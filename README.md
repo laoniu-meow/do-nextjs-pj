@@ -1,24 +1,97 @@
+# Company WebApp - Next.js Full-Stack Application
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## 🏗️ Project Architecture
 
-First, run the development server:
+- **Frontend**: Next.js 15 with React 19, TypeScript, and Tailwind CSS
+- **Backend**: Next.js API routes with Prisma ORM
+- **Database**: PostgreSQL with Docker containerization
+- **Authentication**: JWT-based with bcrypt password hashing
+- **UI Framework**: Material-UI (MUI) with custom components
+- **Validation**: Zod schema validation
+- **Security**: Role-based access control, middleware protection
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Docker and Docker Compose
+- PostgreSQL database
+
+### Environment Setup
+
+1. Copy `.env.example` to `.env.local` and configure your environment variables
+2. Ensure your PostgreSQL database is running
+
+### Database Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Start PostgreSQL container
+docker compose --env-file .env.local up -d db_de4864
+
+# Generate Prisma client
+npm run db:generate
+
+# Push database schema
+npm run db:push
+
+# Seed initial data
+npm run db:seed
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Install dependencies
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Run development server
+npm run dev
+
+# Open [http://localhost:3000](http://localhost:3000) with your browser
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API routes
+│   │   ├── users/         # User authentication
+│   │   ├── companies/     # Company management
+│   │   ├── contents/      # Content management
+│   │   └── admin/         # Admin-only routes
+├── lib/                    # Utility libraries
+│   ├── auth.ts            # Authentication utilities
+│   ├── db.ts              # Database configuration
+│   ├── validation.ts      # Input validation schemas
+│   └── api-response.ts    # API response utilities
+└── middleware.ts           # Route protection middleware
+```
+
+## 🛠️ Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run db:generate  # Generate Prisma client
+npm run db:push      # Push database schema
+npm run db:seed      # Seed database with initial data
+npm run db:studio    # Open Prisma Studio
+```
+
+## 🔐 Security Features
+
+- JWT-based authentication with configurable expiration
+- Role-based access control (ADMIN, USER, EDITOR)
+- Secure password hashing with bcrypt
+- Input validation with Zod schemas
+- Protected API routes with middleware
+- Environment variable protection
 
 ## Learn More
 
