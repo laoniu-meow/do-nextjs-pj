@@ -1,11 +1,10 @@
-import { Metadata } from "next";
+import { Header } from '@/components/layout/Header'
 
-export const metadata: Metadata = {
-  title: "Company WebApp - Next.js Full-Stack Application",
-  description:
-    "A secure and optimized Next.js application with PostgreSQL backend",
-};
-
-export default function HomePage() {
-  return <div>{/* Your content will go here */}</div>;
+export default function Home() {
+  return (
+    <div>
+      <Header />
+      {/* Blank content - no other components */}
+    </div>
+  )
 }
