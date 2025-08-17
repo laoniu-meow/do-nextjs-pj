@@ -5,6 +5,23 @@ export interface OrderingParams {
   direction: 'asc' | 'desc'
 }
 
+export const validateOrdering = (field: string, direction: string): boolean => {
+  return ORDERING_CONFIG.ALLOWED_FIELDS.includes(field as (typeof ORDERING_CONFIG.ALLOWED_FIELDS)[number]) && 
+         ORDERING_CONFIG.ALLOWED_DIRECTIONS.includes(direction as (typeof ORDERING_CONFIG.ALLOWED_DIRECTIONS)[number])
+}
+
+export const getDefaultOrdering = () => ({
+  field: ORDERING_CONFIG.DEFAULT_FIELD,
+  direction: ORDERING_CONFIG.DEFAULT_DIRECTION
+})
+
+export const sanitizeOrdering = (field: string, direction: string) => {
+  const validField = ORDERING_CONFIG.ALLOWED_FIELDS.includes(field as (typeof ORDERING_CONFIG.ALLOWED_FIELDS)[number]) ? field : ORDERING_CONFIG.DEFAULT_FIELD
+  const validDirection = ORDERING_CONFIG.ALLOWED_DIRECTIONS.includes(direction as (typeof ORDERING_CONFIG.ALLOWED_DIRECTIONS)[number]) ? direction : ORDERING_CONFIG.DEFAULT_DIRECTION
+  
+  return { field: validField, direction: validDirection }
+}
+
 export function parseOrderingParams(
   orderByParam: string | null,
   orderDirectionParam: string | null

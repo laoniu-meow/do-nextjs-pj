@@ -1,73 +1,71 @@
 // Secure logging utility - no sensitive data exposure
 export enum LogLevel {
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error',
-  DEBUG = 'debug'
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+  DEBUG = 'DEBUG'
 }
 
-interface LogContext {
-  endpoint?: string
-  userId?: string
-  action?: string
-  timestamp: string
+export interface LogContext {
+  endpoint?: string;
+  userId?: string;
+  action?: string;
+  timestamp?: string;
+  [key: string]: unknown;
 }
 
-class SecureLogger {
-  private isDevelopment = process.env.NODE_ENV === 'development'
-  
-  private formatMessage(level: LogLevel, message: string, context?: Partial<LogContext>): string {
-    const timestamp = new Date().toISOString()
-    const contextStr = context ? ` | ${JSON.stringify(context)}` : ''
-    return `[${timestamp}] [${level.toUpperCase()}] ${message}${contextStr}`
+export class Logger {
+  private isDevelopment = process.env.NODE_ENV === 'development';
+
+  private formatMessage(level: LogLevel, message: string, context?: LogContext): string {
+    const timestamp = new Date().toISOString();
+    const contextStr = context ? ` | Context: ${JSON.stringify(context)}` : '';
+    return `[${timestamp}] ${level}: ${message}${contextStr}`;
   }
-  
-  info(message: string, context?: Partial<LogContext>): void {
+
+  info(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
-      console.log(this.formatMessage(LogLevel.INFO, message, context))
+      console.log(this.formatMessage(LogLevel.INFO, message, context));
     }
-    // In production, send to logging service instead
+    // In production, send to proper logging service
+    // TODO: Implement production logging service integration
   }
-  
-  warn(message: string, context?: Partial<LogContext>): void {
+
+  warn(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
-      console.warn(this.formatMessage(LogLevel.WARN, message, context))
+      console.warn(this.formatMessage(LogLevel.WARN, message, context));
     }
-    // In production, send to logging service instead
+    // In production, send to proper logging service
+    // TODO: Implement production logging service integration
   }
-  
-  error(message: string, context?: Partial<LogContext>): void {
+
+  error(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
-      console.error(this.formatMessage(LogLevel.ERROR, message, context))
+      console.error(this.formatMessage(LogLevel.ERROR, message, context));
     }
-    // In production, send to logging service instead
+    // In production, send to proper logging service
+    // TODO: Implement production logging service integration
   }
-  
-  debug(message: string, context?: Partial<LogContext>): void {
-    if (this.isDevelopment && process.env.DEBUG === 'true') {
-      console.log(this.formatMessage(LogLevel.DEBUG, message, context))
+
+  debug(message: string, context?: LogContext): void {
+    if (this.isDevelopment) {
+      console.log(this.formatMessage(LogLevel.DEBUG, message, context));
     }
+    // In production, debug logging is disabled
   }
-  
-  // Secure error logging - no sensitive data
-  logApiError(endpoint: string, error: unknown, userId?: string): void {
-    const context: LogContext = {
+
+  // API-specific error logging method
+  logApiError(endpoint: string, error: unknown, context?: LogContext): void {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const logContext: LogContext = {
       endpoint,
-      userId,
-      action: 'API_ERROR',
-      timestamp: new Date().toISOString()
-    }
+      error: errorMessage,
+      ...context
+    };
     
-    // Only log safe error information
-    const safeError = error instanceof Error ? error.message : 'Unknown error'
-    this.error(`API Error in ${endpoint}: ${safeError}`, context)
-  }
-  
-  // Secure operation logging
-  logOperation(operation: string, success: boolean, context?: Partial<LogContext>): void {
-    const message = `${operation} ${success ? 'completed' : 'failed'}`
-    this.info(message, context)
+    this.error(`API Error in ${endpoint}: ${errorMessage}`, logContext);
   }
 }
 
-export const logger = new SecureLogger()
+// Create and export a default logger instance
+export const logger = new Logger();

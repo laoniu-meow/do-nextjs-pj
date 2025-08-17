@@ -43,9 +43,6 @@ export default function MenuItemList({
         newExpanded.add(item.id);
       }
       setExpandedItems(newExpanded);
-
-      // Don't navigate immediately for items with children
-      // Only navigate if there are no children or if it's a leaf node
       return;
     }
 
@@ -67,46 +64,29 @@ export default function MenuItemList({
     }
   };
 
-  // Remove hover functionality - sub-menus only expand on click
-  // const handleItemHover = (item: MenuItem) => {
-  //   if (item.children && item.children.length > 0) {
-  //     setExpandedItems((prev) => new Set([...prev, item.id]));
-  //   }
-  // };
+  // Extract divider rendering logic
+  const renderDivider = (index: number, total: number) =>
+    index < total - 1 ? <Divider key={`divider-${index}`} /> : null;
 
-  // const handleItemLeave = (item: MenuItem) => {
-  //   // Optional: Auto-collapse on mouse leave
-  //   // Uncomment the following lines if you want auto-collapse behavior
-  //   // if (item.children && item.children.length > 0) {
-  //   //   setExpandedItems(prev => {
-  //   //     const newSet = new Set(prev);
-  //   //     newSet.delete(item.id);
-  //   //     return newSet;
-  //   //   });
-  //   // }
-  // };
+  // Extract icon color logic
+  const getIconColor = (item: MenuItem, hasChildren: boolean) => {
+    if (item.variant === "error") return ADMIN_MENU_THEME.colors.error;
+    if (item.variant === "primary") return ADMIN_MENU_THEME.colors.primary;
+    if (hasChildren) return ADMIN_MENU_THEME.colors.primary;
+    return "inherit";
+  };
 
   const renderMenuItem = (item: MenuItem, index: number, level: number = 0) => {
     const IconComponent = item.icon;
-    const hasChildren = item.children && item.children.length > 0;
+    const hasChildren = Boolean(item.children && item.children.length > 0);
     const isExpanded = expandedItems.has(item.id);
     const isClickable = item.href || item.action || hasChildren;
-
-    // Handle variant colors
-    const getIconColor = () => {
-      if (item.variant === "error") return ADMIN_MENU_THEME.colors.error;
-      if (item.variant === "primary") return ADMIN_MENU_THEME.colors.primary;
-      if (hasChildren) return ADMIN_MENU_THEME.colors.primary;
-      return "inherit";
-    };
 
     return (
       <React.Fragment key={item.id}>
         <ListItem disablePadding>
           <ListItemButton
             onClick={() => handleItemClick(item)}
-            // onMouseEnter={() => handleItemHover(item)}
-            // onMouseLeave={() => handleItemLeave(item)}
             disabled={!isClickable}
             sx={{
               pl: level * 2 + 2,
@@ -121,7 +101,7 @@ export default function MenuItemList({
               },
             }}
           >
-            <ListItemIcon sx={{ color: getIconColor() }}>
+            <ListItemIcon sx={{ color: getIconColor(item, hasChildren) }}>
               <IconComponent />
             </ListItemIcon>
             <ListItemText
@@ -152,19 +132,15 @@ export default function MenuItemList({
     );
   };
 
-  const renderDivider = (show: boolean) => {
-    return show ? <Divider sx={{ my: 2 }} /> : null;
-  };
-
   return (
     <List sx={{ width: "100%", pt: 1 }} className={className}>
       {menuConfig.mainItems.map((item: MenuItem, index: number) => (
         <React.Fragment key={item.id}>
           {renderMenuItem(item, index)}
-          {index < menuConfig.mainItems.length - 1 && <Divider />}
+          {renderDivider(index, menuConfig.mainItems.length)}
         </React.Fragment>
       ))}
-      {renderDivider(menuConfig.mainItems.length > 0)}
+      {menuConfig.mainItems.length > 0 && <Divider sx={{ my: 2 }} />}
       {renderMenuItem(menuConfig.logoutItem, 0)}
     </List>
   );

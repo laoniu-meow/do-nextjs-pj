@@ -80,7 +80,10 @@ export const defaultMenuConfig: MenuConfig = {
     id: 'logout',
     text: 'Logout',
     icon: LogoutIcon,
-    action: () => console.log('Logout clicked'),
+    action: () => {
+      // TODO: Implement proper logout functionality
+      // For now, just close the drawer
+    },
     variant: 'error',
   },
 };

@@ -18,6 +18,29 @@ export interface PaginationResult<T> {
   }
 }
 
+export const validatePagination = (page: number, limit: number): boolean => {
+  return page >= PAGINATION_CONFIG.MIN_LIMIT && 
+         page <= PAGINATION_CONFIG.MAX_LIMIT &&
+         limit >= PAGINATION_CONFIG.MIN_LIMIT && 
+         limit <= PAGINATION_CONFIG.MAX_LIMIT
+}
+
+export const getDefaultPagination = () => ({
+  page: PAGINATION_CONFIG.DEFAULT_PAGE,
+  limit: PAGINATION_CONFIG.DEFAULT_LIMIT
+})
+
+export const sanitizePagination = (page: number, limit: number) => {
+  const validPage = Math.max(PAGINATION_CONFIG.MIN_LIMIT, Math.min(page, PAGINATION_CONFIG.MAX_LIMIT))
+  const validLimit = Math.max(PAGINATION_CONFIG.MIN_LIMIT, Math.min(limit, PAGINATION_CONFIG.MAX_LIMIT))
+  
+  return { page: validPage, limit: validLimit }
+}
+
+export const calculateSkip = (page: number, limit: number): number => {
+  return (page - 1) * limit
+}
+
 export function parsePaginationParams(
   pageParam: string | null,
   limitParam: string | null

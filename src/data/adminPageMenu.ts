@@ -13,7 +13,9 @@ export const AdminPageMenu: MenuItem[] = [
     id: 'dashboard',
     text: 'Dashboard',
     icon: DashboardIcon,
-    action: () => console.log('Dashboard clicked'),
+    action: () => {
+      // TODO: Implement dashboard navigation logic
+    },
   },
   {
     id: 'settings',
@@ -24,31 +26,41 @@ export const AdminPageMenu: MenuItem[] = [
         id: 'settings-company-profile',
         text: 'Company Profile',
         icon: BusinessIcon,
-        action: () => console.log('Company Profile clicked'),
+        action: () => {
+          // TODO: Implement company profile navigation logic
+        },
       },
       {
         id: 'settings-header-main',
         text: 'Header & Main',
         icon: HeaderIcon,
-        action: () => console.log('Header & Main clicked'),
+        action: () => {
+          // TODO: Implement header & main navigation logic
+        },
       },
       {
         id: 'settings-footer',
         text: 'Footer',
         icon: FooterIcon,
-        action: () => console.log('Footer clicked'),
+        action: () => {
+          // TODO: Implement footer navigation logic
+        },
       },
       {
         id: 'settings-hero-page',
         text: 'Hero Page',
         icon: HeroIcon,
-        action: () => console.log('Hero Page clicked'),
+        action: () => {
+          // TODO: Implement hero page navigation logic
+        },
       },
       {
         id: 'settings-pages',
         text: 'Pages',
         icon: PagesIcon,
-        action: () => console.log('Pages clicked'),
+        action: () => {
+          // TODO: Implement pages navigation logic
+        },
       }
     ]
   }
