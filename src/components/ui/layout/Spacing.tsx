@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { RESPONSIVE_SPACING } from "./constants/theme";
+import { RESPONSIVE_SPACING } from "../constants/theme";
 import { useResponsive } from "@/hooks/useResponsive";
 
 interface SpacingProps {

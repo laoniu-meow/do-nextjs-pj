@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
+import { Box, useTheme } from "@mui/material";
 import { useResponsive } from "@/hooks/useResponsive";
 import {
   Container,
   GridContainer,
   FlexContainer,
-} from "@/components/ui/Container";
+} from "@/components/ui/core/Container";
+import { cn } from "@/lib/utils";
 
 interface ResponsiveLayoutProps {
   children: React.ReactNode;
@@ -51,7 +53,7 @@ export function ResponsiveLayout({
   };
 
   // Extract layout-specific components
-  const GridLayout = ({
+  const renderGridLayout = ({
     children,
     columns,
     gap,
@@ -69,6 +71,46 @@ export function ResponsiveLayout({
     >
       {children}
     </GridContainer>
+  );
+
+  const renderFlexLayout = ({
+    children,
+    direction,
+    gap,
+    className,
+  }: {
+    children: React.ReactNode;
+    direction: "row" | "column";
+    gap: string | { mobile: string; tablet: string; desktop: string };
+    className?: string;
+  }) => {
+    return (
+      <FlexContainer
+        direction={isMobile ? "column" : "row"}
+        gap={getResponsiveValue(gap, "16px")}
+        className={className}
+      >
+        {children}
+      </FlexContainer>
+    );
+  };
+
+  const renderColumnLayout = ({
+    children,
+    gap,
+    className,
+  }: {
+    children: React.ReactNode;
+    gap: string | { mobile: string; tablet: string; desktop: string };
+    className?: string;
+  }) => (
+    <FlexContainer
+      direction="column"
+      gap={getResponsiveValue(gap, "16px")}
+      className={className}
+    >
+      {children}
+    </FlexContainer>
   );
 
   const SidebarLayout = ({
@@ -96,8 +138,8 @@ export function ResponsiveLayout({
     }
 
     return (
-      <FlexContainer
-        direction={isMobile ? "column" : "row"}
+      <Container
+        columns={isMobile ? 1 : 2}
         gap={getResponsiveValue(gap, "16px")}
         className={className}
       >
@@ -126,7 +168,7 @@ export function ResponsiveLayout({
             </div>
           </>
         )}
-      </FlexContainer>
+      </Container>
     );
   };
 
@@ -165,58 +207,51 @@ export function ResponsiveLayout({
     gap: string | { mobile: string; tablet: string; desktop: string };
     className?: string;
   }) => (
-    <FlexContainer
-      direction="column"
+    <Container
+      columns={1}
       gap={getResponsiveValue(gap, "16px")}
       className={className}
     >
       {header && <div className="layout-header">{header}</div>}
       <div className="layout-main">{children}</div>
       {footer && <div className="layout-footer">{footer}</div>}
-    </FlexContainer>
+    </Container>
   );
 
   const renderLayout = () => {
     switch (layout) {
       case "grid":
         return (
-          <GridLayout columns={columns} gap={gap} className={className}>
+          <GridContainer
+            columns={getResponsiveValue(columns, 1)}
+            gap={getResponsiveValue(gap, "16px")}
+            className={className}
+          >
             {children}
-          </GridLayout>
+          </GridContainer>
         );
 
       case "sidebar":
         return (
-          <SidebarLayout
-            sidebar={sidebar!}
-            mainContent={mainContent!}
-            header={header}
-            footer={footer}
-            gap={gap}
-            sidebarWidth={sidebarWidth}
-            className={className}
-          />
+          <div className={cn("layout-sidebar", className)}>
+            <div className="layout-sidebar-content">
+              <div className="layout-sidebar-main">{children}</div>
+              {sidebar && (
+                <div className="layout-sidebar-sidebar">{sidebar}</div>
+              )}
+            </div>
+          </div>
         );
 
       case "masonry":
         return (
-          <MasonryLayout columns={columns} gap={gap} className={className}>
-            {children}
-          </MasonryLayout>
+          <div className={cn("layout-masonry", className)}>
+            <div className="layout-masonry-content">{children}</div>
+          </div>
         );
 
-      case "stack":
       default:
-        return (
-          <StackLayout
-            header={header}
-            footer={footer}
-            gap={gap}
-            className={className}
-          >
-            {children}
-          </StackLayout>
-        );
+        return <Container className={className}>{children}</Container>;
     }
   };
 

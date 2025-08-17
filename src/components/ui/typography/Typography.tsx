@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { RESPONSIVE_TYPOGRAPHY } from "./constants/theme";
+import { RESPONSIVE_TYPOGRAPHY } from "../constants/theme";
 import { useResponsive } from "@/hooks/useResponsive";
 
 interface ResponsiveTypographyProps {

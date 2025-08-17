@@ -1,5 +1,5 @@
 import React from "react";
-import AdminMenuButton from "@/components/ui/AdminMenuButton";
+import AdminMenuButton from "@/components/ui/navigation/AdminMenuButton";
 
 export default function AdminLayout({
   children,

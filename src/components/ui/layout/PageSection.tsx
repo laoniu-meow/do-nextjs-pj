@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { Container } from "./Container";
+import { Container } from "../core/Container";
 
 interface PageSectionProps {
   title: string;

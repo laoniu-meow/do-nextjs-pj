@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Container, Typography, Box, Breadcrumbs } from "@mui/material";
-import BreadcrumbItem from "./BreadcrumbItem";
+import BreadcrumbItem from "../navigation/BreadcrumbItem";
 
 interface BreadcrumbItemData {
   label: string;

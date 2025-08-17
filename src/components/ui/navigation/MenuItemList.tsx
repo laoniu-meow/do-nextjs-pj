@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { MenuItem, MenuConfig, defaultMenuConfig } from "./config/menuConfig";
-import { ADMIN_MENU_THEME } from "./constants/theme";
+import { MenuItem, MenuConfig, defaultMenuConfig } from "../config/menuConfig";
+import { ADMIN_MENU_THEME } from "../constants/theme";
 
 interface MenuItemListProps {
   config?: MenuConfig;
