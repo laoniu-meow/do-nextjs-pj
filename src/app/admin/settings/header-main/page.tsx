@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { PageLayout, MainContainerBox, SettingsPanel } from "@/components/ui";
+import { PageLayout, MainContainerBox } from "@/components/ui";
+import { DynamicSettingsPanel } from "@/components/settings";
 
-export default function HeaderMainPage() {
+export default function HeaderMainSettingsPage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleBuild = () => {
@@ -16,23 +17,22 @@ export default function HeaderMainPage() {
 
   const handleApplySettings = () => {
     // TODO: Implement settings application logic
-    console.log("Settings applied");
     setIsSettingsOpen(false);
   };
 
   return (
     <PageLayout
-      title="Header Main"
-      description="Configure your website header, navigation, and header-specific settings."
+      title="Header & Main Settings"
+      description="Customize your website header, navigation, and main layout settings."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },
         { label: "Settings", href: "/admin/settings" },
-        { label: "Header Main" },
+        { label: "Header & Main" },
       ]}
       maxWidth="xl"
     >
       <MainContainerBox
-        title="Configuration"
+        title="Header Configuration"
         showBuild={true}
         showSave={true}
         showUpload={true}
@@ -43,21 +43,23 @@ export default function HeaderMainPage() {
         onRefresh={() => console.log("Refresh clicked")}
       >
         <div className="space-y-6">
-          {/* Header main configuration content will be added here */}
+          <div className="text-center py-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Header &amp; Main Layout Configuration
+            </h3>
+            <p className="text-gray-600">
+              Click the &ldquo;Build&rdquo; button to open the settings panel
+              and configure your header and main layout.
+            </p>
+          </div>
         </div>
       </MainContainerBox>
 
-      <SettingsPanel
+      <DynamicSettingsPanel
         isOpen={isSettingsOpen}
         onClose={handleCloseSettings}
         onApply={handleApplySettings}
-      >
-        <div className="text-center py-8">
-          <p className="text-gray-500">
-            Header Main settings will be added here
-          </p>
-        </div>
-      </SettingsPanel>
+      />
     </PageLayout>
   );
 }

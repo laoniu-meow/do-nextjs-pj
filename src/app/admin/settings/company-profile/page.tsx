@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { PageLayout, MainContainerBox, SettingsPanel } from "@/components/ui";
+import { PageLayout, MainContainerBox } from "@/components/ui";
+import { DynamicSettingsPanel } from "@/components/settings";
 
 export default function CompanyProfilePage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -46,17 +47,11 @@ export default function CompanyProfilePage() {
         </div>
       </MainContainerBox>
 
-      <SettingsPanel
+      <DynamicSettingsPanel
         isOpen={isSettingsOpen}
         onClose={handleCloseSettings}
         onApply={handleApplySettings}
-      >
-        <div className="text-center py-8">
-          <p className="text-gray-500">
-            Company Profile settings will be added here
-          </p>
-        </div>
-      </SettingsPanel>
+      />
     </PageLayout>
   );
 }

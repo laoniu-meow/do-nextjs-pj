@@ -95,12 +95,13 @@ export interface ContentFormData {
 
 export interface CompanyFormData {
   name: string
-  description?: string
   logo?: string
-  website?: string
-  email?: string
-  phone?: string
+  companyRegNumber?: string
   address?: string
+  country?: string
+  postalCode?: string
+  email?: string
+  contact?: string
 }
 
 // Filter and search types
