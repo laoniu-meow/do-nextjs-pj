@@ -1,4 +1,6 @@
-import { Header } from '@/components/layout/Header'
+"use client";
+
+import { Header } from "@/components/layout/Header";
 
 export default function Home() {
   return (
@@ -6,5 +8,5 @@ export default function Home() {
       <Header />
       {/* Blank content - no other components */}
     </div>
-  )
+  );
 }

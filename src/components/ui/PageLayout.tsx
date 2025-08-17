@@ -82,7 +82,15 @@ export default function PageLayout({
           <Typography
             variant="body1"
             color="text.secondary"
-            className="max-w-3xl text-sm sm:text-base text-gray-600 leading-relaxed"
+            className="max-w-3xl text-sm sm:text-base text-gray-600 leading-relaxed mb-1"
+            sx={{
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              minHeight: "4.5rem", // Ensures consistent height for 3 lines
+            }}
           >
             {description}
           </Typography>

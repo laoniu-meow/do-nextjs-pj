@@ -11,7 +11,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 export interface MenuItem {
   id: string;
   text: string;
-  icon: React.ComponentType;
+  icon: React.ComponentType<{ className?: string; [key: string]: unknown }>;
   action?: () => void;
   href?: string;
   children?: MenuItem[];

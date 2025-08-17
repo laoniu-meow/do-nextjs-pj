@@ -2,13 +2,13 @@
 
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import ResponsiveContainer from "./ResponsiveContainer";
+import { Container } from "./Container";
 
 interface PageSectionProps {
   title: string;
   description?: string;
   children: React.ReactNode;
-  variant?: "default" | "card" | "bordered";
+  variant?: "default" | "card" | "bordered" | "elevated" | "filled";
   className?: string;
 }
 
@@ -48,7 +48,7 @@ export default function PageSection({
       {renderSectionHeader()}
 
       {/* Responsive Main Box/Card */}
-      <ResponsiveContainer variant={variant}>{children}</ResponsiveContainer>
+      <Container variant={variant}>{children}</Container>
     </Box>
   );
 }

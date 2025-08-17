@@ -65,24 +65,5 @@ export const getDeviceType = (width: number): 'mobile' | 'tablet' | 'desktop' | 
   return 'desktop'
 }
 
-// Responsive spacing scale
-export const spacing = {
-  xs: { mobile: '4px', tablet: '6px', desktop: '8px' },
-  sm: { mobile: '8px', tablet: '12px', desktop: '16px' },
-  md: { mobile: '16px', tablet: '24px', desktop: '32px' },
-  lg: { mobile: '24px', tablet: '32px', desktop: '48px' },
-  xl: { mobile: '32px', tablet: '48px', desktop: '64px' },
-  xxl: { mobile: '48px', tablet: '64px', desktop: '96px' }
-}
-
-// Responsive typography scale
-export const typography = {
-  h1: { mobile: '24px', tablet: '32px', desktop: '48px' },
-  h2: { mobile: '20px', tablet: '28px', desktop: '36px' },
-  h3: { mobile: '18px', tablet: '24px', desktop: '28px' },
-  h4: { mobile: '16px', tablet: '20px', desktop: '24px' },
-  h5: { mobile: '14px', tablet: '18px', desktop: '20px' },
-  h6: { mobile: '12px', tablet: '16px', desktop: '18px' },
-  body: { mobile: '14px', tablet: '16px', desktop: '18px' },
-  small: { mobile: '12px', tablet: '14px', desktop: '16px' }
-}
+// Note: Spacing and typography values are now consolidated in src/components/ui/constants/theme.ts
+// Import from there to avoid duplication

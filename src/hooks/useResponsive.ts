@@ -121,7 +121,7 @@ export function useResponsiveSpacing(size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'x
 }
 
 // Hook for responsive typography
-export function useResponsiveTypography(level: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'small'): string {
+export function useResponsiveTypography(level: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'small' | 'caption'): string {
   const { deviceType } = useResponsive()
   const typography = {
     h1: { mobile: '24px', tablet: '32px', desktop: '48px' },
@@ -131,8 +131,57 @@ export function useResponsiveTypography(level: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' 
     h5: { mobile: '14px', tablet: '18px', desktop: '20px' },
     h6: { mobile: '12px', tablet: '16px', desktop: '18px' },
     body: { mobile: '14px', tablet: '16px', desktop: '18px' },
-    small: { mobile: '12px', tablet: '14px', desktop: '16px' }
+    small: { mobile: '12px', tablet: '14px', desktop: '16px' },
+    caption: { mobile: '12px', tablet: '14px', desktop: '16px' }
   }
   
   return typography[level][deviceType === 'largeDesktop' ? 'desktop' : deviceType]
+}
+
+// Hook for responsive padding/margin
+export function useResponsivePadding(size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'): string {
+  const { deviceType } = useResponsive()
+  const padding = {
+    xs: { mobile: '0.5rem', tablet: '0.75rem', desktop: '1rem' },
+    sm: { mobile: '1rem', tablet: '1.5rem', desktop: '2rem' },
+    md: { mobile: '1.5rem', tablet: '2rem', desktop: '3rem' },
+    lg: { mobile: '2rem', tablet: '3rem', desktop: '4rem' },
+    xl: { mobile: '3rem', tablet: '4rem', desktop: '6rem' },
+    xxl: { mobile: '4rem', tablet: '6rem', desktop: '8rem' }
+  }
+  
+  return padding[size][deviceType === 'largeDesktop' ? 'desktop' : deviceType]
+}
+
+// Hook for responsive margins
+export function useResponsiveMargin(size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'): string {
+  const { deviceType } = useResponsive()
+  const margin = {
+    xs: { mobile: '0.25rem', tablet: '0.5rem', desktop: '0.5rem' },
+    sm: { mobile: '0.5rem', tablet: '1rem', desktop: '1rem' },
+    md: { mobile: '1rem', tablet: '1.5rem', desktop: '1.5rem' },
+    lg: { mobile: '1.5rem', tablet: '2rem', desktop: '2rem' },
+    xl: { mobile: '2rem', tablet: '3rem', desktop: '3rem' },
+    xxl: { mobile: '3rem', tablet: '4rem', desktop: '4rem' }
+  }
+  
+  return margin[size][deviceType === 'largeDesktop' ? 'desktop' : deviceType]
+}
+
+// Hook for responsive container sizing
+export function useResponsiveContainer(): {
+  maxWidth: string
+  padding: string
+  margin: string
+} {
+  const { deviceType } = useResponsive()
+  
+  const containerConfig = {
+    mobile: { maxWidth: '100%', padding: '1rem', margin: '0.5rem' },
+    tablet: { maxWidth: '90%', padding: '1.5rem', margin: '1rem' },
+    desktop: { maxWidth: '1200px', padding: '2rem', margin: '1.5rem' },
+    largeDesktop: { maxWidth: '1400px', padding: '2rem', margin: '2rem' }
+  }
+  
+  return containerConfig[deviceType === 'largeDesktop' ? 'desktop' : deviceType]
 }

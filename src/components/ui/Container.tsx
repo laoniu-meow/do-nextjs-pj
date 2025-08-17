@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,10 @@ interface ContainerProps {
   fluid?: boolean;
   maxWidth?: "sm" | "md" | "lg" | "xl" | "full";
   padding?: "none" | "sm" | "md" | "lg" | "xl";
+  variant?: "default" | "card" | "bordered" | "elevated" | "filled";
   as?: keyof React.JSX.IntrinsicElements;
+  hover?: boolean;
+  shadow?: "none" | "sm" | "md" | "lg";
 }
 
 export function Container({
@@ -19,7 +22,10 @@ export function Container({
   fluid = false,
   maxWidth = "lg",
   padding = "md",
+  variant = "default",
   as: Component = "div",
+  hover = false,
+  shadow = "sm",
 }: ContainerProps) {
   const { deviceType } = useResponsive();
 
@@ -95,6 +101,38 @@ export function Container({
     }
   };
 
+  const getVariantStyles = () => {
+    const baseStyles = "w-full rounded-xl transition-all duration-200";
+
+    switch (variant) {
+      case "card":
+        return `${baseStyles} bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200`;
+      case "bordered":
+        return `${baseStyles} bg-white border-2 border-gray-200`;
+      case "elevated":
+        return `${baseStyles} bg-white shadow-lg hover:shadow-xl`;
+      case "filled":
+        return `${baseStyles} bg-gray-50 border border-gray-200`;
+      default:
+        return `${baseStyles} bg-white border border-gray-200 shadow-sm`;
+    }
+  };
+
+  const getShadowStyles = () => {
+    if (shadow === "none") return "";
+
+    switch (shadow) {
+      case "sm":
+        return "shadow-sm";
+      case "md":
+        return "shadow-md";
+      case "lg":
+        return "shadow-lg";
+      default:
+        return "shadow-sm";
+    }
+  };
+
   const containerStyles = {
     maxWidth: getMaxWidth(),
     padding: getPadding(),
@@ -102,8 +140,18 @@ export function Container({
     width: "100%",
   };
 
+  const variantClasses = cn(
+    getVariantStyles(),
+    getShadowStyles(),
+    hover && "hover:shadow-md hover:scale-[1.02]",
+    className
+  );
+
   return (
-    <Component className={cn("container", className)} style={containerStyles}>
+    <Component
+      className={cn("container", variantClasses)}
+      style={containerStyles}
+    >
       {children}
     </Component>
   );
@@ -220,3 +268,6 @@ export function FlexContainer({
     </div>
   );
 }
+
+// Export ResponsiveContainer as an alias for backward compatibility
+export const ResponsiveContainer = Container;

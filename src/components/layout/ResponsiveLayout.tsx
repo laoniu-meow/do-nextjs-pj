@@ -50,86 +50,172 @@ export function ResponsiveLayout({
     return value as T;
   };
 
+  // Extract layout-specific components
+  const GridLayout = ({
+    children,
+    columns,
+    gap,
+    className,
+  }: {
+    children: React.ReactNode;
+    columns: number | { mobile: number; tablet: number; desktop: number };
+    gap: string | { mobile: string; tablet: string; desktop: string };
+    className?: string;
+  }) => (
+    <GridContainer
+      columns={getResponsiveValue(columns, 1)}
+      gap={getResponsiveValue(gap, "16px")}
+      className={className}
+    >
+      {children}
+    </GridContainer>
+  );
+
+  const SidebarLayout = ({
+    sidebar,
+    mainContent,
+    header,
+    footer,
+    gap,
+    sidebarWidth,
+    className,
+  }: {
+    sidebar: React.ReactNode;
+    mainContent: React.ReactNode;
+    header?: React.ReactNode;
+    footer?: React.ReactNode;
+    gap: string | { mobile: string; tablet: string; desktop: string };
+    sidebarWidth: string | { mobile: string; tablet: string; desktop: string };
+    className?: string;
+  }) => {
+    if (!sidebar || !mainContent) {
+      console.warn(
+        "Sidebar layout requires both sidebar and mainContent props"
+      );
+      return <div className={className}>{children}</div>;
+    }
+
+    return (
+      <FlexContainer
+        direction={isMobile ? "column" : "row"}
+        gap={getResponsiveValue(gap, "16px")}
+        className={className}
+      >
+        {isMobile ? (
+          // Mobile: Stack vertically
+          <>
+            {header && <div className="mobile-header">{header}</div>}
+            <div className="mobile-main">{mainContent}</div>
+            <div className="mobile-sidebar">{sidebar}</div>
+            {footer && <div className="mobile-footer">{footer}</div>}
+          </>
+        ) : (
+          // Tablet/Desktop: Side by side
+          <>
+            <div
+              className="sidebar"
+              style={{
+                width: getResponsiveValue(sidebarWidth, "250px"),
+                flexShrink: 0,
+              }}
+            >
+              {sidebar}
+            </div>
+            <div className="main-content" style={{ flex: 1 }}>
+              {mainContent}
+            </div>
+          </>
+        )}
+      </FlexContainer>
+    );
+  };
+
+  const MasonryLayout = ({
+    children,
+    columns,
+    gap,
+    className,
+  }: {
+    children: React.ReactNode;
+    columns: number | { mobile: number; tablet: number; desktop: number };
+    gap: string | { mobile: string; tablet: string; desktop: string };
+    className?: string;
+  }) => (
+    <div
+      className={`masonry-layout ${className || ""}`}
+      style={{
+        columns: getResponsiveValue(columns, 1),
+        columnGap: getResponsiveValue(gap, "16px"),
+      }}
+    >
+      {children}
+    </div>
+  );
+
+  const StackLayout = ({
+    children,
+    header,
+    footer,
+    gap,
+    className,
+  }: {
+    children: React.ReactNode;
+    header?: React.ReactNode;
+    footer?: React.ReactNode;
+    gap: string | { mobile: string; tablet: string; desktop: string };
+    className?: string;
+  }) => (
+    <FlexContainer
+      direction="column"
+      gap={getResponsiveValue(gap, "16px")}
+      className={className}
+    >
+      {header && <div className="layout-header">{header}</div>}
+      <div className="layout-main">{children}</div>
+      {footer && <div className="layout-footer">{footer}</div>}
+    </FlexContainer>
+  );
+
   const renderLayout = () => {
     switch (layout) {
       case "grid":
         return (
-          <GridContainer
-            columns={getResponsiveValue(columns, 1)}
-            gap={getResponsiveValue(gap, "16px")}
-            className={className}
-          >
+          <GridLayout columns={columns} gap={gap} className={className}>
             {children}
-          </GridContainer>
+          </GridLayout>
         );
 
       case "sidebar":
-        if (!sidebar || !mainContent) {
-          console.warn(
-            "Sidebar layout requires both sidebar and mainContent props"
-          );
-          return <div className={className}>{children}</div>;
-        }
-
         return (
-          <FlexContainer
-            direction={isMobile ? "column" : "row"}
-            gap={getResponsiveValue(gap, "16px")}
+          <SidebarLayout
+            sidebar={sidebar!}
+            mainContent={mainContent!}
+            header={header}
+            footer={footer}
+            gap={gap}
+            sidebarWidth={sidebarWidth}
             className={className}
-          >
-            {isMobile ? (
-              // Mobile: Stack vertically
-              <>
-                {header && <div className="mobile-header">{header}</div>}
-                <div className="mobile-main">{mainContent}</div>
-                <div className="mobile-sidebar">{sidebar}</div>
-                {footer && <div className="mobile-footer">{footer}</div>}
-              </>
-            ) : (
-              // Tablet/Desktop: Side by side
-              <>
-                <div
-                  className="sidebar"
-                  style={{
-                    width: getResponsiveValue(sidebarWidth, "250px"),
-                    flexShrink: 0,
-                  }}
-                >
-                  {sidebar}
-                </div>
-                <div className="main-content" style={{ flex: 1 }}>
-                  {mainContent}
-                </div>
-              </>
-            )}
-          </FlexContainer>
+          />
         );
 
       case "masonry":
         return (
-          <div
-            className={`masonry-layout ${className || ""}`}
-            style={{
-              columns: getResponsiveValue(columns, 1),
-              columnGap: getResponsiveValue(gap, "16px"),
-            }}
-          >
+          <MasonryLayout columns={columns} gap={gap} className={className}>
             {children}
-          </div>
+          </MasonryLayout>
         );
 
       case "stack":
       default:
         return (
-          <FlexContainer
-            direction="column"
-            gap={getResponsiveValue(gap, "16px")}
+          <StackLayout
+            header={header}
+            footer={footer}
+            gap={gap}
             className={className}
           >
-            {header && <div className="layout-header">{header}</div>}
-            <div className="layout-main">{children}</div>
-            {footer && <div className="layout-footer">{footer}</div>}
-          </FlexContainer>
+            {children}
+          </StackLayout>
         );
     }
   };

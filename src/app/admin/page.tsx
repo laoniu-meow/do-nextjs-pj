@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import { PageLayout } from "@/components/ui";
 
 export default function AdminPage() {
@@ -8,7 +11,7 @@ export default function AdminPage() {
       breadcrumbs={[{ label: "Admin" }]}
       maxWidth="xl"
     >
-      <div>{/* Dashboard content will be added here when needed */}</div>
+      <div className="space-y-6">{/* Content will be added here */}</div>
     </PageLayout>
   );
 }
