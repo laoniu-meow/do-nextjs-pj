@@ -62,6 +62,48 @@ model Content {
   @@index([title])
 }
 
+model CompanyProfile {
+  id                String   @id @default(cuid())
+  type              CompanyProfileType
+  companyName       String
+  companyRegNumber  String
+  address           String
+  country           String
+  postalCode        String
+  email             String
+  contact           String
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("company_profiles")
+  @@index([type])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+model CompanyProfileStaging {
+  id                String   @id @default(cuid())
+  type              CompanyProfileType
+  companyName       String
+  companyRegNumber  String
+  address           String
+  country           String
+  postalCode        String
+  email             String
+  contact           String
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("company_profile_staging")
+  @@index([type])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
 enum Role {
   ADMIN
   USER
@@ -79,4 +121,9 @@ enum Status {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+enum CompanyProfileType {
+  MAIN
+  BRANCH
 }

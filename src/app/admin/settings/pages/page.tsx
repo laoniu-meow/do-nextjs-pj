@@ -3,7 +3,7 @@ import { PageLayout } from "@/components/ui";
 export default function PagesPage() {
   return (
     <PageLayout
-      title="Pages Settings"
+      title="Pages"
       description="Manage your website pages, content structure, and page-specific configurations."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },

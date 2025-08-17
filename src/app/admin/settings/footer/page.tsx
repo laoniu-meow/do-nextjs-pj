@@ -3,7 +3,7 @@ import { PageLayout } from "@/components/ui";
 export default function FooterPage() {
   return (
     <PageLayout
-      title="Footer Settings"
+      title="Footer"
       description="Configure your website footer, links, and branding information."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },

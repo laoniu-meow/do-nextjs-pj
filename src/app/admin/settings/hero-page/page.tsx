@@ -3,7 +3,7 @@ import { PageLayout } from "@/components/ui";
 export default function HeroPage() {
   return (
     <PageLayout
-      title="Hero Page Settings"
+      title="Hero Page"
       description="Configure your website hero section, landing page content, and call-to-action elements."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },

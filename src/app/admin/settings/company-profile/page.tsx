@@ -7,14 +7,129 @@ import {
   PillButton,
   CompanyProfileCard,
 } from "@/components/ui";
-import { Box } from "@mui/material";
+import { Box, Alert, Snackbar } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import CloudSyncIcon from "@mui/icons-material/CloudSync";
 import LoopIcon from "@mui/icons-material/Loop";
 import AddIcon from "@mui/icons-material/Add";
+import {
+  useCompanyProfile,
+  CompanyProfileData,
+} from "@/hooks/useCompanyProfile";
+import { useState } from "react";
 
 export default function CompanyProfilePage() {
+  const {
+    profiles,
+    isLoading,
+    saveButtonEnabled,
+    uploadButtonEnabled,
+    loadProfiles,
+    saveToStaging,
+    uploadToProduction,
+    updateProfile,
+    addProfile,
+    removeProfile,
+  } = useCompanyProfile();
+
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error" | "info";
+  }>({
+    open: false,
+    message: "",
+    severity: "info",
+  });
+
+  const handleEdit = (index: number) => {
+    setEditingIndex(index);
+  };
+
+  const handleSave = async () => {
+    try {
+      const success = await saveToStaging();
+      if (success) {
+        setSnackbar({
+          open: true,
+          message: "Company profiles saved to staging successfully!",
+          severity: "success",
+        });
+        setEditingIndex(null); // Exit edit mode
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Failed to save company profiles to staging",
+          severity: "error",
+        });
+      }
+    } catch {
+      setSnackbar({
+        open: true,
+        message: "Error saving company profiles",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleUpload = async () => {
+    try {
+      const success = await uploadToProduction();
+      if (success) {
+        setSnackbar({
+          open: true,
+          message: "Company profiles uploaded to production successfully!",
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Failed to upload company profiles to production",
+          severity: "error",
+        });
+      }
+    } catch {
+      setSnackbar({
+        open: true,
+        message: "Error uploading company profiles",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleRefresh = () => {
+    loadProfiles();
+    setEditingIndex(null);
+  };
+
+  const handleAddCompany = (type: "MAIN" | "BRANCH") => {
+    addProfile(type);
+    // Set the new profile to editing mode
+    setEditingIndex(profiles.length);
+  };
+
+  const handleRemoveCompany = (index: number) => {
+    removeProfile(index);
+    if (editingIndex === index) {
+      setEditingIndex(null);
+    } else if (editingIndex !== null && editingIndex > index) {
+      setEditingIndex(editingIndex - 1);
+    }
+  };
+
+  const handleUpdateProfile = (
+    index: number,
+    data: Partial<CompanyProfileData>
+  ) => {
+    updateProfile(index, data);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <PageLayout
       title="Company Profile"
@@ -81,101 +196,134 @@ export default function CompanyProfilePage() {
               variant="success"
               size="medium"
               tooltip="Save"
-              sx={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
+              disabled={!saveButtonEnabled}
+              onClick={handleSave}
+              sx={{
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                backgroundColor: saveButtonEnabled ? "#4ade80" : "#9ca3af",
+                "&:hover": {
+                  backgroundColor: saveButtonEnabled ? "#22c55e" : "#9ca3af",
+                },
+              }}
             />
             <RoundIconButton
               icon={<CloudSyncIcon />}
-              variant="primary"
+              variant="success"
               size="medium"
               tooltip="Upload"
-              sx={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
+              disabled={!uploadButtonEnabled}
+              onClick={handleUpload}
+              sx={{
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                backgroundColor: uploadButtonEnabled ? "#ec4899" : "#9ca3af", // Light pink when enabled
+                "&:hover": {
+                  backgroundColor: uploadButtonEnabled ? "#db2777" : "#9ca3af", // Darker pink on hover
+                },
+              }}
             />
             <RoundIconButton
               icon={<LoopIcon />}
               variant="primary"
               size="medium"
               tooltip="Refresh"
+              onClick={handleRefresh}
               sx={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
             />
           </Box>
         </Box>
 
-        {/* Add Company Button - Third on mobile, with narrower height */}
+        {/* Add Company Buttons - Third on mobile, with narrower height */}
         <Box
           sx={{
             mb: 0.5,
             order: { xs: 3, sm: 3 },
+            display: "flex",
+            gap: 2,
+            flexWrap: "wrap",
           }}
         >
           <PillButton
-            label="Add Company"
+            label="Add Main Company"
             icon={<AddIcon />}
             variant="contained"
             color="primary"
-            onClick={() => {
-              // TODO: Implement add company logic
-            }}
+            onClick={() => handleAddCompany("MAIN")}
+            disabled={profiles.some((p) => p.type === "MAIN")}
+          />
+          <PillButton
+            label="Add Branch"
+            icon={<AddIcon />}
+            variant="contained"
+            color="secondary"
+            onClick={() => handleAddCompany("BRANCH")}
           />
         </Box>
 
         {/* Company Profile Cards Grid */}
         <Box sx={{ mt: 3 }}>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr", // Mobile: 1 column (stacked)
-                sm: "1fr", // Small tablet: 1 column (stacked)
-                md: "repeat(2, 1fr)", // Medium tablet: 2 columns
-                lg: "repeat(2, 1fr)", // Large tablet: 2 columns
-                xl: "repeat(2, 1fr)", // Desktop: 2 columns
-              },
-              gap: {
-                xs: 2, // Mobile: smaller gap
-                sm: 2, // Small tablet: smaller gap
-                md: 3, // Medium and up: larger gap
-              },
-              alignItems: "start",
-            }}
-          >
-            {/* Main Company Card */}
-            <CompanyProfileCard
-              type="main"
-              companyName="Sample Company Ltd"
-              companyRegNumber="REG123456"
-              address="123 Business Street, Suite 100"
-              country="United States"
-              postalCode="12345"
-              email="info@samplecompany.com"
-              contact="+1 (555) 123-4567"
-              onSave={(data) => {
-                // TODO: Implement save to Company Staging Table
-                // Data will be sent to API endpoint for processing
+          {isLoading ? (
+            <Box sx={{ textAlign: "center", py: 4 }}>
+              <LoopIcon
+                sx={{ fontSize: "2rem", animation: "spin 1s linear infinite" }}
+              />
+              <Box sx={{ mt: 1 }}>Loading company profiles...</Box>
+            </Box>
+          ) : profiles.length === 0 ? (
+            <Box sx={{ textAlign: "center", py: 4, color: "grey.500" }}>
+              No company profiles found. Add your first company profile above.
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr", // Mobile: 1 column (stacked)
+                  sm: "1fr", // Small tablet: 1 column (stacked)
+                  md: "repeat(2, 1fr)", // Medium tablet: 2 columns
+                  lg: "repeat(2, 1fr)", // Large tablet: 2 columns
+                  xl: "repeat(2, 1fr)", // Desktop: 2 columns
+                },
+                gap: {
+                  xs: 2, // Mobile: smaller gap
+                  sm: 2, // Small tablet: smaller gap
+                  md: 3, // Medium and up: larger gap
+                },
+                alignItems: "start",
               }}
-            />
-
-            {/* Example Branch Card */}
-            <CompanyProfileCard
-              type="branch"
-              companyName="Sample Company Branch"
-              companyRegNumber="REG789012"
-              address="456 Branch Avenue, Floor 2"
-              country="United States"
-              postalCode="67890"
-              email="branch@samplecompany.com"
-              contact="+1 (555) 987-6543"
-              onSave={(data) => {
-                // TODO: Implement save to Company Staging Table
-                // Data will be sent to API endpoint for processing
-              }}
-              onRemove={() => {
-                // TODO: Implement removal logic
-                // Removal will be handled by API endpoint
-              }}
-            />
-          </Box>
+            >
+              {profiles.map((profile, index) => (
+                <CompanyProfileCard
+                  key={profile.id || index}
+                  type={profile.type}
+                  profile={profile}
+                  index={index}
+                  isEditing={editingIndex === index}
+                  onEdit={handleEdit}
+                  onUpdate={handleUpdateProfile}
+                  onRemove={
+                    profile.type === "BRANCH" ? handleRemoveCompany : undefined
+                  }
+                />
+              ))}
+            </Box>
+          )}
         </Box>
-        {/* Company Information content will be added here */}
+
+        {/* Snackbar for notifications */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </MainContentBox>
     </PageLayout>
   );

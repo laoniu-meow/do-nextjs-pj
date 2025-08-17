@@ -4,110 +4,42 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper, IconButton, Tooltip } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TextField } from "@mui/material";
+import { CompanyProfileData } from "@/hooks/useCompanyProfile";
 
 interface CompanyProfileCardProps {
-  type: "main" | "branch";
-  companyName?: string;
-  companyRegNumber?: string;
-  address?: string;
-  country?: string;
-  postalCode?: string;
-  email?: string;
-  contact?: string;
-  isActive?: boolean;
-  className?: string;
-  onSave?: (data: CompanyData) => void;
-  onRemove?: (id?: string) => void;
-}
-
-interface CompanyData {
-  companyName: string;
-  companyRegNumber: string;
-  address: string;
-  country: string;
-  postalCode: string;
-  email: string;
-  contact: string;
+  type: "MAIN" | "BRANCH";
+  profile: CompanyProfileData;
+  index: number;
+  isEditing: boolean;
+  onEdit: (index: number) => void;
+  onUpdate: (index: number, data: Partial<CompanyProfileData>) => void;
+  onRemove?: (index: number) => void;
 }
 
 export default function CompanyProfileCard({
   type,
-  companyName = "",
-  companyRegNumber = "",
-  address = "",
-  country = "",
-  postalCode = "",
-  email = "",
-  contact = "",
-  isActive = false,
-  className,
-  onSave,
+  profile,
+  index,
+  isEditing,
+  onEdit,
+  onUpdate,
   onRemove,
 }: CompanyProfileCardProps) {
   const [mounted, setMounted] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<CompanyData>({
-    companyName: "",
-    companyRegNumber: "",
-    address: "",
-    country: "",
-    postalCode: "",
-    email: "",
-    contact: "",
-  });
 
   // Ensure component is mounted before rendering
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Update form data when props change
-  useEffect(() => {
-    setFormData({
-      companyName: companyName || "",
-      companyRegNumber: companyRegNumber || "",
-      address: address || "",
-      country: country || "",
-      postalCode: postalCode || "",
-      email: email || "",
-      contact: contact || "",
-    });
-  }, [
-    companyName,
-    companyRegNumber,
-    address,
-    country,
-    postalCode,
-    email,
-    contact,
-  ]);
-
-  const isMainCard = type === "main";
+  const isMainCard = type === "MAIN";
 
   const handleEdit = () => {
     try {
-      setIsEditing(true);
-    } catch (error) {
-      // Log error to proper logging service in production
-      // For now, silently handle errors
-    }
-  };
-
-  const handleSave = () => {
-    try {
-      // Store in Company Staging Table
-      if (onSave) {
-        onSave(formData);
-      }
-
-      // TODO: Implement actual API call to Company Staging Table
-      // Data will be sent to API endpoint for processing
-
-      setIsEditing(false);
-    } catch (error) {
+      onEdit(index);
+    } catch {
       // Log error to proper logging service in production
       // For now, silently handle errors
     }
@@ -116,23 +48,21 @@ export default function CompanyProfileCard({
   const handleRemove = () => {
     try {
       if (onRemove) {
-        onRemove();
+        onRemove(index);
       }
-      // TODO: Implement actual removal logic
-      // Removal will be handled by API endpoint
-    } catch (error) {
+    } catch {
       // Log error to proper logging service in production
       // For now, silently handle errors
     }
   };
 
-  const handleInputChange = (field: keyof CompanyData, value: string) => {
+  const handleInputChange = (
+    field: keyof CompanyProfileData,
+    value: string | boolean
+  ) => {
     try {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value || "",
-      }));
-    } catch (error) {
+      onUpdate(index, { [field]: value });
+    } catch {
       // Log error to proper logging service in production
       // For now, silently handle errors
     }
@@ -182,7 +112,7 @@ export default function CompanyProfileCard({
     };
 
     return (
-      <Paper className={className} sx={getCardStyles()} elevation={0}>
+      <Paper sx={getCardStyles()} elevation={0}>
         {/* Card Header */}
         <Box
           sx={{
@@ -279,37 +209,20 @@ export default function CompanyProfileCard({
 
             {/* Action Buttons */}
             <Box sx={{ display: "flex", gap: 1.5, ml: { xs: 0, sm: "auto" } }}>
-              {isEditing ? (
-                <Tooltip title="Save">
-                  <IconButton
-                    onClick={handleSave}
-                    color="primary"
-                    size="small"
-                    sx={{
-                      backgroundColor: "success.main",
-                      color: "white",
-                      "&:hover": { backgroundColor: "success.dark" },
-                    }}
-                  >
-                    <SaveIcon />
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <Tooltip title="Edit">
-                  <IconButton
-                    onClick={handleEdit}
-                    color="primary"
-                    size="small"
-                    sx={{
-                      backgroundColor: "primary.main",
-                      color: "white",
-                      "&:hover": { backgroundColor: "primary.dark" },
-                    }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
+              <Tooltip title="Edit">
+                <IconButton
+                  onClick={handleEdit}
+                  color="primary"
+                  size="small"
+                  sx={{
+                    backgroundColor: "primary.main",
+                    color: "white",
+                    "&:hover": { backgroundColor: "primary.dark" },
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
 
               {/* Only show remove button for non-main cards */}
               {!isMainCard && (
@@ -352,7 +265,7 @@ export default function CompanyProfileCard({
             <TextField
               variant="outlined"
               fullWidth
-              value={formData.companyName || ""}
+              value={profile.companyName || ""}
               onChange={(e) => handleInputChange("companyName", e.target.value)}
               disabled={!isEditing}
               size="small"
@@ -392,7 +305,7 @@ export default function CompanyProfileCard({
             <TextField
               variant="outlined"
               fullWidth
-              value={formData.companyRegNumber || ""}
+              value={profile.companyRegNumber || ""}
               onChange={(e) =>
                 handleInputChange("companyRegNumber", e.target.value)
               }
@@ -436,7 +349,7 @@ export default function CompanyProfileCard({
               fullWidth
               multiline
               rows={2}
-              value={formData.address || ""}
+              value={profile.address || ""}
               onChange={(e) => handleInputChange("address", e.target.value)}
               disabled={!isEditing}
               size="small"
@@ -477,7 +390,7 @@ export default function CompanyProfileCard({
               <TextField
                 variant="outlined"
                 fullWidth
-                value={formData.country || ""}
+                value={profile.country || ""}
                 onChange={(e) => handleInputChange("country", e.target.value)}
                 disabled={!isEditing}
                 size="small"
@@ -515,7 +428,7 @@ export default function CompanyProfileCard({
               <TextField
                 variant="outlined"
                 fullWidth
-                value={formData.postalCode || ""}
+                value={profile.postalCode || ""}
                 onChange={(e) =>
                   handleInputChange("postalCode", e.target.value)
                 }
@@ -558,7 +471,7 @@ export default function CompanyProfileCard({
             <TextField
               variant="outlined"
               fullWidth
-              value={formData.email || ""}
+              value={profile.email || ""}
               onChange={(e) => handleInputChange("email", e.target.value)}
               disabled={!isEditing}
               size="small"
@@ -598,7 +511,7 @@ export default function CompanyProfileCard({
             <TextField
               variant="outlined"
               fullWidth
-              value={formData.contact || ""}
+              value={profile.contact || ""}
               onChange={(e) => handleInputChange("contact", e.target.value)}
               disabled={!isEditing}
               size="small"
@@ -622,7 +535,7 @@ export default function CompanyProfileCard({
         </Box>
       </Paper>
     );
-  } catch (error) {
+  } catch {
     // Log error to proper logging service in production
     // For now, silently handle errors
     return (

@@ -3,7 +3,7 @@ import { PageLayout } from "@/components/ui";
 export default function HeaderMainPage() {
   return (
     <PageLayout
-      title="Header & Main Settings"
+      title="Header & Main"
       description="Configure your website header, navigation, and main content area settings."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },
