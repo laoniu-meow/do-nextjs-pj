@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { IconButton, Drawer, Box } from "@mui/material";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import MenuItemList from "./MenuItemList";

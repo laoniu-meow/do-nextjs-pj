@@ -1,16 +1,16 @@
 "use client";
 
+import React from "react";
 import { PageLayout, MainContainerBox } from "@/components/ui";
 
-export default function PagesPage() {
+export default function MenuNavigationPage() {
   return (
     <PageLayout
-      title="Pages"
-      description="Manage your website pages, content structure, and page-specific configurations."
+      title="Menu Navigation"
+      description="Configure your website navigation menu structure, links, and menu item settings."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },
-        { label: "Settings", href: "/admin/settings" },
-        { label: "Pages" },
+        { label: "Menu Navigation" },
       ]}
       maxWidth="xl"
     >
@@ -26,7 +26,7 @@ export default function PagesPage() {
         onRefresh={() => console.log("Refresh clicked")}
       >
         <div className="space-y-6">
-          {/* Pages configuration content will be added here */}
+          {/* Menu navigation configuration content will be added here */}
         </div>
       </MainContainerBox>
     </PageLayout>

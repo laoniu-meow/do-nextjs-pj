@@ -1,6 +1,9 @@
 // Core UI Components - Essential building blocks
 export * from "./core";
 
+// Main Container Box - Reusable page container with glassy effect
+export { default as MainContainerBox } from "./MainContainerBox";
+
 // Layout Components - Page structure and spacing
 export * from "./layout";
 

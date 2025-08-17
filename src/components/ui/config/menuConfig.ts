@@ -7,6 +7,8 @@ import FooterIcon from "@mui/icons-material/ViewQuilt";
 import HeroIcon from "@mui/icons-material/Star";
 import PagesIcon from "@mui/icons-material/Pages";
 import SettingsIcon from "@mui/icons-material/Settings";
+import MenuIcon from "@mui/icons-material/Menu";
+import SwitchAccessShortcutIcon from "@mui/icons-material/SwitchAccessShortcut";
 
 export interface MenuItem {
   id: string;
@@ -74,6 +76,18 @@ export const defaultMenuConfig: MenuConfig = {
           href: '/admin/settings/pages',
         },
       ],
+    },
+    {
+      id: 'menu-navigation',
+      text: 'Menu Navigation',
+      icon: MenuIcon,
+      href: '/admin/menu-navigation',
+    },
+    {
+      id: 'quick-navigation',
+      text: 'Quick Navigation',
+      icon: SwitchAccessShortcutIcon,
+      href: '/admin/quick-navigation',
     },
   ],
   logoutItem: {

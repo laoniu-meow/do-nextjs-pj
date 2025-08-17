@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { PageLayout } from "@/components/ui";
+import { PageLayout, MainContainerBox } from "@/components/ui";
 
 export default function HeaderMainPage() {
   return (
@@ -15,7 +15,21 @@ export default function HeaderMainPage() {
       ]}
       maxWidth="xl"
     >
-      <div className="space-y-6">{/* Content will be added here */}</div>
+      <MainContainerBox
+        title="Configuration"
+        showBuild={true}
+        showSave={true}
+        showUpload={true}
+        showRefresh={true}
+        onBuild={() => console.log("Build clicked")}
+        onSave={() => console.log("Save clicked")}
+        onUpload={() => console.log("Upload clicked")}
+        onRefresh={() => console.log("Refresh clicked")}
+      >
+        <div className="space-y-6">
+          {/* Company profile content will be added here */}
+        </div>
+      </MainContainerBox>
     </PageLayout>
   );
 }

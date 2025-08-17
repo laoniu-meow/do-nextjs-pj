@@ -1,4 +1,6 @@
-import { PageLayout } from "@/components/ui";
+"use client";
+
+import { PageLayout, MainContainerBox } from "@/components/ui";
 
 export default function FooterPage() {
   return (
@@ -12,7 +14,21 @@ export default function FooterPage() {
       ]}
       maxWidth="xl"
     >
-      <div>{/* Footer settings content will be added here when needed */}</div>
+      <MainContainerBox
+        title="Configuration"
+        showBuild={true}
+        showSave={true}
+        showUpload={true}
+        showRefresh={true}
+        onBuild={() => console.log("Build clicked")}
+        onSave={() => console.log("Save clicked")}
+        onUpload={() => console.log("Upload clicked")}
+        onRefresh={() => console.log("Refresh clicked")}
+      >
+        <div className="space-y-6">
+          {/* Footer configuration content will be added here */}
+        </div>
+      </MainContainerBox>
     </PageLayout>
   );
 }
