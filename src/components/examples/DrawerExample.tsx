@@ -2,8 +2,7 @@
 
 import React from "react";
 import { Drawer } from "@/components/ui/Drawer";
-import { MenuItemList } from "@/components/ui/MenuItemList";
-import { AdminPageMenu } from "@/data/adminPageMenu";
+import MenuItemList from "@/components/ui/MenuItemList";
 
 export function DrawerExample() {
   return (
@@ -20,11 +19,7 @@ export function DrawerExample() {
               <h3>Navigation Menu</h3>
             </Drawer.Header>
             <Drawer.Body>
-              <MenuItemList
-                items={AdminPageMenu}
-                variant="vertical"
-                size="md"
-              />
+              <MenuItemList />
             </Drawer.Body>
           </Drawer.Content>
         </Drawer>
@@ -129,11 +124,7 @@ export function DrawerExample() {
             <Drawer.Body>
               <div className="h-full flex flex-col">
                 <div className="flex-1">
-                  <MenuItemList
-                    items={AdminPageMenu}
-                    variant="vertical"
-                    size="lg"
-                  />
+                  <MenuItemList />
                 </div>
                 <div className="mt-auto p-4 bg-gray-50 rounded">
                   <p className="text-sm text-gray-600">

@@ -1,36 +1,54 @@
-import { MenuItem } from '@/components/ui/MenuItemList'
+import { MenuItem } from '@/components/ui/config/menuConfig'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import SettingsIcon from '@mui/icons-material/Settings'
+import BusinessIcon from '@mui/icons-material/Business'
+import HeaderIcon from '@mui/icons-material/ViewHeadline'
+import FooterIcon from '@mui/icons-material/ViewQuilt'
+import HeroIcon from '@mui/icons-material/Star'
+import PagesIcon from '@mui/icons-material/Pages'
 
 // Admin Page Menu Data Structure
 export const AdminPageMenu: MenuItem[] = [
   {
+    id: 'dashboard',
+    text: 'Dashboard',
+    icon: DashboardIcon,
+    action: () => console.log('Dashboard clicked'),
+  },
+  {
     id: 'settings',
-    label: 'Settings',
-    href: '/admin/settings',
+    text: 'Settings',
+    icon: SettingsIcon,
     children: [
       {
         id: 'settings-company-profile',
-        label: 'Company Profile',
-        href: '/admin/settings/company-profile'
+        text: 'Company Profile',
+        icon: BusinessIcon,
+        action: () => console.log('Company Profile clicked'),
       },
       {
         id: 'settings-header-main',
-        label: 'Header & Main',
-        href: '/admin/settings/header-main'
+        text: 'Header & Main',
+        icon: HeaderIcon,
+        action: () => console.log('Header & Main clicked'),
       },
       {
         id: 'settings-footer',
-        label: 'Footer',
-        href: '/admin/settings/footer'
+        text: 'Footer',
+        icon: FooterIcon,
+        action: () => console.log('Footer clicked'),
       },
       {
         id: 'settings-hero-page',
-        label: 'Hero Page',
-        href: '/admin/settings/hero-page'
+        text: 'Hero Page',
+        icon: HeroIcon,
+        action: () => console.log('Hero Page clicked'),
       },
       {
         id: 'settings-pages',
-        label: 'Pages',
-        href: '/admin/settings/pages'
+        text: 'Pages',
+        icon: PagesIcon,
+        action: () => console.log('Pages clicked'),
       }
     ]
   }
@@ -97,7 +115,8 @@ export function isMenuItemActive(items: MenuItem[], currentPath: string): string
   
   function checkActive(items: MenuItem[]) {
     for (const item of items) {
-      if (item.href && currentPath.startsWith(item.href)) {
+      // Since we no longer have href, we'll check by id or implement a different active logic
+      if (item.id && currentPath.includes(item.id)) {
         activeIds.push(item.id)
       }
       if (item.children) {

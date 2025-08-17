@@ -33,7 +33,7 @@ export function ResponsiveLayout({
   header,
   footer,
 }: ResponsiveLayoutProps) {
-  const { deviceType, isMobile, isTablet, isDesktop } = useResponsive();
+  const { deviceType, isMobile } = useResponsive();
 
   const getResponsiveValue = <T,>(
     value: T | { mobile: T; tablet: T; desktop: T },
@@ -136,7 +136,7 @@ export function ResponsiveLayout({
 
   return (
     <Container
-      maxWidth={isMobile ? "full" : isTablet ? "lg" : "xl"}
+      maxWidth={isMobile ? "full" : "lg"}
       padding={isMobile ? "md" : "lg"}
     >
       {renderLayout()}
@@ -192,11 +192,11 @@ export function ResponsiveFooter({
   className,
   variant = "default",
 }: ResponsiveFooterProps) {
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile } = useResponsive();
 
   const getFooterStyles = () => {
     const baseStyles = {
-      padding: isMobile ? "24px 16px" : isTablet ? "32px 24px" : "48px 32px",
+      padding: isMobile ? "24px 16px" : "48px 32px",
       borderTop: "1px solid #e5e7eb",
       backgroundColor: "#f9fafb",
     };
@@ -211,11 +211,7 @@ export function ResponsiveFooter({
       case "full":
         return {
           ...baseStyles,
-          padding: isMobile
-            ? "32px 16px"
-            : isTablet
-            ? "48px 24px"
-            : "64px 32px",
+          padding: isMobile ? "32px 16px" : "64px 32px",
         };
       default:
         return baseStyles;
@@ -237,16 +233,14 @@ interface ResponsiveNavigationProps {
   children: React.ReactNode;
   className?: string;
   variant?: "horizontal" | "vertical" | "mobile";
-  collapsed?: boolean;
 }
 
 export function ResponsiveNavigation({
   children,
   className,
   variant = "horizontal",
-  collapsed = false,
 }: ResponsiveNavigationProps) {
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile } = useResponsive();
 
   const getNavStyles = (): React.CSSProperties => {
     const baseStyles = {
