@@ -4,6 +4,8 @@ import { userUpdateSchema, validateRequest } from '@/lib/validation'
 import { successResponse, errorResponse, validationErrorResponse, notFoundResponse } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
 
+export const runtime = 'nodejs'
+
 // PUT /api/admin/users/[id] - Update user role (admin only)
 export async function PUT(
   request: NextRequest,

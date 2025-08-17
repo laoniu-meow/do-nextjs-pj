@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
 
+export const runtime = 'nodejs'
+
 // GET /api/admin/users - Get all users (admin only)
 export async function GET() {
   try {

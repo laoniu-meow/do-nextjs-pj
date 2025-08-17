@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { logger } from "@/lib/logger";
 
+export const runtime = 'nodejs'
+
 const prisma = new PrismaClient();
 
 interface ProfileData {

@@ -1,9 +1,25 @@
 "use client";
 
-import React from "react";
-import { PageLayout, MainContainerBox } from "@/components/ui";
+import React, { useState } from "react";
+import { PageLayout, MainContainerBox, SettingsPanel } from "@/components/ui";
 
 export default function MenuNavigationPage() {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleBuild = () => {
+    setIsSettingsOpen(true);
+  };
+
+  const handleCloseSettings = () => {
+    setIsSettingsOpen(false);
+  };
+
+  const handleApplySettings = () => {
+    // TODO: Implement settings application logic
+    console.log("Settings applied");
+    setIsSettingsOpen(false);
+  };
+
   return (
     <PageLayout
       title="Menu Navigation"
@@ -20,7 +36,7 @@ export default function MenuNavigationPage() {
         showSave={true}
         showUpload={true}
         showRefresh={true}
-        onBuild={() => console.log("Build clicked")}
+        onBuild={handleBuild}
         onSave={() => console.log("Save clicked")}
         onUpload={() => console.log("Upload clicked")}
         onRefresh={() => console.log("Refresh clicked")}
@@ -29,6 +45,16 @@ export default function MenuNavigationPage() {
           {/* Menu navigation configuration content will be added here */}
         </div>
       </MainContainerBox>
+
+      <SettingsPanel
+        isOpen={isSettingsOpen}
+        onClose={handleCloseSettings}
+        onApply={handleApplySettings}
+      >
+        <div className="text-center py-8">
+          <p className="text-gray-500">Settings content will be added here</p>
+        </div>
+      </SettingsPanel>
     </PageLayout>
   );
 }

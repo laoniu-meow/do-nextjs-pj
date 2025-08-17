@@ -24,6 +24,9 @@ export {
   FileField 
 } from "./forms/FormField";
 
+// Settings Components - Reusable settings panel
+export * from "../settings";
+
 // Utility Components - Error boundaries and utility components
 export * from "./utils";
 

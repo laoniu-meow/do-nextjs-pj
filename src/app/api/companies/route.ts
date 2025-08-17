@@ -4,6 +4,8 @@ import { companyCreateSchema, validateRequest } from '@/lib/validation'
 import { successResponse, errorResponse, validationErrorResponse } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
 
+export const runtime = 'nodejs'
+
 // GET /api/companies - Get all companies
 export async function GET() {
   try {

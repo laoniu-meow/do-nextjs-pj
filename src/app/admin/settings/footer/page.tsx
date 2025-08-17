@@ -1,12 +1,29 @@
 "use client";
 
-import { PageLayout, MainContainerBox } from "@/components/ui";
+import React, { useState } from "react";
+import { PageLayout, MainContainerBox, SettingsPanel } from "@/components/ui";
 
 export default function FooterPage() {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleBuild = () => {
+    setIsSettingsOpen(true);
+  };
+
+  const handleCloseSettings = () => {
+    setIsSettingsOpen(false);
+  };
+
+  const handleApplySettings = () => {
+    // TODO: Implement settings application logic
+    console.log("Settings applied");
+    setIsSettingsOpen(false);
+  };
+
   return (
     <PageLayout
       title="Footer"
-      description="Configure your website footer, links, and branding information."
+      description="Configure your website footer, footer links, and footer-specific settings."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },
         { label: "Settings", href: "/admin/settings" },
@@ -20,7 +37,7 @@ export default function FooterPage() {
         showSave={true}
         showUpload={true}
         showRefresh={true}
-        onBuild={() => console.log("Build clicked")}
+        onBuild={handleBuild}
         onSave={() => console.log("Save clicked")}
         onUpload={() => console.log("Upload clicked")}
         onRefresh={() => console.log("Refresh clicked")}
@@ -29,6 +46,16 @@ export default function FooterPage() {
           {/* Footer configuration content will be added here */}
         </div>
       </MainContainerBox>
+
+      <SettingsPanel
+        isOpen={isSettingsOpen}
+        onClose={handleCloseSettings}
+        onApply={handleApplySettings}
+      >
+        <div className="text-center py-8">
+          <p className="text-gray-500">Footer settings will be added here</p>
+        </div>
+      </SettingsPanel>
     </PageLayout>
   );
 }
