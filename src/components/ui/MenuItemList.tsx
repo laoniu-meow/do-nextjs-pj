@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   List,
   ListItem,
@@ -28,46 +29,126 @@ export default function MenuItemList({
   onItemClick,
   className,
 }: MenuItemListProps) {
-  const [settingsOpen, setSettingsOpen] = useState(false);
-
-  // Use provided config or default
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const router = useRouter();
   const menuConfig = config || defaultMenuConfig;
 
-  const handleSettingsClick = () => {
-    setSettingsOpen(!settingsOpen);
-  };
-
   const handleItemClick = (item: MenuItem) => {
-    if (item.action) {
+    if (item.children && item.children.length > 0) {
+      // Toggle expansion for items with children
+      const newExpanded = new Set(expandedItems);
+      if (newExpanded.has(item.id)) {
+        newExpanded.delete(item.id);
+      } else {
+        newExpanded.add(item.id);
+      }
+      setExpandedItems(newExpanded);
+
+      // Don't navigate immediately for items with children
+      // Only navigate if there are no children or if it's a leaf node
+      return;
+    }
+
+    // Handle navigation or action for items without children
+    if (item.href) {
+      router.push(item.href);
+    } else if (item.action) {
       item.action();
     }
+
+    // Call custom item click handler if provided
     if (onItemClick) {
       onItemClick(item);
     }
+
+    // Close the drawer after navigation
     if (onClose) {
       onClose();
     }
   };
 
-  const renderMenuItem = (item: MenuItem, index: number, isSubItem = false) => {
+  // Remove hover functionality - sub-menus only expand on click
+  // const handleItemHover = (item: MenuItem) => {
+  //   if (item.children && item.children.length > 0) {
+  //     setExpandedItems((prev) => new Set([...prev, item.id]));
+  //   }
+  // };
+
+  // const handleItemLeave = (item: MenuItem) => {
+  //   // Optional: Auto-collapse on mouse leave
+  //   // Uncomment the following lines if you want auto-collapse behavior
+  //   // if (item.children && item.children.length > 0) {
+  //   //   setExpandedItems(prev => {
+  //   //     const newSet = new Set(prev);
+  //   //     newSet.delete(item.id);
+  //   //     return newSet;
+  //   //   });
+  //   // }
+  // };
+
+  const renderMenuItem = (item: MenuItem, index: number, level: number = 0) => {
     const IconComponent = item.icon;
-    const color =
-      item.variant === "error"
-        ? ADMIN_MENU_THEME.colors.error
-        : ADMIN_MENU_THEME.colors.primary;
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = expandedItems.has(item.id);
+    const isClickable = item.href || item.action || hasChildren;
+
+    // Handle variant colors
+    const getIconColor = () => {
+      if (item.variant === "error") return ADMIN_MENU_THEME.colors.error;
+      if (item.variant === "primary") return ADMIN_MENU_THEME.colors.primary;
+      if (hasChildren) return ADMIN_MENU_THEME.colors.primary;
+      return "inherit";
+    };
 
     return (
-      <ListItem key={item.id} disablePadding>
-        <ListItemButton
-          onClick={() => handleItemClick(item)}
-          sx={isSubItem ? { pl: 4 } : {}}
-        >
-          <ListItemIcon sx={{ color }}>
-            <IconComponent />
-          </ListItemIcon>
-          <ListItemText primary={item.text} />
-        </ListItemButton>
-      </ListItem>
+      <React.Fragment key={item.id}>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => handleItemClick(item)}
+            // onMouseEnter={() => handleItemHover(item)}
+            // onMouseLeave={() => handleItemLeave(item)}
+            disabled={!isClickable}
+            sx={{
+              pl: level * 2 + 2,
+              cursor: isClickable ? "pointer" : "default",
+              "&:hover": {
+                backgroundColor: isClickable
+                  ? "rgba(0, 0, 0, 0.04)"
+                  : "transparent",
+              },
+              "&.Mui-disabled": {
+                opacity: 0.6,
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: getIconColor() }}>
+              <IconComponent />
+            </ListItemIcon>
+            <ListItemText
+              primary={item.text}
+              primaryTypographyProps={{
+                color:
+                  item.variant === "error"
+                    ? "error"
+                    : hasChildren
+                    ? "primary"
+                    : "inherit",
+              }}
+            />
+            {hasChildren &&
+              (isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
+          </ListItemButton>
+        </ListItem>
+        {hasChildren && (
+          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {item.children!.map((child, childIndex) =>
+                renderMenuItem(child, childIndex, level + 1)
+              )}
+            </List>
+          </Collapse>
+        )}
+      </React.Fragment>
     );
   };
 
@@ -77,42 +158,14 @@ export default function MenuItemList({
 
   return (
     <List sx={{ width: "100%", pt: 1 }} className={className}>
-      {/* Main menu items */}
       {menuConfig.mainItems.map((item: MenuItem, index: number) => (
         <React.Fragment key={item.id}>
           {renderMenuItem(item, index)}
           {index < menuConfig.mainItems.length - 1 && <Divider />}
         </React.Fragment>
       ))}
-
       {renderDivider(menuConfig.mainItems.length > 0)}
-
-      {/* Settings with sub-items */}
-      <ListItem disablePadding>
-        <ListItemButton onClick={handleSettingsClick}>
-          <ListItemIcon sx={{ color: ADMIN_MENU_THEME.colors.primary }}>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Settings" />
-          {settingsOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </ListItemButton>
-      </ListItem>
-
-      <Collapse in={settingsOpen} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {menuConfig.settingsItems.map((item: MenuItem, index: number) =>
-            renderMenuItem(item, index, true)
-          )}
-        </List>
-      </Collapse>
-
-      {renderDivider(menuConfig.settingsItems.length > 0)}
-
-      {/* Logout item */}
       {renderMenuItem(menuConfig.logoutItem, 0)}
     </List>
   );
 }
-
-// Import SettingsIcon for the Settings menu item
-import SettingsIcon from "@mui/icons-material/Settings";

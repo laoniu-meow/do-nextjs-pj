@@ -6,20 +6,20 @@ import HeaderIcon from "@mui/icons-material/ViewHeadline";
 import FooterIcon from "@mui/icons-material/ViewQuilt";
 import HeroIcon from "@mui/icons-material/Star";
 import PagesIcon from "@mui/icons-material/Pages";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export interface MenuItem {
   id: string;
   text: string;
   icon: React.ComponentType;
   action?: () => void;
+  href?: string;
   children?: MenuItem[];
-  divider?: boolean;
   variant?: 'default' | 'error' | 'primary';
 }
 
 export interface MenuConfig {
   mainItems: MenuItem[];
-  settingsItems: MenuItem[];
   logoutItem: MenuItem;
 }
 
@@ -29,45 +29,51 @@ export const defaultMenuConfig: MenuConfig = {
       id: 'dashboard',
       text: 'Dashboard',
       icon: DashboardIcon,
-      action: () => console.log('Dashboard clicked'),
+      href: '/admin',
     },
     {
       id: 'users',
       text: 'Users',
       icon: PeopleIcon,
-      action: () => console.log('Users clicked'),
-    },
-  ],
-  settingsItems: [
-    {
-      id: 'company-profile',
-      text: 'Company Profile',
-      icon: BusinessIcon,
-      action: () => console.log('Company Profile clicked'),
+      href: '/admin/users',
     },
     {
-      id: 'header-main',
-      text: 'Header & Main',
-      icon: HeaderIcon,
-      action: () => console.log('Header & Main clicked'),
-    },
-    {
-      id: 'footer',
-      text: 'Footer',
-      icon: FooterIcon,
-      action: () => console.log('Footer clicked'),
-    },
-    {
-      id: 'hero-page',
-      text: 'Hero Page',
-      icon: HeroIcon,
-      action: () => console.log('Hero Page clicked'),
-    },
-    {
-      id: 'pages',
-      text: 'Pages',
-      icon: PagesIcon,
-      action: () => console.log('Pages clicked'),
+      id: 'settings',
+      text: 'Settings',
+      icon: SettingsIcon,
+      href: '/admin/settings',
+      children: [
+        {
+          id: 'company-profile',
+          text: 'Company Profile',
+          icon: BusinessIcon,
+          href: '/admin/settings/company-profile',
+        },
+        {
+          id: 'header-main',
+          text: 'Header & Main',
+          icon: HeaderIcon,
+          href: '/admin/settings/header-main',
+        },
+        {
+          id: 'footer',
+          text: 'Footer',
+          icon: FooterIcon,
+          href: '/admin/settings/footer',
+        },
+        {
+          id: 'hero-page',
+          text: 'Hero Page',
+          icon: HeroIcon,
+          href: '/admin/settings/hero-page',
+        },
+        {
+          id: 'pages',
+          text: 'Pages',
+          icon: PagesIcon,
+          href: '/admin/settings/pages',
+        },
+      ],
     },
   ],
   logoutItem: {

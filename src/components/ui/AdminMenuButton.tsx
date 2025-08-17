@@ -16,7 +16,6 @@ interface AdminMenuButtonProps {
     right?: number;
   };
   onItemClick?: (item: MenuItem) => void;
-  onClose?: () => void;
 }
 
 export default function AdminMenuButton({
@@ -24,14 +23,13 @@ export default function AdminMenuButton({
   config,
   position = {},
   onItemClick,
-  onClose,
 }: AdminMenuButtonProps) {
   const {
     isOpen: isDrawerOpen,
     mounted,
     open: openDrawer,
     close: closeDrawer,
-  } = useMenuState();
+  } = useMenuState({ autoClose: false }); // Disable auto-close to prevent interference
 
   const toggleDrawer = () => {
     if (isDrawerOpen) {
@@ -39,6 +37,22 @@ export default function AdminMenuButton({
     } else {
       openDrawer();
     }
+  };
+
+  // Handle backdrop clicks - prevent closing
+  const handleBackdropClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    // Don't close the drawer
+  };
+
+  // Handle drawer close attempts - only allow closing for navigation
+  const handleDrawerClose = (event: React.SyntheticEvent, reason: string) => {
+    // Only allow closing for navigation, not for backdrop clicks
+    if (reason === "backdropClick") {
+      return; // Prevent closing on backdrop click
+    }
+    // Allow other close reasons (like programmatic close)
   };
 
   // Don't render until mounted to prevent hydration mismatch
@@ -77,11 +91,19 @@ export default function AdminMenuButton({
       <Drawer
         anchor="right"
         open={isDrawerOpen}
-        onClose={closeDrawer}
+        onClose={handleDrawerClose} // Only prevent backdrop clicks, allow toggle button
+        disableEscapeKeyDown={true} // Prevent closing on Escape key
         PaperProps={{
           sx: {
             width: ADMIN_MENU_THEME.drawer.width,
             maxWidth: ADMIN_MENU_THEME.drawer.maxWidth,
+          },
+        }}
+        BackdropProps={{
+          onClick: handleBackdropClick,
+          sx: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            pointerEvents: "auto", // Allow backdrop to receive clicks
           },
         }}
       >
@@ -104,7 +126,7 @@ export default function AdminMenuButton({
           >
             <MenuItemList
               config={config}
-              onClose={onClose || closeDrawer}
+              onClose={() => closeDrawer()}
               onItemClick={onItemClick}
             />
           </Box>
