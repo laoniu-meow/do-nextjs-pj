@@ -52,10 +52,10 @@ export const defaultMenuConfig: MenuConfig = {
           href: '/admin/settings/company-profile',
         },
         {
-          id: 'header-main',
+          id: 'header-settings',
           text: 'Header & Main',
           icon: HeaderIcon,
-          href: '/admin/settings/header-main',
+          href: '/admin/settings/header-settings',
         },
         {
           id: 'footer',

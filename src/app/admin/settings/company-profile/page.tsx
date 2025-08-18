@@ -290,17 +290,6 @@ export default function CompanyProfilePage() {
         uploadDisabled={!hasStagingData || isLoading}
       >
         <div className="space-y-6">
-          {/* Company profile configuration content */}
-          <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-            <h3 className="text-lg font-medium text-gray-700 mb-2">
-              Company Profile Configuration
-            </h3>
-            <p className="text-gray-500 text-sm">
-              Click &ldquo;Build&rdquo; to add company information. Use the
-              settings panel to configure your company details.
-            </p>
-          </div>
-
           {/* Company Cards - Sub-cards nested inside MainContainerBox */}
           {isLoading && (
             <div className="text-center py-4">

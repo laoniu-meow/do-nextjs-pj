@@ -24,6 +24,8 @@ export const SettingsContentFactory: React.FC<SettingsContentFactoryProps> = ({
           initialData={initialData || undefined}
         />
       );
+    case "header-settings":
+      return <HeaderMainSettings onApply={() => {}} onCancel={() => {}} />;
     case "header-main":
       return <HeaderMainSettings onApply={() => {}} onCancel={() => {}} />;
     default:

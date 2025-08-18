@@ -31,7 +31,7 @@ export const AdminPageMenu: MenuItem[] = [
         },
       },
       {
-        id: 'settings-header-main',
+        id: 'settings-header-settings',
         text: 'Header & Main',
         icon: HeaderIcon,
         action: () => {

@@ -34,7 +34,7 @@ export const DynamicSettingsExample: React.FC = () => {
     switch (settingsContent.pageType) {
       case "company-profile":
         return <Business />;
-      case "header-main":
+      case "header-settings":
         return <ViewHeadline />;
       case "users":
         return <People />;

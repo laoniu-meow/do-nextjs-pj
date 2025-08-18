@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { PageLayout, MainContainerBox, SettingsPanel } from "@/components/ui";
+import { PageLayout, MainContainerBox, SettingsPanel, ResponsiveTabs, ResponsiveView } from "@/components/ui";
 
 export default function HeroPagePage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [currentView, setCurrentView] = useState<ResponsiveView>("desktop");
 
   const handleBuild = () => {
     setIsSettingsOpen(true);
@@ -18,6 +19,11 @@ export default function HeroPagePage() {
     // TODO: Implement settings application logic
     console.log("Settings applied");
     setIsSettingsOpen(false);
+  };
+
+  // Handle responsive view change
+  const handleViewChange = (view: ResponsiveView) => {
+    setCurrentView(view);
   };
 
   return (
@@ -42,6 +48,13 @@ export default function HeroPagePage() {
         onUpload={() => console.log("Upload clicked")}
         onRefresh={() => console.log("Refresh clicked")}
       >
+        {/* Responsive Tabs */}
+        <ResponsiveTabs
+          currentView={currentView}
+          onViewChange={handleViewChange}
+          showIcons={true}
+        />
+
         <div className="space-y-6">
           {/* Hero page configuration content will be added here */}
         </div>

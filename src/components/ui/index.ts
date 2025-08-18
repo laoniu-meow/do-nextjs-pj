@@ -4,6 +4,10 @@ export * from "./core";
 // Main Container Box - Reusable page container with glassy effect
 export { default as MainContainerBox } from "./MainContainerBox";
 
+// Responsive Tabs - Device view switcher (Desktop, Tablet, Mobile)
+export { default as ResponsiveTabs } from "./ResponsiveTabs";
+export type { ResponsiveView } from "./ResponsiveTabs";
+
 // Layout Components - Page structure and spacing
 export * from "./layout";
 

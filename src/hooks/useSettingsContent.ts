@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 export type SettingsPageType = 
   | "company-profile"
-  | "header-main"
+  | "header-settings"
   | "footer"
   | "hero-page"
   | "pages"
@@ -42,11 +42,11 @@ export function useSettingsContent(): SettingsContent | null {
               content: null, // Will be set by the component using this hook
             };
           
-          case 'header-main':
+          case 'header-settings':
             return {
               title: "Header & Main Settings",
               description: "Customize your website header, navigation, and main layout settings.",
-              pageType: "header-main",
+              pageType: "header-settings",
               content: null,
             };
           

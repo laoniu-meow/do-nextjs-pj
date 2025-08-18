@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Typography, Alert } from "@mui/material";
+import { Typography, Alert } from "@mui/material";
 import { CompanyCreateForm } from "@/components/company";
 import { CompanyFormData } from "@/types";
 
@@ -56,7 +56,7 @@ export const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({
   };
 
   return (
-    <Box className="space-y-3">
+    <div className="space-y-3">
       {/* Form Validation Status */}
       {!isFormValid && (
         <Alert severity="warning" className="mb-3" sx={{ borderRadius: "8px" }}>
@@ -71,6 +71,6 @@ export const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({
         initialData={formData}
         onFormChange={handleFormChange}
       />
-    </Box>
+    </div>
   );
 };
