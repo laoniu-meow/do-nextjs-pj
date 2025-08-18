@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { ResponsiveHeader } from "./ResponsiveLayout";
 import { useCompanyLogo } from "@/hooks/useCompanyLogo";
 
@@ -197,9 +198,11 @@ export function Header({
               }}
             ></div>
           ) : logoUrl ? (
-            <img
+            <Image
               src={logoUrl}
               alt="Company Logo"
+              width={parseInt(logoWidth)}
+              height={parseInt(logoHeight)}
               style={{
                 width: logoWidth,
                 height: logoHeight,

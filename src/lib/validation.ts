@@ -49,7 +49,7 @@ export async function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown):
     return { success: true, data: validatedData }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = (error as unknown as { errors: Array<{ message: string }> }).errors.map((err) => err.message)
+      const errors = error.issues.map((err) => err.message)
       return { success: false, errors }
     }
     return { success: false, errors: ['Validation failed'] }

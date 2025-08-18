@@ -5,20 +5,30 @@ declare global {
   var __prisma: PrismaClient | undefined
 }
 
-const prisma = globalThis.__prisma || new PrismaClient({
-  datasources: {
-    db: {
-      url: dbConfig.url
-    }
-  },
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error']
-})
-
-if (process.env.NODE_ENV !== 'production') globalThis.__prisma = prisma
+function getPrisma(): PrismaClient {
+  if (!globalThis.__prisma) {
+    globalThis.__prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: dbConfig.url
+        }
+      },
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error']
+    })
+  }
+  return globalThis.__prisma
+}
 
 // Graceful shutdown
 process.on('beforeExit', async () => {
-  await prisma.$disconnect()
+  if (globalThis.__prisma) {
+    await globalThis.__prisma.$disconnect()
+  }
 })
 
-export { prisma }
+// Export a proxy that creates the Prisma client when accessed
+export const prisma = new Proxy({} as PrismaClient, {
+  get(target, prop) {
+    return getPrisma()[prop as keyof PrismaClient]
+  }
+})

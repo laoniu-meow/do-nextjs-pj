@@ -49,55 +49,69 @@ function validateEnv(): EnvConfig {
     return envSchema.parse(process.env)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const missingVars = (error as unknown as { errors: Array<{ path: string[] }> }).errors.map(err => err.path.join('.'))
+      const missingVars = error.issues.map(err => err.path.join('.'))
       throw new Error(`Missing or invalid environment variables: ${missingVars.join(', ')}`)
     }
     throw error
   }
 }
 
-export const env = validateEnv()
+// Only validate environment variables at runtime, not at build time
+let envCache: EnvConfig | null = null
+
+function getEnv(): EnvConfig {
+  if (envCache === null) {
+    envCache = validateEnv()
+  }
+  return envCache
+}
+
+export const env = new Proxy({} as EnvConfig, {
+  get(target, prop) {
+    return getEnv()[prop as keyof EnvConfig]
+  }
+})
 
 // Environment-specific configurations
-export const isDevelopment = env.NODE_ENV === 'development'
-export const isProduction = env.NODE_ENV === 'production'
-export const isTest = env.NODE_ENV === 'test'
+export const isDevelopment = () => getEnv().NODE_ENV === 'development'
+export const isProduction = () => getEnv().NODE_ENV === 'production'
+export const isTest = () => getEnv().NODE_ENV === 'test'
 
 // Database configuration
 export const dbConfig = {
-  url: env.DATABASE_URL,
-  containerName: env.POSTGRES_CONTAINER_NAME,
-  database: env.POSTGRES_DB,
-  user: env.POSTGRES_USER,
-  password: env.POSTGRES_PASSWORD,
-  port: env.POSTGRES_PORT,
-  authMethod: env.POSTGRES_HOST_AUTH_METHOD
+  get url() { return getEnv().DATABASE_URL },
+  get containerName() { return getEnv().POSTGRES_CONTAINER_NAME },
+  get database() { return getEnv().POSTGRES_DB },
+  get user() { return getEnv().POSTGRES_USER },
+  get password() { return getEnv().POSTGRES_PASSWORD },
+  get port() { return getEnv().POSTGRES_PORT },
+  get authMethod() { return getEnv().POSTGRES_HOST_AUTH_METHOD }
 }
 
 // Email configuration
 export const emailConfig = {
-  host: env.EMAIL_SERVER_HOST,
-  port: env.EMAIL_SERVER_PORT,
-  user: env.EMAIL_SERVER_USER,
-  password: env.EMAIL_SERVER_PASSWORD,
-  encryptionKey: env.EMAIL_ENCRYPTION_KEY
+  get host() { return getEnv().EMAIL_SERVER_HOST },
+  get port() { return getEnv().EMAIL_SERVER_PORT },
+  get user() { return getEnv().EMAIL_SERVER_USER },
+  get password() { return getEnv().EMAIL_SERVER_PASSWORD },
+  get encryptionKey() { return getEnv().EMAIL_ENCRYPTION_KEY }
 }
 
 // JWT configuration
 export const jwtConfig = {
-  secret: env.JWT_SECRET,
-  expiresIn: env.JWT_EXPIRES_IN
+  get secret() { return getEnv().JWT_SECRET },
+  get expiresIn() { return getEnv().JWT_EXPIRES_IN }
 }
 
 // Upload configuration
 export const uploadConfig = {
-  maxFileSize: env.MAX_FILE_SIZE,
-  logosDir: env.UPLOAD_LOGOS_DIR,
-  mediaDir: env.UPLOAD_MEDIA_DIR,
-  docsDir: env.UPLOAD_DOCS_DIR
+  get maxFileSize() { return getEnv().MAX_FILE_SIZE },
+  get logosDir() { return getEnv().UPLOAD_LOGOS_DIR },
+  get mediaDir() { return getEnv().UPLOAD_MEDIA_DIR },
+  get docsDir() { return getEnv().UPLOAD_DOCS_DIR }
 }
 
 // CORS configuration
 export const corsConfig = {
-  origin: env.CORS_ORIGIN
+  get origin() { return getEnv().CORS_ORIGIN }
 }
