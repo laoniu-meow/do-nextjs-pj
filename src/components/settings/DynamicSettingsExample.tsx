@@ -173,6 +173,7 @@ export const DynamicSettingsExample: React.FC = () => {
         isOpen={isSettingsOpen}
         onClose={handleCloseSettings}
         onApply={handleApplySettings}
+        onFormDataChange={() => {}} // Placeholder for form data changes
       />
     </Box>
   );

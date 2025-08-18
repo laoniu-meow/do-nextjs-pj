@@ -58,13 +58,13 @@ export const CompanyFormField = forwardRef<
               borderRadius: "8px",
               fontSize: "0.875rem",
               height: textFieldProps.multiline ? "auto" : "36px",
-              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+              //boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
               transition: "all 0.2s ease-in-out",
-              backgroundColor: "#ffffff",
+              //backgroundColor: "#ffffff",
               textAlign: "left",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#d1d5db",
-                borderWidth: "1px",
+                //borderColor: "#d1d5db",
+                borderWidth: "0px", //  Remove border line
               },
               "&:hover": {
                 boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
@@ -75,11 +75,11 @@ export const CompanyFormField = forwardRef<
               },
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                 borderColor: "#3b82f6",
-                borderWidth: "1.5px",
+                borderWidth: "0px",
                 boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.1)",
               },
               "& .MuiOutlinedInput-input": {
-                padding: "12px 16px",
+                padding: "12px 15px",
                 height: "auto",
                 textAlign: "left",
                 "&::placeholder": {
@@ -89,7 +89,6 @@ export const CompanyFormField = forwardRef<
               },
               "& .MuiOutlinedInput-inputMultiline": {
                 padding: "6px 16px",
-                minHeight: "36px",
                 textAlign: "left",
                 "&::placeholder": {
                   color: "#9ca3af",

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,10 +16,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
   @@index([email])
   @@index([role])
   @@index([createdAt])
+  @@map("users")
 }
 
 model Company {
@@ -37,11 +34,11 @@ model Company {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("companies")
   @@index([name])
   @@index([email])
   @@index([createdAt])
   @@index([updatedAt])
+  @@map("companies")
 }
 
 model Content {
@@ -53,55 +50,68 @@ model Content {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  @@map("contents")
   @@index([type])
   @@index([status])
   @@index([createdAt])
   @@index([updatedAt])
   @@index([type, status])
   @@index([title])
+  @@map("contents")
 }
 
 model CompanyProfile {
-  id                String   @id @default(cuid())
-  type              CompanyProfileType
-  companyName       String
-  companyRegNumber  String
-  address           String
-  country           String
-  postalCode        String
-  email             String
-  contact           String
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               String             @id @default(cuid())
+  type             CompanyProfileType
+  companyName      String
+  companyRegNumber String
+  address          String
+  country          String
+  postalCode       String
+  email            String
+  contact          String
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 
-  @@map("company_profiles")
   @@index([type])
   @@index([isActive])
   @@index([createdAt])
   @@index([updatedAt])
+  @@map("company_profiles")
 }
 
 model CompanyProfileStaging {
-  id                String   @id @default(cuid())
-  type              CompanyProfileType
-  companyName       String
-  companyRegNumber  String
-  address           String
-  country           String
-  postalCode        String
-  email             String
-  contact           String
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               String   @id @default(cuid())
+  companyRegNumber String?
+  address          String?
+  country          String?
+  postalCode       String?
+  email            String?
+  contact          String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  isMainCompany    Boolean  @default(false)
+  logo             String?
+  name             String
 
   @@map("company_profile_staging")
-  @@index([type])
-  @@index([isActive])
-  @@index([createdAt])
-  @@index([updatedAt])
+}
+
+model CompanyProfileProduction {
+  id               String   @id @default(cuid())
+  name             String
+  companyRegNumber String?
+  email            String?
+  address          String?
+  country          String?
+  postalCode       String?
+  contact          String?
+  logo             String?
+  isMainCompany    Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("company_profile_production")
 }
 
 enum Role {

@@ -16,6 +16,8 @@ interface MainContainerBoxProps {
   showSave?: boolean;
   showUpload?: boolean;
   showRefresh?: boolean;
+  saveDisabled?: boolean;
+  uploadDisabled?: boolean;
 }
 
 const MainContainerBox: React.FC<MainContainerBoxProps> = ({
@@ -29,6 +31,8 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
   showSave = false,
   showUpload = false,
   showRefresh = false,
+  saveDisabled = false,
+  uploadDisabled = false,
 }) => {
   return (
     <Box
@@ -118,21 +122,35 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
               variant="contained"
               startIcon={<SaveIcon />}
               onClick={onSave}
+              disabled={saveDisabled}
               sx={{
-                background: "linear-gradient(135deg, #27ae60 0%, #229954 100%)",
+                background: saveDisabled
+                  ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
+                  : "linear-gradient(135deg, #27ae60 0%, #229954 100%)",
                 color: "white",
                 borderRadius: "8px",
                 textTransform: "none",
                 fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                padding: { xs: "6px 12px", sm: "8px 16px" },
-                minWidth: { xs: "auto", sm: "100px" },
+                padding: { xs: "8px 12px", sm: "10px 16px" },
+                minWidth: { xs: "80px", sm: "100px" },
+                boxShadow: saveDisabled
+                  ? "none"
+                  : "0 4px 12px rgba(39, 174, 96, 0.3)",
                 "&:hover": {
-                  background:
-                    "linear-gradient(135deg, #229954 0%, #1e8449 100%)",
-                  transform: "translateY(-1px)",
-                  boxShadow: "0 4px 12px rgba(39, 174, 96, 0.3)",
+                  background: saveDisabled
+                    ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
+                    : "linear-gradient(135deg, #229954 0%, #1e8449 100%)",
+                  transform: saveDisabled ? "none" : "translateY(-2px)",
+                  boxShadow: saveDisabled
+                    ? "none"
+                    : "0 6px 16px rgba(39, 174, 96, 0.4)",
                 },
-                transition: "all 0.2s ease-in-out",
+                "&:active": {
+                  transform: saveDisabled ? "none" : "translateY(0)",
+                },
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                cursor: saveDisabled ? "not-allowed" : "pointer",
+                opacity: saveDisabled ? 0.6 : 1,
               }}
             >
               Save
@@ -144,21 +162,35 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
               variant="contained"
               startIcon={<CloudUploadIcon />}
               onClick={onUpload}
+              disabled={uploadDisabled}
               sx={{
-                background: "linear-gradient(135deg, #f39c12 0%, #e67e22 100%)",
+                background: uploadDisabled
+                  ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
+                  : "linear-gradient(135deg, #f39c12 0%, #e67e22 100%)",
                 color: "white",
                 borderRadius: "8px",
                 textTransform: "none",
                 fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                padding: { xs: "6px 12px", sm: "8px 16px" },
-                minWidth: { xs: "auto", sm: "100px" },
+                padding: { xs: "8px 12px", sm: "10px 16px" },
+                minWidth: { xs: "80px", sm: "100px" },
+                boxShadow: uploadDisabled
+                  ? "none"
+                  : "0 4px 12px rgba(243, 156, 18, 0.3)",
                 "&:hover": {
-                  background:
-                    "linear-gradient(135deg, #e67e22 0%, #d35400 100%)",
-                  transform: "translateY(-1px)",
-                  boxShadow: "0 4px 12px rgba(243, 156, 18, 0.3)",
+                  background: uploadDisabled
+                    ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
+                    : "linear-gradient(135deg, #e67e22 0%, #d35400 100%)",
+                  transform: uploadDisabled ? "none" : "translateY(-2px)",
+                  boxShadow: uploadDisabled
+                    ? "none"
+                    : "0 6px 16px rgba(243, 156, 18, 0.4)",
                 },
-                transition: "all 0.2s ease-in-out",
+                "&:active": {
+                  transform: uploadDisabled ? "none" : "translateY(0)",
+                },
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                cursor: uploadDisabled ? "not-allowed" : "pointer",
+                opacity: uploadDisabled ? 0.6 : 1,
               }}
             >
               Upload

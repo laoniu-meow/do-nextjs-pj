@@ -5,21 +5,54 @@ import { Box, Typography, Alert } from "@mui/material";
 import { CompanyCreateForm } from "@/components/company";
 import { CompanyFormData } from "@/types";
 
-export const CompanyProfileSettings: React.FC = () => {
+interface CompanyProfileSettingsProps {
+  onFormDataChange?: (data: CompanyFormData) => void;
+  initialData?: CompanyFormData;
+}
+
+export const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({
+  onFormDataChange,
+  initialData,
+}) => {
   const [formData, setFormData] = useState<CompanyFormData>({
-    name: "Your Company Name",
-    companyRegNumber: "REG123456",
-    email: "contact@company.com",
-    address: "123 Business St, City, State 12345",
-    country: "United States",
-    postalCode: "12345",
-    contact: "+1 (555) 123-4567",
+    name: "",
+    companyRegNumber: "",
+    email: "",
+    address: "",
+    country: "",
+    postalCode: "",
+    contact: "",
+    ...initialData,
   });
   const [isFormValid, setIsFormValid] = useState(false);
 
+  // Update form data when initialData changes (for editing)
+  React.useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
+
   const handleFormChange = (data: CompanyFormData, isValid: boolean) => {
+    console.log(
+      "CompanyProfileSettings - Form data changed:",
+      data,
+      "Valid:",
+      isValid
+    );
     setFormData(data);
     setIsFormValid(isValid);
+
+    // Pass form data to parent component
+    if (onFormDataChange) {
+      console.log(
+        "CompanyProfileSettings - Calling onFormDataChange with:",
+        data
+      );
+      onFormDataChange(data);
+    } else {
+      console.log("CompanyProfileSettings - onFormDataChange is not defined");
+    }
   };
 
   return (

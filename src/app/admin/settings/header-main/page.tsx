@@ -22,7 +22,7 @@ export default function HeaderMainSettingsPage() {
 
   return (
     <PageLayout
-      title="Header & Main Settings"
+      title="Header & Main"
       description="Customize your website header, navigation, and main layout settings."
       breadcrumbs={[
         { label: "Admin", href: "/admin" },
@@ -47,10 +47,6 @@ export default function HeaderMainSettingsPage() {
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Header &amp; Main Layout Configuration
             </h3>
-            <p className="text-gray-600">
-              Click the &ldquo;Build&rdquo; button to open the settings panel
-              and configure your header and main layout.
-            </p>
           </div>
         </div>
       </MainContainerBox>
@@ -59,6 +55,7 @@ export default function HeaderMainSettingsPage() {
         isOpen={isSettingsOpen}
         onClose={handleCloseSettings}
         onApply={handleApplySettings}
+        onFormDataChange={() => {}} // Placeholder for form data changes
       />
     </PageLayout>
   );

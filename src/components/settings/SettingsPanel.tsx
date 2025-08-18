@@ -41,7 +41,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         ? Math.min(window.innerWidth - 20, 400)
         : Math.min(500, window.innerWidth - 40);
       const centerX = (window.innerWidth - panelWidth) / 2;
-      const centerY = (window.innerHeight - 200) / 2; // Center vertically
+      const centerY = (window.innerHeight - 200) / 2;
       setPosition({
         x: Math.max(0, centerX),
         y: Math.max(0, centerY),
@@ -54,18 +54,16 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           const actualHeight = rect.height;
           const actualWidth = rect.width;
           const newCenterX = (window.innerWidth - actualWidth) / 2;
-          const newCenterY = (window.innerHeight - actualHeight) / 2; // Perfect center
+          const newCenterY = (window.innerHeight - actualHeight) / 2;
           setPosition({
             x: Math.max(0, newCenterX),
             y: Math.max(0, newCenterY),
           });
-          // Cache dimensions for smooth dragging
           setPanelDimensions({ width: actualWidth, height: actualHeight });
         }
       }, 150);
     }
 
-    // Return cleanup function that handles both cases
     return () => {
       if (timer) {
         clearTimeout(timer);
@@ -74,7 +72,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   }, [isOpen]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    // Only allow dragging from the header area, not from buttons
     const target = e.target as HTMLElement;
     const isButton =
       target.closest("button") || target.closest('[role="button"]');
@@ -93,7 +90,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   }, []);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    // Only allow dragging from the header area, not from buttons
     const target = e.target as HTMLElement;
     const isButton =
       target.closest("button") || target.closest('[role="button"]');
@@ -118,7 +114,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         const newX = e.clientX - dragOffset.x;
         const newY = e.clientY - dragOffset.y;
 
-        // Use cached dimensions for smooth dragging
         const panelWidth = panelDimensions.width || 400;
         const panelHeight = panelDimensions.height || 400;
         const maxX = window.innerWidth - panelWidth;
@@ -140,7 +135,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         const newX = e.touches[0].clientX - dragOffset.x;
         const newY = e.touches[0].clientY - dragOffset.y;
 
-        // Use cached dimensions for smooth dragging
         const panelWidth = panelDimensions.width || 400;
         const panelHeight = panelDimensions.height || 400;
         const maxX = window.innerWidth - panelWidth;
@@ -176,23 +170,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         document.removeEventListener("touchend", handleMouseUp);
       };
     }
-    // Return empty cleanup function when not dragging
     return () => {};
   }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove]);
 
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black bg-opacity-50"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-      }}
-    >
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50">
       <div
         ref={panelRef}
         className="bg-white shadow-2xl overflow-hidden border-2 border-gray-300"
@@ -200,8 +184,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           position: "fixed",
           top: position.y,
           left: position.x,
-          backgroundColor: "white",
-          borderRadius: "8px 8px 8px 8px",
+          borderRadius: "8px",
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
           width:
             window.innerWidth <= 768
@@ -213,7 +196,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               : "calc(100vw - 40px)",
           minWidth: window.innerWidth <= 768 ? "280px" : "320px",
           cursor: isDragging ? "grabbing" : "default",
-          transform: "none",
           userSelect: isDragging ? "none" : "auto",
           transition: "all 0.3s ease-in-out",
           zIndex: 9999,
@@ -222,14 +204,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         {/* Header - Drag Handle */}
         <div
           ref={headerRef}
-          className="px-15 py-6 border-b-2 border-blue-600"
           style={{
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             borderRadius: "8px 8px 0 0",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            paddingTop: "12px",
-            paddingBottom: "12px",
+            padding: "12px 16px",
+            borderBottom: "2px solid #2563eb",
             cursor: "grab",
             userSelect: "none",
           }}
@@ -299,17 +278,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
         {/* Content */}
         <div
-          className="px-15 py-6"
           style={{
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            paddingTop: "16px",
-            paddingBottom: "16px",
+            padding: "16px",
             backgroundColor: "#ffffff",
             minHeight: "150px",
-            maxHeight: "70vh", // Limit height on mobile
-            overflowY: "auto", // Enable scrolling
-            WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
+            maxHeight: "70vh",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
           }}
         >
           {children}

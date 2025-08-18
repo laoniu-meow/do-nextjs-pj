@@ -28,7 +28,7 @@ export default function PageLayout({
 }: PageLayoutProps) {
   // Extract breadcrumb rendering logic
   const renderBreadcrumbs = (breadcrumbItems: BreadcrumbItemData[]) => (
-    <Box className="mb-6">
+    <Box className="mb-6 mt-8">
       <Breadcrumbs
         aria-label="breadcrumb"
         className="p-3 bg-gray-50 rounded-lg"
