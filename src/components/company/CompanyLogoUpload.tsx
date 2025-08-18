@@ -1,13 +1,19 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { Button, Box, Typography, Avatar } from "@mui/material";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Button,
+  Box,
+  Typography,
+  Avatar,
+  CircularProgress,
+} from "@mui/material";
 import { CloudUpload, Delete } from "@mui/icons-material";
 import { cn } from "@/lib/utils";
 
 interface CompanyLogoUploadProps {
   currentLogo?: string;
-  onLogoChange: (file: File | null) => void;
+  onLogoChange: (file: File | null, logoUrl?: string) => void;
   className?: string;
   disabled?: boolean;
   required?: boolean;
@@ -26,18 +32,62 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
     currentLogo || null
   );
   const [dragActive, setDragActive] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (file: File) => {
+  // Update previewUrl when currentLogo changes (for editing existing profiles)
+  useEffect(() => {
+    setPreviewUrl(currentLogo || null);
+  }, [currentLogo]);
+
+  const uploadLogoToServer = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/upload/logo", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to upload logo");
+    }
+
+    const result = await response.json();
+    return result.data.filePath;
+  };
+
+  const handleFileSelect = async (file: File) => {
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setPreviewUrl(result);
-        // Pass the file object to parent, which can extract the filename
-        onLogoChange(file);
-      };
-      reader.readAsDataURL(file);
+      try {
+        setIsUploading(true);
+        setUploadError(null);
+
+        // Upload to server first
+        const logoUrl = await uploadLogoToServer(file);
+
+        // Create preview URL
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result as string;
+          setPreviewUrl(result);
+        };
+        reader.readAsDataURL(file);
+
+        // Pass both file and logo URL to parent
+        onLogoChange(file, logoUrl);
+      } catch (error) {
+        console.error("Error uploading logo:", error);
+        setUploadError(
+          error instanceof Error ? error.message : "Upload failed"
+        );
+        setPreviewUrl(null);
+        onLogoChange(null);
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -72,6 +122,7 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
 
   const handleRemoveLogo = () => {
     setPreviewUrl(null);
+    setUploadError(null);
     onLogoChange(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -142,7 +193,7 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
               e.stopPropagation();
               handleRemoveLogo();
             }}
-            disabled={disabled}
+            disabled={disabled || isUploading}
             sx={{
               fontSize: "0.75rem",
               padding: "4px 12px",
@@ -158,14 +209,20 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
           sx={{ display: "flex", alignItems: "center" }}
         >
           <Box sx={{ flexShrink: 0 }}>
-            <CloudUpload sx={{ fontSize: 36, color: "#9ca3af" }} />
+            {isUploading ? (
+              <CircularProgress size={36} color="primary" />
+            ) : (
+              <CloudUpload sx={{ fontSize: 36, color: "#9ca3af" }} />
+            )}
           </Box>
           <Box
             className={cn(
               "border-2 border-dashed rounded-lg p-3 transition-all duration-200",
               dragActive ? "border-blue-400 bg-blue-50" : "border-gray-300",
-              error ? "border-red-300 bg-red-50" : "",
-              disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              error || uploadError ? "border-red-300 bg-red-50" : "",
+              disabled || isUploading
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
             )}
             sx={{
               flex: 1,
@@ -181,7 +238,7 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            onClick={!disabled ? handleUploadClick : undefined}
+            onClick={!disabled && !isUploading ? handleUploadClick : undefined}
           >
             <Box
               className="flex flex-col space-y-1"
@@ -193,10 +250,18 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
                 className="text-sm"
                 style={{ textAlign: "left" }}
               >
-                <span className="text-blue-600 font-medium">
-                  Click to upload
-                </span>{" "}
-                or drag and drop
+                {isUploading ? (
+                  <span className="text-blue-600 font-medium">
+                    Uploading...
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-blue-600 font-medium">
+                      Click to upload
+                    </span>{" "}
+                    or drag and drop
+                  </>
+                )}
               </Typography>
               <Typography
                 variant="caption"
@@ -217,12 +282,12 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
         accept="image/*"
         onChange={handleFileInputChange}
         className="hidden"
-        disabled={disabled}
+        disabled={disabled || isUploading}
       />
 
-      {error && (
+      {(error || uploadError) && (
         <Typography variant="caption" color="error" className="mt-1 block">
-          {error}
+          {error || uploadError}
         </Typography>
       )}
     </Box>

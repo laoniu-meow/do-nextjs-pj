@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react";
 import { PageLayout, MainContainerBox } from "@/components/ui";
 import { DynamicSettingsPanel } from "@/components/settings";
 import { CompanyFormData } from "@/types";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Image from "next/image";
 
 export default function CompanyProfilePage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -96,6 +99,8 @@ export default function CompanyProfilePage() {
         // Create new company
         const newCompany: CompanyFormData = {
           name: currentFormData.name,
+          logo: currentFormData.logo || "",
+          logoUrl: currentFormData.logoUrl || "",
           companyRegNumber: currentFormData.companyRegNumber || "",
           email: currentFormData.email || "",
           address: currentFormData.address || "",
@@ -345,7 +350,26 @@ export default function CompanyProfilePage() {
                         alignItems: "flex-start",
                       }}
                     >
-                      <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                        }}
+                      >
+                        {company.logoUrl && (
+                          <Image
+                            src={company.logoUrl}
+                            alt={`${company.name} logo`}
+                            width={32}
+                            height={32}
+                            style={{
+                              borderRadius: "4px",
+                              objectFit: "cover",
+                              border: "2px solid rgba(255, 255, 255, 0.3)",
+                            }}
+                          />
+                        )}
                         <h4 style={{ fontWeight: "bold", fontSize: "18px" }}>
                           {company.name}
                         </h4>
@@ -360,7 +384,7 @@ export default function CompanyProfilePage() {
                         <button
                           onClick={() => handleEditCompany(company, index)}
                           style={{
-                            backgroundColor: "rgba(255, 255, 255, 0.2)",
+                            backgroundColor: "#80d9ff",
                             color: "white",
                             border: "none",
                             borderRadius: "6px",
@@ -368,33 +392,38 @@ export default function CompanyProfilePage() {
                             cursor: "pointer",
                             fontSize: "14px",
                             fontWeight: "500",
-                            transition: "background-color 0.2s",
+                            transition: "all 0.3s ease",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             width: "32px",
                             height: "32px",
+                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                           }}
                           onMouseOver={(e) => {
                             const target = e.target as HTMLButtonElement;
-                            target.style.backgroundColor =
-                              "rgba(255, 255, 255, 0.3)";
+                            target.style.backgroundColor = "#57C785";
+                            target.style.transform = "translateY(-2px)";
+                            target.style.boxShadow =
+                              "0 4px 8px rgba(0, 0, 0, 0.15)";
                           }}
                           onMouseOut={(e) => {
                             const target = e.target as HTMLButtonElement;
-                            target.style.backgroundColor =
-                              "rgba(255, 255, 255, 0.2)";
+                            target.style.backgroundColor = "#80d9ff";
+                            target.style.transform = "translateY(0)";
+                            target.style.boxShadow =
+                              "0 2px 4px rgba(0, 0, 0, 0.1)";
                           }}
                           title="Edit Company"
                         >
-                          ✏️
+                          <EditIcon sx={{ color: "#fce7f3" }} />
                         </button>
 
                         {index > 0 && (
                           <button
                             onClick={() => handleRemoveCompany(index)}
                             style={{
-                              backgroundColor: "rgba(239, 68, 68, 0.2)",
+                              backgroundColor: "#80d9ff",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",
@@ -402,26 +431,31 @@ export default function CompanyProfilePage() {
                               cursor: "pointer",
                               fontSize: "14px",
                               fontWeight: "500",
-                              transition: "background-color 0.2s",
+                              transition: "all 0.3s ease",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
                               width: "32px",
                               height: "32px",
+                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                             }}
                             onMouseOver={(e) => {
                               const target = e.target as HTMLButtonElement;
-                              target.style.backgroundColor =
-                                "rgba(239, 68, 68, 0.2)";
+                              target.style.backgroundColor = "#57C785";
+                              target.style.transform = "translateY(-2px)";
+                              target.style.boxShadow =
+                                "0 4px 8px rgba(0, 0, 0, 0.15)";
                             }}
                             onMouseOut={(e) => {
                               const target = e.target as HTMLButtonElement;
-                              target.style.backgroundColor =
-                                "rgba(239, 68, 68, 0.2)";
+                              target.style.backgroundColor = "#80d9ff";
+                              target.style.transform = "translateY(0)";
+                              target.style.boxShadow =
+                                "0 2px 4px rgba(0, 0, 0, 0.1)";
                             }}
                             title="Remove Company"
                           >
-                            🗑️
+                            <DeleteIcon sx={{ color: "#fce7f3" }} />
                           </button>
                         )}
                       </div>

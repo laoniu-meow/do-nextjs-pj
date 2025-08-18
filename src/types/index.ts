@@ -96,6 +96,7 @@ export interface ContentFormData {
 export interface CompanyFormData {
   name: string
   logo?: string
+  logoUrl?: string
   companyRegNumber?: string
   address?: string
   country?: string

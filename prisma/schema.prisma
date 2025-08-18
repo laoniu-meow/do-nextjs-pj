@@ -69,6 +69,8 @@ model CompanyProfile {
   postalCode       String
   email            String
   contact          String
+  logo             String?
+  logoUrl          String?
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
@@ -92,6 +94,7 @@ model CompanyProfileStaging {
   updatedAt        DateTime @updatedAt
   isMainCompany    Boolean  @default(false)
   logo             String?
+  logoUrl          String?
   name             String
 
   @@map("company_profile_staging")
@@ -107,6 +110,7 @@ model CompanyProfileProduction {
   postalCode       String?
   contact          String?
   logo             String?
+  logoUrl          String?
   isMainCompany    Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

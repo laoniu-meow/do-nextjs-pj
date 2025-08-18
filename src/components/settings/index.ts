@@ -1,11 +1,15 @@
-// Core settings components
-export { SettingsPanel } from "./SettingsPanel";
-export { DynamicSettingsPanel } from "./DynamicSettingsPanel";
-export { SettingsContentFactory } from "./SettingsContentFactory";
+// Legacy components (deprecated - use GenericSettingsPanel instead)
+export { DynamicSettingsPanel } from './DynamicSettingsPanel';
+export { SettingsPanel } from './SettingsPanel';
+export { SettingsContentFactory } from './SettingsContentFactory';
 
-// Settings content components
-export { CompanyProfileSettings } from "./content/CompanyProfileSettings";
-export { HeaderMainSettings } from "./content/HeaderMainSettings";
+// New generic settings system
+export { GenericSettingsPanel } from './GenericSettingsPanel';
+export { GenericSettingsForm } from './GenericSettingsForm';
+
+// Content components (legacy - will be replaced by schemas)
+export { CompanyProfileSettings } from './content/CompanyProfileSettings';
+export { HeaderMainSettings } from './content/HeaderMainSettings';
 
 // Types and hooks
 export type { SettingsPageType } from "@/hooks/useSettingsContent";

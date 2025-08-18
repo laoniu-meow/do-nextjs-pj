@@ -86,17 +86,29 @@ export const CompanyCreateForm: React.FC<CompanyCreateFormProps> = ({
   );
 
   const handleLogoChange = useCallback(
-    (file: File | null) => {
-      if (file) {
-        // In a real app, you'd upload to server and get URL
-        // For now, we'll use a placeholder
-        setFormData((prev) => ({ ...prev, logo: file.name }));
+    (file: File | null, logoUrl?: string) => {
+      if (file && logoUrl) {
+        // File uploaded successfully, store both filename and URL
+        setFormData((prev) => ({
+          ...prev,
+          logo: file.name,
+          logoUrl: logoUrl,
+        }));
       } else {
-        setFormData((prev) => ({ ...prev, logo: "" }));
+        // Logo removed
+        setFormData((prev) => ({
+          ...prev,
+          logo: "",
+          logoUrl: "",
+        }));
       }
       // Notify parent of form changes
       if (onFormChange) {
-        const newFormData = { ...formData, logo: file ? file.name : "" };
+        const newFormData = {
+          ...formData,
+          logo: file ? file.name : "",
+          logoUrl: logoUrl || "",
+        };
         const isValid = validateForm(newFormData);
         onFormChange(newFormData, isValid);
       }
@@ -109,7 +121,7 @@ export const CompanyCreateForm: React.FC<CompanyCreateFormProps> = ({
       {/* 1. Company Logo */}
       <CompanyFormSection showDivider={false}>
         <CompanyLogoUpload
-          currentLogo={formData.logo}
+          currentLogo={formData.logoUrl}
           onLogoChange={handleLogoChange}
           error={errors.logo}
         />
