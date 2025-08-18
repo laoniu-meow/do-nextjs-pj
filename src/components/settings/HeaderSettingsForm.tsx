@@ -2,36 +2,56 @@
 
 import React, { useState } from "react";
 import { ColorPicker } from "@/components/ui";
+// import { IconSelector } from "@/components/ui/IconSelector";
+// import { IconOption } from "@/components/ui/config/iconLibrary";
 
 interface HeaderSettingsData {
-  // Header appearance
-  height: string;
+  // Responsive settings for Desktop, Tablet, Mobile
+  desktop: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  tablet: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  mobile: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+
+  // Global settings (not device-specific)
   backgroundColor: string;
-  dropShadow: string;
-
-  // Logo settings
-  logoWidth: string;
-  logoHeight: string;
-
-  // Quick button settings
-  quickButtonSize: string;
+  dropShadow: "none" | "light" | "medium" | "strong";
   quickButtonBgColor: string;
   quickButtonIconColor: string;
   quickButtonHoverBgColor: string;
   quickButtonHoverIconColor: string;
   quickButtonShape: "rounded" | "circle" | "square";
-  quickButtonShadow: string;
+  quickButtonShadow: "none" | "light" | "medium" | "strong";
   quickButtonGap: string;
-
-  // Menu button settings
-  menuButtonWidth: string;
-  menuButtonHeight: string;
   menuButtonBgColor: string;
   menuButtonIconColor: string;
   menuButtonHoverBgColor: string;
   menuButtonHoverIconColor: string;
+  menuButtonIconId: string;
   menuButtonShape: "rounded" | "circle" | "square";
-  menuButtonShadow: string;
+  menuButtonShadow: "none" | "light" | "medium" | "strong";
 }
 
 interface HeaderSettingsFormProps {
@@ -44,9 +64,36 @@ export function HeaderSettingsForm({
   onSettingsChange,
 }: HeaderSettingsFormProps) {
   const [settings, setSettings] = useState<HeaderSettingsData>(initialSettings);
+  const [currentDevice, setCurrentDevice] = useState<
+    "desktop" | "tablet" | "mobile"
+  >("desktop");
 
   const handleSettingChange = (
-    key: keyof HeaderSettingsData,
+    device: "desktop" | "tablet" | "mobile",
+    key: keyof {
+      height: number;
+      paddingHorizontal: number;
+      paddingVertical: number;
+      logoWidth: number;
+      logoHeight: number;
+      quickButtonSize: number;
+      menuButtonSize: number;
+    },
+    value: number
+  ) => {
+    const newSettings = {
+      ...settings,
+      [device]: {
+        ...settings[device],
+        [key]: value,
+      },
+    };
+    setSettings(newSettings);
+    onSettingsChange(newSettings);
+  };
+
+  const handleGlobalSettingChange = (
+    key: keyof Omit<HeaderSettingsData, "desktop" | "tablet" | "mobile">,
     value: string
   ) => {
     const newSettings = { ...settings, [key]: value };
@@ -54,116 +101,225 @@ export function HeaderSettingsForm({
     onSettingsChange(newSettings);
   };
 
-  const handleColorChange = (key: keyof HeaderSettingsData, value: string) => {
-    handleSettingChange(key, value);
+  const handleColorChange = (
+    key: keyof Omit<HeaderSettingsData, "desktop" | "tablet" | "mobile">,
+    value: string
+  ) => {
+    handleGlobalSettingChange(key, value);
   };
 
   const handleShapeChange = (
-    key: keyof HeaderSettingsData,
+    key: keyof Omit<HeaderSettingsData, "desktop" | "tablet" | "mobile">,
     value: "rounded" | "circle" | "square"
   ) => {
-    handleSettingChange(key, value);
+    handleGlobalSettingChange(key, value);
   };
 
-  const TextInput = ({
+  const NumberInput = ({
     label,
     value,
     onChange,
     placeholder,
     helperText,
+    min = 0,
+    max = 200,
   }: {
     label: string;
-    value: string;
-    onChange: (value: string) => void;
+    value: number;
+    onChange: (value: number) => void;
     placeholder?: string;
     helperText?: string;
+    min?: number;
+    max?: number;
   }) => (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
       <input
-        type="text"
+        type="number"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          const numValue = parseInt(e.target.value) || 0;
+          if (numValue >= min && numValue <= max) {
+            onChange(numValue);
+          }
+        }}
+        onBlur={(e) => {
+          const numValue = parseInt(e.target.value) || 0;
+          if (numValue < min) {
+            onChange(min);
+          } else if (numValue > max) {
+            onChange(max);
+          }
+        }}
         placeholder={placeholder}
+        min={min}
+        max={max}
         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       />
       {helperText && <p className="text-xs text-gray-500">{helperText}</p>}
     </div>
   );
 
+  const ResponsiveSection = ({
+    device,
+    title,
+  }: {
+    device: "desktop" | "tablet" | "mobile";
+    title: string;
+  }) => (
+    <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">{title}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <NumberInput
+          label="Header Height"
+          value={settings[device].height}
+          onChange={(value) => handleSettingChange(device, "height", value)}
+          placeholder="64"
+          helperText="Height in pixels"
+          min={40}
+          max={120}
+        />
+        <NumberInput
+          label="Horizontal Padding"
+          value={settings[device].paddingHorizontal}
+          onChange={(value) =>
+            handleSettingChange(device, "paddingHorizontal", value)
+          }
+          placeholder="16"
+          helperText="Left & right padding in pixels"
+          min={0}
+          max={100}
+        />
+        <NumberInput
+          label="Vertical Padding"
+          value={settings[device].paddingVertical}
+          onChange={(value) =>
+            handleSettingChange(device, "paddingVertical", value)
+          }
+          placeholder="8"
+          helperText="Top & bottom padding in pixels"
+          min={0}
+          max={50}
+        />
+        <NumberInput
+          label="Logo Width"
+          value={settings[device].logoWidth}
+          onChange={(value) => handleSettingChange(device, "logoWidth", value)}
+          placeholder="40"
+          helperText="Logo width in pixels"
+          min={20}
+          max={100}
+        />
+        <NumberInput
+          label="Logo Height"
+          value={settings[device].logoHeight}
+          onChange={(value) => handleSettingChange(device, "logoHeight", value)}
+          placeholder="40"
+          helperText="Logo height in pixels"
+          min={20}
+          max={100}
+        />
+        <NumberInput
+          label="Quick Button Size"
+          value={settings[device].quickButtonSize}
+          onChange={(value) =>
+            handleSettingChange(device, "quickButtonSize", value)
+          }
+          placeholder="40"
+          helperText="Quick button size (40 = 40x40 pixels)"
+          min={24}
+          max={80}
+        />
+        <NumberInput
+          label="Menu Button Size"
+          value={settings[device].menuButtonSize}
+          onChange={(value) =>
+            handleSettingChange(device, "menuButtonSize", value)
+          }
+          placeholder="40"
+          helperText="Menu button size (40 = 40x40 pixels)"
+          min={24}
+          max={80}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
-      {/* Header Appearance Section */}
+      {/* Device Tabs */}
+      <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+          {[
+            { key: "desktop", label: "💻 Desktop" },
+            { key: "tablet", label: "📱 Tablet" },
+            { key: "mobile", label: "📱 Mobile" },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() =>
+                setCurrentDevice(key as "desktop" | "tablet" | "mobile")
+              }
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                currentDevice === key
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Responsive Settings */}
+      {currentDevice === "desktop" && (
+        <ResponsiveSection device="desktop" title="Desktop Settings" />
+      )}
+      {currentDevice === "tablet" && (
+        <ResponsiveSection device="tablet" title="Tablet Settings" />
+      )}
+      {currentDevice === "mobile" && (
+        <ResponsiveSection device="mobile" title="Mobile Settings" />
+      )}
+
+      {/* Global Settings */}
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Header Appearance
+          Global Settings
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextInput
-            label="Header Height"
-            value={settings.height}
-            onChange={(value) => handleSettingChange("height", value)}
-            placeholder="64px"
-            helperText="e.g., 64px, 80px, 100px"
-          />
           <ColorPicker
             label="Background Color"
             color={settings.backgroundColor}
             onChange={(value) => handleColorChange("backgroundColor", value)}
           />
-          <ColorPicker
-            label="Drop Shadow"
-            color={settings.dropShadow}
-            onChange={(value) => handleSettingChange("dropShadow", value)}
-          />
-        </div>
-      </div>
-
-      {/* Logo Settings Section */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Logo Settings
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextInput
-            label="Logo Width"
-            value={settings.logoWidth}
-            onChange={(value) => handleSettingChange("logoWidth", value)}
-            placeholder="120px"
-            helperText="e.g., 80px, 120px, 160px"
-          />
-          <TextInput
-            label="Logo Height"
-            value={settings.logoHeight}
-            onChange={(value) => handleSettingChange("logoHeight", value)}
-            placeholder="40px"
-            helperText="e.g., 32px, 40px, 48px"
-          />
-          <div className="md:col-span-2">
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-              <p className="text-sm text-blue-800">
-                <strong>Note:</strong> Logo is automatically fetched from your
-                Company Profile. Upload or update your logo in the Company
-                Profile settings.
-              </p>
-            </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Drop Shadow
+            </label>
+            <select
+              value={settings.dropShadow}
+              onChange={(e) =>
+                handleGlobalSettingChange("dropShadow", e.target.value)
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="none">None</option>
+              <option value="light">Light</option>
+              <option value="medium">Medium</option>
+              <option value="strong">Strong</option>
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Quick Button Settings Section */}
+      {/* Quick Button Settings */}
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           Quick Button Settings
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextInput
-            label="Button Size"
-            value={settings.quickButtonSize}
-            onChange={(value) => handleSettingChange("quickButtonSize", value)}
-            placeholder="40px"
-            helperText="e.g., 32px, 40px, 48px"
-          />
           <ColorPicker
             label="Background Color"
             color={settings.quickButtonBgColor}
@@ -177,7 +333,7 @@ export function HeaderSettingsForm({
             }
           />
           <ColorPicker
-            label="Hover Background"
+            label="Hover Background Color"
             color={settings.quickButtonHoverBgColor}
             onChange={(value) =>
               handleColorChange("quickButtonHoverBgColor", value)
@@ -192,7 +348,7 @@ export function HeaderSettingsForm({
           />
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Button Shape
+              Shape
             </label>
             <select
               value={settings.quickButtonShape}
@@ -209,45 +365,32 @@ export function HeaderSettingsForm({
               <option value="square">Square</option>
             </select>
           </div>
-          <TextInput
-            label="Button Shadow"
-            value={settings.quickButtonShadow}
-            onChange={(value) =>
-              handleSettingChange("quickButtonShadow", value)
-            }
-            placeholder="0 1px 3px rgba(0, 0, 0, 0.1)"
-            helperText="CSS box-shadow value"
-          />
-          <TextInput
-            label="Button Gap"
-            value={settings.quickButtonGap}
-            onChange={(value) => handleSettingChange("quickButtonGap", value)}
-            placeholder="0px"
-            helperText="e.g., 0px, 8px, 16px"
-          />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Shadow
+            </label>
+            <select
+              value={settings.quickButtonShadow}
+              onChange={(e) =>
+                handleGlobalSettingChange("quickButtonShadow", e.target.value)
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="none">None</option>
+              <option value="light">Light</option>
+              <option value="medium">Medium</option>
+              <option value="strong">Strong</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Menu Button Settings Section */}
+      {/* Menu Button Settings */}
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           Menu Button Settings
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextInput
-            label="Button Width"
-            value={settings.menuButtonWidth}
-            onChange={(value) => handleSettingChange("menuButtonWidth", value)}
-            placeholder="40px"
-            helperText="e.g., 32px, 40px, 48px"
-          />
-          <TextInput
-            label="Button Height"
-            value={settings.menuButtonHeight}
-            onChange={(value) => handleSettingChange("menuButtonHeight", value)}
-            placeholder="40px"
-            helperText="e.g., 32px, 40px, 48px"
-          />
           <ColorPicker
             label="Background Color"
             color={settings.menuButtonBgColor}
@@ -261,7 +404,7 @@ export function HeaderSettingsForm({
             }
           />
           <ColorPicker
-            label="Hover Background"
+            label="Hover Background Color"
             color={settings.menuButtonHoverBgColor}
             onChange={(value) =>
               handleColorChange("menuButtonHoverBgColor", value)
@@ -276,7 +419,7 @@ export function HeaderSettingsForm({
           />
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Button Shape
+              Shape
             </label>
             <select
               value={settings.menuButtonShape}
@@ -293,13 +436,23 @@ export function HeaderSettingsForm({
               <option value="square">Square</option>
             </select>
           </div>
-          <TextInput
-            label="Button Shadow"
-            value={settings.menuButtonShadow}
-            onChange={(value) => handleSettingChange("menuButtonShadow", value)}
-            placeholder="0 1px 3px rgba(0, 0, 0, 0.1)"
-            helperText="CSS box-shadow value"
-          />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Shadow
+            </label>
+            <select
+              value={settings.menuButtonShadow}
+              onChange={(e) =>
+                handleGlobalSettingChange("menuButtonShadow", e.target.value)
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="none">None</option>
+              <option value="light">Light</option>
+              <option value="medium">Medium</option>
+              <option value="strong">Strong</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>

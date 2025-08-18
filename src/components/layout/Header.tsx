@@ -1,65 +1,141 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ResponsiveHeader } from "./ResponsiveLayout";
 import { useCompanyLogo } from "@/hooks/useCompanyLogo";
 
 interface HeaderProps {
-  // Header appearance
-  height?: string;
+  // Responsive settings for Desktop, Tablet, Mobile (optional with defaults)
+  desktop?: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  tablet?: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  mobile?: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+
+  // Global settings (not device-specific)
   backgroundColor?: string;
-  dropShadow?: string;
-
-  // Logo settings
-  logoWidth?: string;
-  logoHeight?: string;
-
-  // Quick button settings
-  quickButtonSize?: string;
+  dropShadow?: "none" | "light" | "medium" | "strong";
   quickButtonBgColor?: string;
   quickButtonIconColor?: string;
   quickButtonHoverBgColor?: string;
   quickButtonHoverIconColor?: string;
   quickButtonShape?: "rounded" | "circle" | "square";
-  quickButtonShadow?: string;
+  quickButtonShadow?: "none" | "light" | "medium" | "strong";
   quickButtonGap?: string;
-
-  // Menu button settings
-  menuButtonWidth?: string;
-  menuButtonHeight?: string;
   menuButtonBgColor?: string;
   menuButtonIconColor?: string;
   menuButtonHoverBgColor?: string;
   menuButtonHoverIconColor?: string;
+  menuButtonIconId?: string;
   menuButtonShape?: "rounded" | "circle" | "square";
-  menuButtonShadow?: string;
+  menuButtonShadow?: "none" | "light" | "medium" | "strong";
 }
 
 export function Header({
-  // Default values
-  height = "64px",
+  // Responsive settings with defaults
+  desktop = {
+    height: 64,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    logoWidth: 40,
+    logoHeight: 40,
+    quickButtonSize: 40,
+    menuButtonSize: 40,
+  },
+  tablet = {
+    height: 64,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    logoWidth: 40,
+    logoHeight: 40,
+    quickButtonSize: 40,
+    menuButtonSize: 40,
+  },
+  mobile = {
+    height: 64,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    logoWidth: 40,
+    logoHeight: 40,
+    quickButtonSize: 40,
+    menuButtonSize: 40,
+  },
+  // Global settings with defaults
   backgroundColor = "#ffffff",
-  dropShadow = "0 2px 8px rgba(0, 0, 0, 0.1)",
-  logoWidth = "40px",
-  logoHeight = "40px",
-  quickButtonSize = "40px",
+  dropShadow = "medium",
   quickButtonBgColor = "#f3f4f6",
   quickButtonIconColor = "#6b7280",
   quickButtonHoverBgColor = "#e5e7eb",
   quickButtonHoverIconColor = "#374151",
   quickButtonShape = "rounded",
-  quickButtonShadow = "0 1px 3px rgba(0, 0, 0, 0.1)",
+  quickButtonShadow = "light",
   quickButtonGap = "8px",
-  menuButtonWidth = "40px",
-  menuButtonHeight = "40px",
   menuButtonBgColor = "#3b82f6",
   menuButtonIconColor = "#ffffff",
   menuButtonHoverBgColor = "#2563eb",
   menuButtonHoverIconColor = "#ffffff",
   menuButtonShape = "rounded",
-  menuButtonShadow = "0 1px 3px rgba(0, 0, 0, 0.1)",
+  menuButtonShadow = "light",
 }: HeaderProps) {
+  const [currentDevice, setCurrentDevice] = useState<
+    "desktop" | "tablet" | "mobile"
+  >("desktop");
+
+  // Detect device size on mount and resize
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setCurrentDevice("desktop");
+      } else if (width >= 768) {
+        setCurrentDevice("tablet");
+      } else {
+        setCurrentDevice("mobile");
+      }
+    };
+
+    handleResize(); // Set initial device
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Get current device settings
+  const getCurrentSettings = () => {
+    switch (currentDevice) {
+      case "tablet":
+        return tablet;
+      case "mobile":
+        return mobile;
+      default:
+        return desktop;
+    }
+  };
+
+  const currentSettings = getCurrentSettings();
+
   const {
     logoUrl,
     isLoading: logoLoading,
@@ -77,11 +153,26 @@ export function Header({
     }
   };
 
+  const getShadowValue = (shadowOption: string) => {
+    switch (shadowOption) {
+      case "none":
+        return "none";
+      case "light":
+        return "0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06)";
+      case "medium":
+        return "0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.08)";
+      case "strong":
+        return "0 10px 15px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1)";
+      default:
+        return "0 2px 8px rgba(0, 0, 0, 0.1)";
+    }
+  };
+
   const headerStyles: React.CSSProperties = {
-    height,
+    height: currentSettings.height,
     backgroundColor,
-    boxShadow: dropShadow,
-    padding: "0 !important", // Force zero padding with !important
+    boxShadow: getShadowValue(dropShadow),
+    padding: `${currentSettings.paddingVertical} ${currentSettings.paddingHorizontal}`,
     margin: "0 !important", // Force zero margin with !important
     position: "relative",
     width: "100%",
@@ -106,10 +197,10 @@ export function Header({
     // Force positioning context
     isolation: "isolate",
     // Additional aggressive overrides
-    paddingLeft: "0 !important",
-    paddingRight: "0 !important",
-    paddingTop: "0 !important",
-    paddingBottom: "0 !important",
+    paddingLeft: `${currentSettings.paddingHorizontal} !important`,
+    paddingRight: `${currentSettings.paddingHorizontal} !important`,
+    paddingTop: `${currentSettings.paddingVertical} !important`,
+    paddingBottom: `${currentSettings.paddingVertical} !important`,
     marginLeft: "0 !important",
     marginRight: "0 !important",
     marginTop: "0 !important",
@@ -185,27 +276,27 @@ export function Header({
             <div
               className="bg-gray-200 animate-pulse rounded"
               style={{
-                width: logoWidth,
-                height: logoHeight,
+                width: currentSettings.logoWidth,
+                height: currentSettings.logoHeight,
               }}
             />
           ) : logoError ? (
             <div
               className="bg-red-100 text-red-600 text-xs flex items-center justify-center rounded border border-red-200"
               style={{
-                width: logoWidth,
-                height: logoHeight,
+                width: currentSettings.logoWidth,
+                height: currentSettings.logoHeight,
               }}
             ></div>
           ) : logoUrl ? (
             <Image
               src={logoUrl}
               alt="Company Logo"
-              width={parseInt(logoWidth)}
-              height={parseInt(logoHeight)}
+              width={currentSettings.logoWidth}
+              height={currentSettings.logoHeight}
               style={{
-                width: logoWidth,
-                height: logoHeight,
+                width: currentSettings.logoWidth,
+                height: currentSettings.logoHeight,
                 // Remove any potential image spacing
                 margin: "0 !important",
                 padding: "0 !important",
@@ -232,8 +323,8 @@ export function Header({
             <div
               className="bg-gray-100 text-gray-500 text-xs flex items-center justify-center rounded border border-gray-200"
               style={{
-                width: logoWidth,
-                height: logoHeight,
+                width: currentSettings.logoWidth,
+                height: currentSettings.logoHeight,
               }}
             ></div>
           )}
@@ -258,10 +349,10 @@ export function Header({
                 quickButtonShape
               )}`}
               style={{
-                width: quickButtonSize,
-                height: quickButtonSize,
+                width: currentSettings.quickButtonSize,
+                height: currentSettings.quickButtonSize,
                 backgroundColor: quickButtonBgColor,
-                boxShadow: quickButtonShadow,
+                boxShadow: getShadowValue(quickButtonShadow),
                 flexShrink: 0,
               }}
               onMouseEnter={(e) => {
@@ -273,12 +364,15 @@ export function Header({
                 e.currentTarget.style.color = quickButtonIconColor;
               }}
             >
-              <span
-                className="text-lg font-semibold"
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
                 style={{ color: quickButtonIconColor }}
               >
-                {index}
-              </span>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
             </button>
           ))}
         </div>
@@ -298,10 +392,10 @@ export function Header({
               menuButtonShape
             )}`}
             style={{
-              width: menuButtonWidth,
-              height: menuButtonHeight,
+              width: currentSettings.menuButtonSize,
+              height: currentSettings.menuButtonSize,
               backgroundColor: menuButtonBgColor,
-              boxShadow: menuButtonShadow,
+              boxShadow: getShadowValue(menuButtonShadow),
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = menuButtonHoverBgColor;

@@ -5,6 +5,10 @@ export { default as MainContainerBox } from "./MainContainerBox";
 // Color Components
 export { ColorPicker } from "./ColorPicker";
 
+// Icon Library Component
+export { IconLibrary } from "./IconLibrary";
+export { IconSelector } from "./IconSelector";
+
 // Responsive Tabs - Device view switcher (Desktop, Tablet, Mobile)
 export { default as ResponsiveTabs } from "./ResponsiveTabs";
 export type { ResponsiveView } from "./ResponsiveTabs";

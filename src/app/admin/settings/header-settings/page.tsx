@@ -12,34 +12,52 @@ import { HeaderPreview } from "@/components/settings/HeaderPreview";
 import { HeaderSettingsForm } from "@/components/settings/HeaderSettingsForm";
 
 interface HeaderSettingsData {
-  // Header appearance
-  height: string;
+  // Responsive settings for Desktop, Tablet, Mobile
+  desktop: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  tablet: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  mobile: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+
+  // Global settings (not device-specific)
   backgroundColor: string;
-  dropShadow: string;
-
-  // Logo settings
-  logoWidth: string;
-  logoHeight: string;
-
-  // Quick button settings
-  quickButtonSize: string;
+  dropShadow: "none" | "light" | "medium" | "strong";
   quickButtonBgColor: string;
   quickButtonIconColor: string;
   quickButtonHoverBgColor: string;
   quickButtonHoverIconColor: string;
   quickButtonShape: "rounded" | "circle" | "square";
-  quickButtonShadow: string;
+  quickButtonShadow: "none" | "light" | "medium" | "strong";
   quickButtonGap: string;
-
-  // Menu button settings
-  menuButtonWidth: string;
-  menuButtonHeight: string;
   menuButtonBgColor: string;
   menuButtonIconColor: string;
   menuButtonHoverBgColor: string;
   menuButtonHoverIconColor: string;
   menuButtonShape: "rounded" | "circle" | "square";
-  menuButtonShadow: string;
+  menuButtonShadow: "none" | "light" | "medium" | "strong";
+  menuButtonIconId: string;
 }
 
 export default function HeaderSettingsPage() {
@@ -50,34 +68,52 @@ export default function HeaderSettingsPage() {
 
   // Default header settings
   const [headerSettings, setHeaderSettings] = useState<HeaderSettingsData>({
-    // Header appearance
-    height: "64px",
+    // Responsive settings for Desktop, Tablet, Mobile
+    desktop: {
+      height: 64,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      logoWidth: 40,
+      logoHeight: 40,
+      quickButtonSize: 40,
+      menuButtonSize: 40,
+    },
+    tablet: {
+      height: 64,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      logoWidth: 40,
+      logoHeight: 40,
+      quickButtonSize: 40,
+      menuButtonSize: 40,
+    },
+    mobile: {
+      height: 64,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      logoWidth: 40,
+      logoHeight: 40,
+      quickButtonSize: 40,
+      menuButtonSize: 40,
+    },
+
+    // Global settings (not device-specific)
     backgroundColor: "#ffffff",
-    dropShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-
-    // Logo settings
-    logoWidth: "40px",
-    logoHeight: "40px",
-
-    // Quick button settings
-    quickButtonSize: "40px",
+    dropShadow: "medium" as const,
     quickButtonBgColor: "#f3f4f6",
     quickButtonIconColor: "#6b7280",
     quickButtonHoverBgColor: "#e5e7eb",
     quickButtonHoverIconColor: "#374151",
     quickButtonShape: "rounded",
-    quickButtonShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    quickButtonGap: "0px",
-
-    // Menu button settings
-    menuButtonWidth: "40px",
-    menuButtonHeight: "40px",
+    quickButtonShadow: "light" as const,
+    quickButtonGap: "8px",
     menuButtonBgColor: "#3b82f6",
     menuButtonIconColor: "#ffffff",
     menuButtonHoverBgColor: "#2563eb",
     menuButtonHoverIconColor: "#ffffff",
+    menuButtonIconId: "menu",
     menuButtonShape: "rounded",
-    menuButtonShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    menuButtonShadow: "light" as const,
   });
 
   const handleBuild = () => {

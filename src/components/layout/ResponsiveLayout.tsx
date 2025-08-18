@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Container, GridContainer } from "@/components/ui/core/Container";
 import { cn } from "@/lib/utils";
@@ -84,22 +84,112 @@ export function ResponsiveLayout({
 
 // Responsive Header Component
 interface ResponsiveHeaderProps {
-  children?: React.ReactNode;
+  children: React.ReactNode;
   className?: string;
   sticky?: boolean;
   transparent?: boolean;
+  desktop?: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  tablet?: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
+  mobile?: {
+    height: number;
+    paddingHorizontal: number;
+    paddingVertical: number;
+    logoWidth: number;
+    logoHeight: number;
+    quickButtonSize: number;
+    menuButtonSize: number;
+  };
 }
 
 export function ResponsiveHeader({
   children,
   transparent = false,
   className,
+  desktop = {
+    height: 64,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    logoWidth: 40,
+    logoHeight: 40,
+    quickButtonSize: 40,
+    menuButtonSize: 40,
+  },
+  tablet = {
+    height: 64,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    logoWidth: 40,
+    logoHeight: 40,
+    quickButtonSize: 40,
+    menuButtonSize: 40,
+  },
+  mobile = {
+    height: 64,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    logoWidth: 40,
+    logoHeight: 40,
+    quickButtonSize: 40,
+    menuButtonSize: 40,
+  },
 }: ResponsiveHeaderProps) {
+  const [currentDevice, setCurrentDevice] = useState<
+    "desktop" | "tablet" | "mobile"
+  >("desktop");
+
+  // Detect device size on mount and resize
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setCurrentDevice("desktop");
+      } else if (width >= 768) {
+        setCurrentDevice("tablet");
+      } else {
+        setCurrentDevice("mobile");
+      }
+    };
+
+    handleResize(); // Set initial device
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Get current device settings
+  const getCurrentSettings = () => {
+    switch (currentDevice) {
+      case "tablet":
+        return tablet;
+      case "mobile":
+        return mobile;
+      default:
+        return desktop;
+    }
+  };
+
+  const currentSettings = getCurrentSettings();
+
   const headerStyles: React.CSSProperties = {
     position: "relative",
     backgroundColor: transparent ? "transparent" : "white",
     borderBottom: "none",
-    padding: "0 !important", // Force zero padding with !important
+    padding: `${currentSettings.paddingVertical} ${currentSettings.paddingHorizontal}`,
     margin: "0 !important", // Force zero margin with !important
     transition: "all 0.2s ease-in-out",
     width: "100%", // Ensure full width within container
@@ -109,10 +199,10 @@ export function ResponsiveHeader({
     outline: "none", // Remove any outline
     border: "none", // Remove any border
     // Additional aggressive overrides
-    paddingLeft: "0 !important",
-    paddingRight: "0 !important",
-    paddingTop: "0 !important",
-    paddingBottom: "0 !important",
+    paddingLeft: `${currentSettings.paddingHorizontal} !important`,
+    paddingRight: `${currentSettings.paddingHorizontal} !important`,
+    paddingTop: `${currentSettings.paddingVertical} !important`,
+    paddingBottom: `${currentSettings.paddingVertical} !important`,
     marginLeft: "0 !important",
     marginRight: "0 !important",
     marginTop: "0 !important",

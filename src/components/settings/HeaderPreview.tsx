@@ -5,34 +5,51 @@ import { Header } from "@/components/layout/Header";
 
 interface HeaderPreviewProps {
   headerSettings: {
-    // Header appearance
-    height: string;
+    // Responsive settings for Desktop, Tablet, Mobile
+    desktop: {
+      height: number;
+      paddingHorizontal: number;
+      paddingVertical: number;
+      logoWidth: number;
+      logoHeight: number;
+      quickButtonSize: number;
+      menuButtonSize: number;
+    };
+    tablet: {
+      height: number;
+      paddingHorizontal: number;
+      paddingVertical: number;
+      logoWidth: number;
+      logoHeight: number;
+      quickButtonSize: number;
+      menuButtonSize: number;
+    };
+    mobile: {
+      height: number;
+      paddingHorizontal: number;
+      paddingVertical: number;
+      logoWidth: number;
+      logoHeight: number;
+      quickButtonSize: number;
+      menuButtonSize: number;
+    };
+
+    // Global settings (not device-specific)
     backgroundColor: string;
-    dropShadow: string;
-
-    // Logo settings
-    logoWidth: string;
-    logoHeight: string;
-
-    // Quick button settings
-    quickButtonSize: string;
+    dropShadow: "none" | "light" | "medium" | "strong";
     quickButtonBgColor: string;
     quickButtonIconColor: string;
     quickButtonHoverBgColor: string;
     quickButtonHoverIconColor: string;
     quickButtonShape: "rounded" | "circle" | "square";
-    quickButtonShadow: string;
+    quickButtonShadow: "none" | "light" | "medium" | "strong";
     quickButtonGap: string;
-
-    // Menu button settings
-    menuButtonWidth: string;
-    menuButtonHeight: string;
     menuButtonBgColor: string;
     menuButtonIconColor: string;
     menuButtonHoverBgColor: string;
     menuButtonHoverIconColor: string;
     menuButtonShape: "rounded" | "circle" | "square";
-    menuButtonShadow: string;
+    menuButtonShadow: "none" | "light" | "medium" | "strong";
   };
 }
 
@@ -107,12 +124,11 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
             }}
           >
             <Header
-              height={headerSettings.height}
+              desktop={headerSettings.desktop}
+              tablet={headerSettings.tablet}
+              mobile={headerSettings.mobile}
               backgroundColor={headerSettings.backgroundColor}
               dropShadow={headerSettings.dropShadow}
-              logoWidth={headerSettings.logoWidth}
-              logoHeight={headerSettings.logoHeight}
-              quickButtonSize={headerSettings.quickButtonSize}
               quickButtonBgColor={headerSettings.quickButtonBgColor}
               quickButtonIconColor={headerSettings.quickButtonIconColor}
               quickButtonHoverBgColor={headerSettings.quickButtonHoverBgColor}
@@ -122,8 +138,6 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
               quickButtonShape={headerSettings.quickButtonShape}
               quickButtonShadow={headerSettings.quickButtonShadow}
               quickButtonGap={headerSettings.quickButtonGap}
-              menuButtonWidth={headerSettings.menuButtonWidth}
-              menuButtonHeight={headerSettings.menuButtonHeight}
               menuButtonBgColor={headerSettings.menuButtonBgColor}
               menuButtonIconColor={headerSettings.menuButtonIconColor}
               menuButtonHoverBgColor={headerSettings.menuButtonHoverBgColor}

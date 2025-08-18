@@ -6,6 +6,7 @@ import HeaderIcon from '@mui/icons-material/ViewHeadline'
 import FooterIcon from '@mui/icons-material/ViewQuilt'
 import HeroIcon from '@mui/icons-material/Star'
 import PagesIcon from '@mui/icons-material/Pages'
+import IconLibraryIcon from '@mui/icons-material/EmojiEmotions'
 
 // Admin Page Menu Data Structure
 export const AdminPageMenu: MenuItem[] = [
@@ -15,6 +16,14 @@ export const AdminPageMenu: MenuItem[] = [
     icon: DashboardIcon,
     action: () => {
       // TODO: Implement dashboard navigation logic
+    },
+  },
+  {
+    id: 'icon-library',
+    text: 'Icon Library',
+    icon: IconLibraryIcon,
+    action: () => {
+      // TODO: Implement icon library navigation logic
     },
   },
   {
