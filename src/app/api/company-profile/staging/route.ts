@@ -4,6 +4,8 @@ import { CompanyFormData } from "@/types";
 
 const prisma = new PrismaClient();
 
+export const runtime = 'nodejs';
+
 // GET - Load staging data
 export async function GET() {
   try {

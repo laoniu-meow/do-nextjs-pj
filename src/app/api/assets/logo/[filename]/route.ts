@@ -3,6 +3,8 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { uploadConfig } from '@/lib/env';
 
+export const runtime = 'nodejs';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ filename: string }> }

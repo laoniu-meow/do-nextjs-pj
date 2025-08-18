@@ -22,7 +22,7 @@ export function ResponsiveLayout({
   gap = { mobile: "16px", tablet: "24px", desktop: "32px" },
   sidebar,
 }: ResponsiveLayoutProps) {
-  const { deviceType, isMobile } = useResponsive();
+  const { isMobile } = useResponsive();
 
   const getResponsiveValue = <T,>(
     value: T | { mobile: T; tablet: T; desktop: T },
@@ -30,11 +30,7 @@ export function ResponsiveLayout({
   ): T => {
     if (typeof value === "object" && value !== null && "mobile" in value) {
       const responsiveValue = value as { mobile: T; tablet: T; desktop: T };
-      return (
-        responsiveValue[
-          deviceType === "largeDesktop" ? "desktop" : deviceType
-        ] || defaultValue
-      );
+      return responsiveValue[isMobile ? "mobile" : "desktop"] || defaultValue;
     }
     return value as T;
   };
@@ -96,26 +92,48 @@ interface ResponsiveHeaderProps {
 
 export function ResponsiveHeader({
   children,
-  className,
-  sticky = false,
   transparent = false,
+  className,
 }: ResponsiveHeaderProps) {
-  const { isMobile } = useResponsive();
-
   const headerStyles: React.CSSProperties = {
-    position: sticky ? "sticky" : "relative",
-    top: sticky ? 0 : "auto",
-    zIndex: sticky ? 1000 : "auto",
+    position: "relative",
     backgroundColor: transparent ? "transparent" : "white",
     borderBottom: "none",
-    padding: isMobile ? "16px" : "24px",
+    padding: "0 !important", // Force zero padding with !important
+    margin: "0 !important", // Force zero margin with !important
     transition: "all 0.2s ease-in-out",
+    width: "100%", // Ensure full width within container
+    height: "auto", // Auto height
+    display: "block", // Block display
+    boxSizing: "border-box", // Include padding in width calculation
+    outline: "none", // Remove any outline
+    border: "none", // Remove any border
+    // Additional aggressive overrides
+    paddingLeft: "0 !important",
+    paddingRight: "0 !important",
+    paddingTop: "0 !important",
+    paddingBottom: "0 !important",
+    marginLeft: "0 !important",
+    marginRight: "0 !important",
+    marginTop: "0 !important",
+    marginBottom: "0 !important",
   };
 
   return (
     <header
       className={`responsive-header ${className || ""}`}
-      style={headerStyles}
+      style={{
+        ...headerStyles,
+        // Additional browser reset overrides
+        all: "unset",
+        display: "block",
+        boxSizing: "border-box",
+        // Force zero spacing
+        padding: "0 !important",
+        margin: "0 !important",
+        border: "none !important",
+        outline: "none !important",
+      }}
     >
       {children}
     </header>

@@ -11,6 +11,10 @@ export { GenericSettingsForm } from './GenericSettingsForm';
 export { CompanyProfileSettings } from './content/CompanyProfileSettings';
 export { HeaderMainSettings } from './content/HeaderMainSettings';
 
+// New header components
+export { HeaderPreview } from './HeaderPreview';
+export { HeaderSettingsForm } from './HeaderSettingsForm';
+
 // Types and hooks
 export type { SettingsPageType } from "@/hooks/useSettingsContent";
 export { useSettingsContent } from "@/hooks/useSettingsContent";

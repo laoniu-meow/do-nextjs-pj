@@ -1,12 +1,19 @@
-// Core UI Components - Essential building blocks
-export * from "./core";
-
-// Main Container Box - Reusable page container with glassy effect
+// Layout Components
+export { default as PageLayout } from "./layout/PageLayout";
 export { default as MainContainerBox } from "./MainContainerBox";
+
+// Color Components
+export { ColorPicker } from "./ColorPicker";
 
 // Responsive Tabs - Device view switcher (Desktop, Tablet, Mobile)
 export { default as ResponsiveTabs } from "./ResponsiveTabs";
 export type { ResponsiveView } from "./ResponsiveTabs";
+
+// Admin Menu Button - Reusable admin menu button component
+export { default as AdminMenuButton } from "./AdminMenuButton";
+
+// Settings Panel - Reusable settings panel component
+export { SettingsPanel } from "../settings/SettingsPanel";
 
 // Layout Components - Page structure and spacing
 export * from "./layout";

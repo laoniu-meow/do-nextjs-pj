@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Force Node.js runtime for all API routes
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push('bcryptjs', 'jsonwebtoken');
+    }
+    return config;
+  },
   async headers() {
     return [
       {

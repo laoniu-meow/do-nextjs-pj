@@ -8,11 +8,38 @@ import {
   ResponsiveTabs,
   ResponsiveView,
 } from "@/components/ui";
+import { HeaderPreview } from "@/components/settings/HeaderPreview";
+import { HeaderSettingsForm } from "@/components/settings/HeaderSettingsForm";
 
 interface HeaderSettingsData {
-  // TODO: Add header settings fields when database schema is defined
-  // For now, using a placeholder to satisfy TypeScript requirements
-  placeholder?: string;
+  // Header appearance
+  height: string;
+  backgroundColor: string;
+  dropShadow: string;
+
+  // Logo settings
+  logoWidth: string;
+  logoHeight: string;
+
+  // Quick button settings
+  quickButtonSize: string;
+  quickButtonBgColor: string;
+  quickButtonIconColor: string;
+  quickButtonHoverBgColor: string;
+  quickButtonHoverIconColor: string;
+  quickButtonShape: "rounded" | "circle" | "square";
+  quickButtonShadow: string;
+  quickButtonGap: string;
+
+  // Menu button settings
+  menuButtonWidth: string;
+  menuButtonHeight: string;
+  menuButtonBgColor: string;
+  menuButtonIconColor: string;
+  menuButtonHoverBgColor: string;
+  menuButtonHoverIconColor: string;
+  menuButtonShape: "rounded" | "circle" | "square";
+  menuButtonShadow: string;
 }
 
 export default function HeaderSettingsPage() {
@@ -20,6 +47,38 @@ export default function HeaderSettingsPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentView, setCurrentView] = useState<ResponsiveView>("desktop");
+
+  // Default header settings
+  const [headerSettings, setHeaderSettings] = useState<HeaderSettingsData>({
+    // Header appearance
+    height: "64px",
+    backgroundColor: "#ffffff",
+    dropShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+
+    // Logo settings
+    logoWidth: "40px",
+    logoHeight: "40px",
+
+    // Quick button settings
+    quickButtonSize: "40px",
+    quickButtonBgColor: "#f3f4f6",
+    quickButtonIconColor: "#6b7280",
+    quickButtonHoverBgColor: "#e5e7eb",
+    quickButtonHoverIconColor: "#374151",
+    quickButtonShape: "rounded",
+    quickButtonShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    quickButtonGap: "0px",
+
+    // Menu button settings
+    menuButtonWidth: "40px",
+    menuButtonHeight: "40px",
+    menuButtonBgColor: "#3b82f6",
+    menuButtonIconColor: "#ffffff",
+    menuButtonHoverBgColor: "#2563eb",
+    menuButtonHoverIconColor: "#ffffff",
+    menuButtonShape: "rounded",
+    menuButtonShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+  });
 
   const handleBuild = () => {
     // Open settings panel with current settings
@@ -33,9 +92,15 @@ export default function HeaderSettingsPage() {
 
   const handleApplySettings = (formData: HeaderSettingsData) => {
     // Settings applied
+    setHeaderSettings(formData);
     setHasUnsavedChanges(true);
     setIsSettingsOpen(false);
     console.log("Settings applied:", formData);
+  };
+
+  const handleSettingsChange = (newSettings: HeaderSettingsData) => {
+    setHeaderSettings(newSettings);
+    setHasUnsavedChanges(true);
   };
 
   const handleSave = async () => {
@@ -56,11 +121,6 @@ export default function HeaderSettingsPage() {
 
   const handleRefresh = () => {
     window.location.reload();
-  };
-
-  // Handle responsive view change
-  const handleViewChange = (view: ResponsiveView) => {
-    setCurrentView(view);
   };
 
   return (
@@ -86,34 +146,35 @@ export default function HeaderSettingsPage() {
         onRefresh={handleRefresh}
         saveDisabled={!hasUnsavedChanges || isLoading}
       >
-        {/* Responsive Tabs */}
-        <ResponsiveTabs
-          currentView={currentView}
-          onViewChange={handleViewChange}
-          showIcons={true}
-        />
-
         <div className="space-y-6">
+          {/* Device Tabs */}
+          <ResponsiveTabs
+            currentView={currentView}
+            onViewChange={setCurrentView}
+          />
+
           {/* Loading State */}
           {isLoading && (
             <div className="text-center py-4">
               <p className="text-gray-600">Loading...</p>
             </div>
           )}
+
+          {/* Header Preview */}
+          <HeaderPreview headerSettings={headerSettings} />
         </div>
       </MainContainerBox>
 
       <SettingsPanel
         isOpen={isSettingsOpen}
         onClose={handleCloseSettings}
-        onApply={() => handleApplySettings({} as HeaderSettingsData)}
+        onApply={() => handleApplySettings(headerSettings)}
         title="Header & Navigation Settings"
       >
-        <div className="text-center py-8">
-          <p className="text-gray-500">
-            Settings panel is ready for custom content
-          </p>
-        </div>
+        <HeaderSettingsForm
+          initialSettings={headerSettings}
+          onSettingsChange={handleSettingsChange}
+        />
       </SettingsPanel>
     </PageLayout>
   );
