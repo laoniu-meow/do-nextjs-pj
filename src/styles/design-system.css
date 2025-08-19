@@ -1,7 +1,8 @@
-/* Professional Design System - Enhanced utilities for modern UI */
+/* Design System CSS - Professional UI Standards */
 
+/* Base styles using design system tokens */
 :root {
-  /* Essential spacing utilities */
+  /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
@@ -9,53 +10,64 @@
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
   --spacing-3xl: 64px;
+  --spacing-4xl: 80px;
 
-  /* Essential shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
-
-  /* Professional color palette */
+  /* Colors */
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
   --color-primary-500: #3b82f6;
   --color-primary-600: #2563eb;
   --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
 
-  --color-success-50: #f0fdf4;
-  --color-success-100: #dcfce7;
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
   --color-success-500: #22c55e;
   --color-success-600: #16a34a;
-
-  --color-warning-50: #fffbeb;
-  --color-warning-100: #fef3c7;
   --color-warning-500: #f59e0b;
   --color-warning-600: #d97706;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
 
-  --color-danger-50: #fef2f2;
-  --color-danger-100: #fee2e2;
-  --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
+  /* Typography */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: "SF Mono", Monaco, Inconsolata, "Roboto Mono",
+    "Source Code Pro", monospace;
 
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
-
-  /* Border radius */
+  /* Border Radius */
+  --radius-none: 0;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
-  --radius-2xl: 24px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
   /* Transitions */
   --transition-fast: 150ms ease-in-out;
@@ -63,441 +75,165 @@
   --transition-slow: 300ms ease-in-out;
 }
 
-/* Essential utility classes for common styling issues - Scoped to avoid conflicts */
-.design-system .no-margin {
-  margin: 0;
+/* Global styles */
+* {
+  box-sizing: border-box;
 }
-.design-system .no-padding {
+
+html {
+  background-color: var(--color-neutral-50) !important;
+}
+
+body {
+  font-family: var(--font-family-base);
+  line-height: 1.6;
+  color: var(--color-neutral-900);
+  background-color: var(--color-neutral-50) !important;
+  margin: 0;
   padding: 0;
 }
-.design-system .no-border {
-  border: none;
-}
-.design-system .no-outline {
-  outline: none;
-}
 
-/* Icon sizing utilities - Clean, conflict-free sizing */
-.design-system .icon-xs {
-  width: 12px;
-  height: 12px;
-  font-size: 12px;
+/* Typography utilities */
+.text-h1 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
-.design-system .icon-sm {
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
+.text-h2 {
+  font-size: 2rem;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-.design-system .icon-md {
-  width: 20px;
-  height: 20px;
-  font-size: 20px;
+.text-h3 {
+  font-size: 1.5rem;
+  line-height: 1.33;
+  font-weight: 600;
+  letter-spacing: -0.015em;
 }
 
-.design-system .icon-lg {
-  width: 24px;
-  height: 24px;
-  font-size: 24px;
+.text-h4 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.design-system .icon-xl {
-  width: 32px;
-  height: 32px;
-  font-size: 32px;
+.text-h5 {
+  font-size: 1.125rem;
+  line-height: 1.44;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.design-system .icon-2xl {
-  width: 40px;
-  height: 40px;
-  font-size: 40px;
+.text-h6 {
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
-/* Professional form styling - Scoped to avoid conflicts */
-.design-system .form-input {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 hover:border-gray-400;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
+.text-body1 {
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
-.design-system .form-input:focus {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-.design-system .form-select {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 hover:border-gray-400;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: 40px;
-}
-
-.design-system .form-select:focus {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-/* Professional button styles - Scoped to avoid conflicts */
-.design-system .btn-primary {
-  @apply px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary-500) 0%,
-    var(--color-primary-600) 100%
-  );
-}
-
-.design-system .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-}
-
-.design-system .btn-success {
-  @apply px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
-  background: linear-gradient(
-    135deg,
-    var(--color-success-500) 0%,
-    var(--color-success-600) 100%
-  );
-}
-
-.design-system .btn-success:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
-}
-
-.design-system .btn-danger {
-  @apply px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
-  background: linear-gradient(
-    135deg,
-    var(--color-danger-500) 0%,
-    var(--color-danger-600) 100%
-  );
-}
-
-.design-system .btn-danger:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-}
-
-/* Header component utilities - Preserved for existing components */
-.header-container {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.header-logo-container {
-  flex-shrink: 0;
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.header-quick-buttons {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-}
-
-.header-menu-button {
-  flex-shrink: 0;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Button base styles - Preserved for existing components */
-.btn-base {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-normal);
-  cursor: pointer;
-  border: none;
-  outline: none;
-}
-
-.btn-hover-scale:hover {
-  transform: scale(1.05);
-}
-
-/* Shape utilities - Preserved for existing components */
-.shape-rounded {
-  border-radius: var(--radius-md);
-}
-.shape-circle {
-  border-radius: 50%;
-}
-.shape-square {
-  border-radius: 0;
-}
-
-/* Professional card styles - Scoped to avoid conflicts */
-.design-system .card {
-  @apply bg-white rounded-xl border border-gray-200 shadow-sm;
-  transition: all var(--transition-normal);
-}
-
-.design-system .card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-
-.design-system .card-header {
-  @apply p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white;
-}
-
-.design-system .card-body {
-  @apply p-6;
-}
-
-.design-system .card-footer {
-  @apply p-6 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white;
-}
-
-/* Professional section headers - Scoped to avoid conflicts */
-.design-system .section-header {
-  @apply flex items-center mb-6;
-}
-
-.design-system .section-icon {
-  @apply w-10 h-10 rounded-lg flex items-center justify-center mr-4;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary-500) 0%,
-    var(--color-primary-600) 100%
-  );
-}
-
-.design-system .section-title {
-  @apply text-xl font-bold text-gray-900;
-}
-
-.design-system .section-description {
-  @apply text-sm text-gray-600;
-}
-
-/* Responsive utilities - Preserved for existing components */
-@media (max-width: 768px) {
-  .header-container {
-    padding: var(--spacing-sm);
-  }
-
-  .design-system .card {
-    @apply rounded-lg;
-  }
-
-  .design-system .card-header,
-  .design-system .card-body,
-  .design-system .card-footer {
-    @apply p-4;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-container {
-    padding: var(--spacing-xs);
-  }
-
-  .design-system .section-header {
-    @apply flex-col items-start space-y-3;
-  }
-
-  .design-system .section-icon {
-    @apply mr-0;
-  }
-}
-
-/* Professional focus states - Scoped to avoid conflicts */
-.design-system .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
-}
-
-.design-system .focus-ring-white {
-  @apply focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800;
-}
-
-/* Professional animations - Scoped to avoid conflicts */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.design-system .animate-fade-in {
-  animation: fadeIn var(--transition-normal) ease-out;
-}
-
-.design-system .animate-slide-in {
-  animation: slideIn var(--transition-normal) ease-out;
-}
-
-/* Professional gradients - Scoped to avoid conflicts */
-.design-system .gradient-primary {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary-500) 0%,
-    var(--color-primary-600) 100%
-  );
-}
-
-.design-system .gradient-success {
-  background: linear-gradient(
-    135deg,
-    var(--color-success-500) 0%,
-    var(--color-success-600) 100%
-  );
-}
-
-.design-system .gradient-warning {
-  background: linear-gradient(
-    135deg,
-    var(--color-warning-500) 0%,
-    var(--color-warning-600) 100%
-  );
-}
-
-.design-system .gradient-danger {
-  background: linear-gradient(
-    135deg,
-    var(--color-danger-500) 0%,
-    var(--color-danger-600) 100%
-  );
-}
-
-.design-system .gradient-gray {
-  background: linear-gradient(
-    135deg,
-    var(--color-gray-100) 0%,
-    var(--color-gray-200) 100%
-  );
-}
-
-/* Company Profile specific styles - Preserved */
-.company-profile-form {
-  /* Keep existing company profile styling intact */
-}
-
-.company-profile-form .form-group {
-  margin-bottom: 1.5rem;
-}
-
-.company-profile-form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.company-profile-form input,
-.company-profile-form textarea,
-.company-profile-form select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+.text-body2 {
   font-size: 0.875rem;
-  transition: border-color 0.2s ease-in-out;
+  line-height: 1.57;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
-.company-profile-form input:focus,
-.company-profile-form textarea:focus,
-.company-profile-form select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.text-caption {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
-/* Settings Panel specific icon sizing fixes - Using specific selectors instead of !important */
-.settings-panel.settings-panel-header svg {
-  max-width: 24px;
-  max-height: 24px;
-  width: 24px;
-  height: 24px;
+/* Spacing utilities */
+.m-0 {
+  margin: 0;
+}
+.m-xs {
+  margin: var(--spacing-xs);
+}
+.m-sm {
+  margin: var(--spacing-sm);
+}
+.m-md {
+  margin: var(--spacing-md);
+}
+.m-lg {
+  margin: var(--spacing-lg);
+}
+.m-xl {
+  margin: var(--spacing-xl);
+}
+.m-2xl {
+  margin: var(--spacing-2xl);
+}
+.m-3xl {
+  margin: var(--spacing-3xl);
 }
 
-.settings-panel .settings-panel-header .icon-container {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  max-width: 32px;
-  max-height: 32px;
+.p-0 {
+  padding: 0;
+}
+.p-xs {
+  padding: var(--spacing-xs);
+}
+.p-sm {
+  padding: var(--spacing-sm);
+}
+.p-md {
+  padding: var(--spacing-md);
+}
+.p-lg {
+  padding: var(--spacing-lg);
+}
+.p-xl {
+  padding: var(--spacing-xl);
+}
+.p-2xl {
+  padding: var(--spacing-2xl);
+}
+.p-3xl {
+  padding: var(--spacing-3xl);
 }
 
-/* Ensure all icons in settings panels respect sizing */
-.settings-panel svg {
+/* Component-specific styles */
+.page-layout-container {
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.main-container-box {
+  margin: 0 auto;
+  width: 100%;
   max-width: 100%;
-  max-height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* Specific icon sizing for different container sizes */
-.settings-panel .w-8.h-8 svg {
-  width: 16px;
-  height: 16px;
+/* Settings panel improvements */
+.settings-panel {
+  background: var(--color-neutral-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-md);
 }
 
-.settings-panel .w-10.h-10 svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* Additional specificity for settings panel icons */
-.settings-panel .settings-panel-header .icon-container svg {
-  width: 16px;
-  height: 16px;
-  max-width: 16px;
-  max-height: 16px;
-}
-
-/* Force icon sizing with higher specificity for settings panel */
-.settings-panel.settings-panel-header .icon-container svg {
-  width: 16px !important;
-  height: 16px !important;
-  max-width: 16px !important;
-  max-height: 16px !important;
-  min-width: 16px !important;
-  min-height: 16px !important;
-}
-
-/* Ensure form inputs maintain their styling */
 .settings-panel input[type="text"],
 .settings-panel input[type="number"] {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-family-base);
   -webkit-appearance: none;
   -moz-appearance: textfield;
 }
@@ -526,13 +262,15 @@
 .admin-layout {
   min-height: 100vh;
   position: relative;
+  background-color: var(--color-neutral-50) !important;
 }
 
 .admin-content {
-  padding-top: 1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 1rem;
+  padding-top: var(--spacing-md);
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  background-color: var(--color-neutral-50) !important;
 }
 
 /* Preserve existing MUI drawer styling */
@@ -543,22 +281,6 @@
 
 .MuiDrawer-root .MuiDrawer-paper {
   z-index: 1201 !important;
-}
-
-/* Ensure PageLayout has responsive padding like before */
-.page-layout-container {
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Ensure MainContainerBox properly wraps content */
-.main-container-box {
-  margin: 0 auto;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
 }
 
 /* Ensure content inside MainContainerBox is properly constrained */
@@ -588,3 +310,268 @@ main {
   width: 100%;
   box-sizing: border-box;
 }
+
+/* Enhanced form styling */
+.form-field {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--color-neutral-700);
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  transition: var(--transition-normal);
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+/* Button enhancements */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  text-transform: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary-600);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-700);
+  border: 1px solid var(--color-neutral-300);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-neutral-200);
+  border-color: var(--color-neutral-400);
+}
+
+/* Card enhancements */
+.card {
+  background: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-neutral-300);
+}
+
+/* Focus states for accessibility */
+*:focus {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Ensure Settings Panel is always on top */
+.settings-panel {
+  z-index: 99999999 !important;
+  position: fixed !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.settings-panel-header {
+  z-index: 99999999 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Force visibility for all settings panels */
+[class*="settings-panel"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 99999999 !important;
+}
+
+/* Ensure Settings Panel overlay is always on top */
+.fixed.inset-0[style*="z-index"] {
+  z-index: 99999999 !important;
+}
+
+/* Force Settings Panel above all Material-UI components */
+.settings-panel,
+.settings-panel *,
+[class*="settings-panel"] {
+  z-index: 99999999 !important;
+  position: relative !important;
+}
+
+/* Settings Panel scrollbar styling */
+.settings-panel .overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+  height: 400px !important;
+  min-height: 300px !important;
+  max-height: calc(90vh - 200px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.settings-panel .overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-panel .overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.settings-panel .overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.settings-panel .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Ensure content area is scrollable */
+.settings-panel .design-system {
+  height: 400px !important;
+  min-height: 300px !important;
+  max-height: calc(90vh - 200px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Remove any red borders and ensure clean Settings Panel styling */
+.settings-panel,
+.settings-panel * {
+  border-color: transparent !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.settings-panel {
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Override any focus styles that might add red borders */
+.settings-panel:focus,
+.settings-panel:focus-within,
+.settings-panel *:focus {
+  border-color: transparent !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Ensure no red colors anywhere in the Settings Panel */
+.settings-panel,
+.settings-panel * {
+  color: inherit !important;
+}
+
+/* Ensure Settings Panel is rendered at document body level */
+body > .settings-panel,
+body > [class*="settings-panel"] {
+  position: fixed !important;
+  z-index: 99999999 !important;
+}
+
+/* Ensure Settings Panel is above MainContainerBox and all other components */
+.settings-panel {
+  position: fixed !important;
+  z-index: 99999999 !important;
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
+  will-change: transform !important;
+}
+
+/* Force Settings Panel to break out of any stacking contexts */
+.settings-panel,
+.settings-panel * {
+  transform: translateZ(0) !important;
+  will-change: transform !important;
+}
+
+/* Override any Material-UI z-index */
+.MuiPaper-root,
+.MuiBox-root,
+.MuiContainer-root {
+  z-index: auto !important;
+}
+
+/* Prevent parent containers from clipping the Settings Panel */
+.admin-layout,
+.admin-content,
+.main-container-box,
+.container {
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+}
+
+/* Ensure all modal overlays have proper z-index */
+.fixed.inset-0 {
+  z-index: 999998 !important;
+}
+
+/* Ensure proper layering for admin components */
+.admin-layout {
+  z-index: 1;
+}
+
+.admin-content {
+  z-index: 1;
+}
+
+/* Dark mode support (future enhancement) */
+/* Temporarily disabled to prevent automatic dark mode switching */
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --color-neutral-50: #0f172a;
+    --color-neutral-100: #1e293b;
+    --color-neutral-200: #334155;
+    --color-neutral-300: #475569;
+    --color-neutral-400: #64748b;
+    --color-neutral-500: #94a3b8;
+    --color-neutral-600: #cbd5e1;
+    --color-neutral-700: #e2e8f0;
+    --color-neutral-800: #f1f5f9;
+    --color-neutral-900: #f8fafc;
+  }
+} */

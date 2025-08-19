@@ -2,6 +2,12 @@
 
 @import "../styles/design-system.css";
 
+/* Force light theme - override any dark mode */
+html, body, .admin-layout, .admin-content {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
 /* Admin Layout Styles */
 .admin-layout {
   min-height: 100vh;

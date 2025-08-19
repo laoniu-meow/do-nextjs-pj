@@ -39,8 +39,11 @@ export function SettingsPanel({
       const panelWidth = isMobile
         ? Math.min(window.innerWidth - 20, 400)
         : Math.min(600, window.innerWidth - 40);
+
+      // Always center the panel
       const centerX = (window.innerWidth - panelWidth) / 2;
       const centerY = (window.innerHeight - 200) / 2;
+
       setPosition({
         x: Math.max(0, centerX),
         y: Math.max(0, centerY),
@@ -52,8 +55,11 @@ export function SettingsPanel({
           const rect = panelRef.current.getBoundingClientRect();
           const actualHeight = rect.height;
           const actualWidth = rect.width;
+
+          // Always maintain center positioning
           const newCenterX = (window.innerWidth - actualWidth) / 2;
           const newCenterY = (window.innerHeight - actualHeight) / 2;
+
           setPosition({
             x: Math.max(0, newCenterX),
             y: Math.max(0, newCenterY),
@@ -183,8 +189,8 @@ export function SettingsPanel({
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-50 p-4"
-      style={{ zIndex: 99999 }}
+      className="fixed inset-0 z-[99999999] flex items-center justify-center bg-black bg-opacity-50 p-4"
+      style={{ zIndex: 99999999 }}
     >
       <div
         ref={panelRef}
@@ -194,8 +200,9 @@ export function SettingsPanel({
           left: position.x,
           top: position.y,
           width: "auto",
-          minWidth: "500px",
-          maxWidth: "90vw",
+          minWidth: "400px",
+          maxWidth: "500px",
+          height: "auto",
           maxHeight: "90vh",
           cursor: isDragging ? "grabbing" : "default",
         }}
@@ -317,8 +324,15 @@ export function SettingsPanel({
         <div
           className="overflow-y-auto design-system"
           style={{
-            maxHeight: "calc(90vh - 100px)",
+            height: "400px",
+            maxHeight: "calc(90vh - 200px)",
+            minHeight: "300px",
             background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+            padding: "20px",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#cbd5e1 #f1f5f9",
+            overflowY: "auto",
+            overflowX: "hidden",
           }}
         >
           {children}

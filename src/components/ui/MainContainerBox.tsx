@@ -1,9 +1,11 @@
 import React from "react";
-import { Box, Typography, Button, Stack } from "@mui/material";
+import { Box, Typography, Stack, Paper } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
 import SaveIcon from "@mui/icons-material/Save";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ReplayCircleFilledIcon from "@mui/icons-material/ReplayCircleFilled";
+import { designSystem } from "@/styles/design-system";
+import { Button } from "./core/Button";
 
 interface MainContainerBoxProps {
   title: string;
@@ -35,16 +37,18 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
   uploadDisabled = false,
 }) => {
   return (
-    <Box
-      className="main-container-box"
+    <Paper
+      elevation={0}
       sx={{
-        background:
-          "linear-gradient(135deg, rgba(173, 216, 230, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)",
-        backdropFilter: "blur(10px)",
-        borderRadius: "16px",
-        border: "1px solid rgba(255, 255, 255, 0.2)",
-        boxShadow: "0 8px 32px rgba(31, 38, 135, 0.15)",
-        padding: { xs: 2, sm: 3, md: 4 },
+        background: designSystem.colors.surface.primary,
+        border: `1px solid ${designSystem.colors.neutral[200]}`,
+        borderRadius: designSystem.borderRadius.xl,
+        boxShadow: designSystem.shadows.md,
+        padding: {
+          xs: designSystem.spacing.md,
+          sm: designSystem.spacing.lg,
+          md: designSystem.spacing.xl,
+        },
         minHeight: "200px",
         position: "relative",
         overflow: "hidden",
@@ -52,37 +56,53 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
         maxWidth: "100%",
         margin: "0 auto",
         boxSizing: "border-box",
+        transition: designSystem.transitions.normal,
+        "&:hover": {
+          boxShadow: designSystem.shadows.lg,
+          borderColor: designSystem.colors.neutral[300],
+        },
         "&::before": {
           content: '""',
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0,
-          background:
-            "linear-gradient(45deg, rgba(173, 216, 230, 0.05) 0%, rgba(255, 255, 255, 0.1) 100%)",
-          pointerEvents: "none",
+          height: "3px",
+          background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 100%)`,
+          borderRadius: `${designSystem.borderRadius.xl} ${designSystem.borderRadius.xl} 0 0`,
         },
       }}
     >
+      {/* Header Section */}
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
           alignItems: { xs: "flex-start", sm: "center" },
           justifyContent: "space-between",
-          marginBottom: 3,
-          gap: { xs: 2, sm: 0 },
+          marginBottom: designSystem.spacing.xl,
+          gap: { xs: designSystem.spacing.md, sm: 0 },
+          paddingTop: designSystem.spacing.sm,
         }}
       >
         <Typography
-          variant="h4"
-          component="h1"
+          variant="h3"
+          component="h2"
           sx={{
-            fontWeight: 600,
-            color: "#2c3e50",
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+            ...designSystem.typography.h3,
+            color: designSystem.colors.text.primary,
+            margin: 0,
+            position: "relative",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: "-8px",
+              left: 0,
+              width: "40px",
+              height: "3px",
+              background: designSystem.colors.primary[500],
+              borderRadius: designSystem.borderRadius.full,
+            },
           }}
         >
           {title}
@@ -93,30 +113,14 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
           spacing={1}
           sx={{
             flexWrap: "wrap",
-            gap: { xs: 1, sm: 1.5 },
+            gap: designSystem.spacing.sm,
           }}
         >
           {showBuild && (
             <Button
-              variant="contained"
-              startIcon={<BuildIcon />}
+              variant="primary"
+              leftIcon={<BuildIcon />}
               onClick={onBuild}
-              sx={{
-                background: "linear-gradient(135deg, #3498db 0%, #2980b9 100%)",
-                color: "white",
-                borderRadius: "8px",
-                textTransform: "none",
-                fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                padding: { xs: "6px 12px", sm: "8px 16px" },
-                minWidth: { xs: "auto", sm: "100px" },
-                "&:hover": {
-                  background:
-                    "linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%)",
-                  transform: "translateY(-1px)",
-                  boxShadow: "0 4px 12px rgba(52, 152, 219, 0.3)",
-                },
-                transition: "all 0.2s ease-in-out",
-              }}
             >
               Build
             </Button>
@@ -124,39 +128,10 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
 
           {showSave && (
             <Button
-              variant="contained"
-              startIcon={<SaveIcon />}
+              variant="success"
+              leftIcon={<SaveIcon />}
               onClick={onSave}
               disabled={saveDisabled}
-              sx={{
-                background: saveDisabled
-                  ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-                  : "linear-gradient(135deg, #27ae60 0%, #229954 100%)",
-                color: "white",
-                borderRadius: "8px",
-                textTransform: "none",
-                fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                padding: { xs: "8px 12px", sm: "10px 16px" },
-                minWidth: { xs: "80px", sm: "100px" },
-                boxShadow: saveDisabled
-                  ? "none"
-                  : "0 4px 12px rgba(39, 174, 96, 0.3)",
-                "&:hover": {
-                  background: saveDisabled
-                    ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-                    : "linear-gradient(135deg, #229954 0%, #1e8449 100%)",
-                  transform: saveDisabled ? "none" : "translateY(-2px)",
-                  boxShadow: saveDisabled
-                    ? "none"
-                    : "0 6px 16px rgba(39, 174, 96, 0.4)",
-                },
-                "&:active": {
-                  transform: saveDisabled ? "none" : "translateY(0)",
-                },
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                cursor: saveDisabled ? "not-allowed" : "pointer",
-                opacity: saveDisabled ? 0.6 : 1,
-              }}
             >
               Save
             </Button>
@@ -164,39 +139,10 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
 
           {showUpload && (
             <Button
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
+              variant="secondary"
+              leftIcon={<CloudUploadIcon />}
               onClick={onUpload}
               disabled={uploadDisabled}
-              sx={{
-                background: uploadDisabled
-                  ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-                  : "linear-gradient(135deg, #f39c12 0%, #e67e22 100%)",
-                color: "white",
-                borderRadius: "8px",
-                textTransform: "none",
-                fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                padding: { xs: "8px 12px", sm: "10px 16px" },
-                minWidth: { xs: "80px", sm: "100px" },
-                boxShadow: uploadDisabled
-                  ? "none"
-                  : "0 4px 12px rgba(243, 156, 18, 0.3)",
-                "&:hover": {
-                  background: uploadDisabled
-                    ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-                    : "linear-gradient(135deg, #e67e22 0%, #d35400 100%)",
-                  transform: uploadDisabled ? "none" : "translateY(-2px)",
-                  boxShadow: uploadDisabled
-                    ? "none"
-                    : "0 6px 16px rgba(243, 156, 18, 0.4)",
-                },
-                "&:active": {
-                  transform: uploadDisabled ? "none" : "translateY(0)",
-                },
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                cursor: uploadDisabled ? "not-allowed" : "pointer",
-                opacity: uploadDisabled ? 0.6 : 1,
-              }}
             >
               Upload
             </Button>
@@ -204,25 +150,9 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
 
           {showRefresh && (
             <Button
-              variant="contained"
-              startIcon={<ReplayCircleFilledIcon />}
+              variant="warning"
+              leftIcon={<ReplayCircleFilledIcon />}
               onClick={onRefresh}
-              sx={{
-                background: "linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)",
-                color: "white",
-                borderRadius: "8px",
-                textTransform: "none",
-                fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                padding: { xs: "6px 12px", sm: "8px 16px" },
-                minWidth: { xs: "auto", sm: "100px" },
-                "&:hover": {
-                  background:
-                    "linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%)",
-                  transform: "translateY(-1px)",
-                  boxShadow: "0 4px 12px rgba(155, 89, 182, 0.3)",
-                },
-                transition: "all 0.2s ease-in-out",
-              }}
             >
               Refresh
             </Button>
@@ -230,8 +160,19 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
         </Stack>
       </Box>
 
-      <Box sx={{ position: "relative", zIndex: 1 }}>{children}</Box>
-    </Box>
+      {/* Content Section */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          "& > *:first-of-type": {
+            marginTop: 0,
+          },
+        }}
+      >
+        {children}
+      </Box>
+    </Paper>
   );
 };
 

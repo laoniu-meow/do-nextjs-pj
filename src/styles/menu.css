@@ -233,8 +233,8 @@
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
+/* Dark Mode Support - Disabled to prevent automatic dark mode */
+/* @media (prefers-color-scheme: dark) {
   .menu-item-list-dropdown {
     background-color: #1f2937;
     border-color: #374151;
@@ -252,7 +252,7 @@
   .menu-item-active:hover {
     background-color: rgba(59, 130, 246, 0.25);
   }
-}
+} */
 
 /* Animation Classes */
 .menu-item-enter {

@@ -775,8 +775,8 @@ export function HeaderSettingsForm({
       {/* Icon Picker Dialog */}
       {isIconPickerOpen && (
         <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-50 p-4"
-          style={{ zIndex: 99999 }}
+          className="fixed inset-0 z-[999998] flex items-center justify-center bg-black bg-opacity-50 p-4"
+          style={{ zIndex: 999998 }}
         >
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden transform transition-all duration-200 ease-out">
             {/* Header */}

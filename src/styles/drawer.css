@@ -240,8 +240,8 @@
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
+/* Dark Mode Support - Disabled to prevent automatic dark mode */
+/* @media (prefers-color-scheme: dark) {
   .drawer-content {
     background-color: #1f2937;
     color: #f9fafb;
@@ -278,7 +278,7 @@
     background-color: #4b5563;
     border-color: #6b7280;
   }
-}
+} */
 
 /* Focus Management */
 .drawer-content:focus {

@@ -1,152 +1,298 @@
 "use client";
 
 import React from "react";
-import { cn } from "@/lib/utils";
-import { useResponsive } from "@/hooks/useResponsive";
-import { Container } from "./Container";
+import { Box, Paper, Typography } from "@mui/material";
+import { designSystem } from "@/styles/design-system";
 
 interface CardProps {
-  variant?: "default" | "elevated" | "outlined" | "filled" | "bordered";
-  size?: "sm" | "md" | "lg";
   children: React.ReactNode;
+  title?: string;
+  subtitle?: string;
+  variant?: "default" | "elevated" | "outlined" | "filled";
+  size?: "sm" | "md" | "lg";
+  headerAction?: React.ReactNode;
+  footer?: React.ReactNode;
   className?: string;
-  onClick?: () => void;
-  hover?: boolean;
-  padding?: "none" | "sm" | "md" | "lg" | "xl";
-  shadow?: "none" | "sm" | "md" | "lg";
 }
 
-export function Card({
-  variant = "default",
+const Card: React.FC<CardProps> = ({
   children,
+  title,
+  subtitle,
+  variant = "default",
+  size = "md",
+  headerAction,
+  footer,
   className,
-  onClick,
-  hover = false,
-  padding = "md",
-  shadow = "sm",
-}: CardProps) {
-  const { isMobile } = useResponsive();
-
-  const getPaddingStyles = () => {
-    if (padding === "none") return "";
-
-    switch (padding) {
-      case "sm":
-        return isMobile ? "p-3" : "p-4";
-      case "lg":
-        return isMobile ? "p-6" : "p-8";
-      case "xl":
-        return isMobile ? "p-8" : "p-12";
-      default:
-        return isMobile ? "p-4" : "p-6";
-    }
-  };
-
-  // Map Card variants to Container variants
-  const getContainerVariant = () => {
+}) => {
+  const getVariantStyles = () => {
     switch (variant) {
       case "elevated":
-        return "elevated";
+        return {
+          background: designSystem.colors.surface.primary,
+          border: "none",
+          boxShadow: designSystem.shadows.lg,
+          "&:hover": {
+            boxShadow: designSystem.shadows.xl,
+            transform: "translateY(-2px)",
+          },
+        };
       case "outlined":
-        return "bordered";
+        return {
+          background: designSystem.colors.surface.primary,
+          border: `1px solid ${designSystem.colors.neutral[200]}`,
+          boxShadow: "none",
+          "&:hover": {
+            borderColor: designSystem.colors.neutral[300],
+            boxShadow: designSystem.shadows.sm,
+          },
+        };
       case "filled":
-        return "filled";
-      case "bordered":
-        return "bordered";
+        return {
+          background: designSystem.colors.surface.secondary,
+          border: "none",
+          boxShadow: "none",
+          "&:hover": {
+            background: designSystem.colors.surface.tertiary,
+          },
+        };
       default:
-        return "card";
+        return {
+          background: designSystem.colors.surface.primary,
+          border: `1px solid ${designSystem.colors.neutral[200]}`,
+          boxShadow: designSystem.shadows.sm,
+          "&:hover": {
+            boxShadow: designSystem.shadows.md,
+            borderColor: designSystem.colors.neutral[300],
+          },
+        };
     }
   };
 
-  const cardStyles = cn(
-    getPaddingStyles(),
-    hover && "hover:shadow-md hover:scale-[1.02]",
-    onClick && "cursor-pointer",
-    className
-  );
-
-  const Component = onClick ? "button" : "div";
-  const componentProps = onClick ? { onClick, type: "button" as const } : {};
+  const getSizeStyles = () => {
+    switch (size) {
+      case "sm":
+        return {
+          padding: designSystem.spacing.md,
+          borderRadius: designSystem.borderRadius.md,
+        };
+      case "lg":
+        return {
+          padding: designSystem.spacing.xl,
+          borderRadius: designSystem.borderRadius.xl,
+        };
+      default:
+        return {
+          padding: designSystem.spacing.lg,
+          borderRadius: designSystem.borderRadius.lg,
+        };
+    }
+  };
 
   return (
-    <Container
-      variant={getContainerVariant()}
-      shadow={shadow}
-      hover={hover}
-      className={cardStyles}
-      as={Component}
-      {...componentProps}
+    <Paper
+      elevation={0}
+      sx={{
+        ...getVariantStyles(),
+        ...getSizeStyles(),
+        transition: designSystem.transitions.normal,
+        overflow: "hidden",
+        position: "relative",
+        "&::before":
+          variant === "elevated"
+            ? {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "3px",
+                background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 100%)`,
+                borderRadius: `${getSizeStyles().borderRadius} ${
+                  getSizeStyles().borderRadius
+                } 0 0`,
+              }
+            : {},
+      }}
+      className={className}
     >
-      {children}
-    </Container>
+      {/* Header Section */}
+      {(title || subtitle || headerAction) && (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: title || subtitle ? designSystem.spacing.lg : 0,
+            paddingBottom: title || subtitle ? designSystem.spacing.md : 0,
+            borderBottom:
+              title || subtitle
+                ? `1px solid ${designSystem.colors.neutral[200]}`
+                : "none",
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            {title && (
+              <Typography
+                variant="h5"
+                sx={{
+                  ...designSystem.typography.h5,
+                  color: designSystem.colors.text.primary,
+                  marginBottom: subtitle ? designSystem.spacing.xs : 0,
+                }}
+              >
+                {title}
+              </Typography>
+            )}
+            {subtitle && (
+              <Typography
+                variant="body2"
+                sx={{
+                  ...designSystem.typography.body2,
+                  color: designSystem.colors.text.secondary,
+                }}
+              >
+                {subtitle}
+              </Typography>
+            )}
+          </Box>
+          {headerAction && (
+            <Box sx={{ marginLeft: designSystem.spacing.md }}>
+              {headerAction}
+            </Box>
+          )}
+        </Box>
+      )}
+
+      {/* Content Section */}
+      <Box sx={{ position: "relative", zIndex: 1 }}>{children}</Box>
+
+      {/* Footer Section */}
+      {footer && (
+        <Box
+          sx={{
+            marginTop: designSystem.spacing.lg,
+            paddingTop: designSystem.spacing.md,
+            borderTop: `1px solid ${designSystem.colors.neutral[200]}`,
+          }}
+        >
+          {footer}
+        </Box>
+      )}
+    </Paper>
   );
-}
+};
 
 // Card Header Component
 interface CardHeaderProps {
   children: React.ReactNode;
+  icon?: React.ReactNode;
+  action?: React.ReactNode;
   className?: string;
-  align?: "left" | "center" | "right";
 }
 
-export function CardHeader({
+const CardHeader: React.FC<CardHeaderProps> = ({
   children,
+  icon,
+  action,
   className,
-  align = "left",
-}: CardHeaderProps) {
-  const alignClasses = {
-    left: "text-left",
-    center: "text-center",
-    right: "text-right",
+}) => (
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: designSystem.spacing.lg,
+      paddingBottom: designSystem.spacing.md,
+      borderBottom: `1px solid ${designSystem.colors.neutral[200]}`,
+    }}
+    className={className}
+  >
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flex: 1,
+      }}
+    >
+      {icon && (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "40px",
+            height: "40px",
+            borderRadius: designSystem.borderRadius.md,
+            background: designSystem.colors.primary[50],
+            color: designSystem.colors.primary[600],
+            marginRight: designSystem.spacing.md,
+          }}
+        >
+          {icon}
+        </Box>
+      )}
+      <Box sx={{ flex: 1 }}>{children}</Box>
+    </Box>
+    {action && <Box sx={{ marginLeft: designSystem.spacing.md }}>{action}</Box>}
+  </Box>
+);
+
+// Card Content Component
+interface CardContentProps {
+  children: React.ReactNode;
+  padding?: "none" | "sm" | "md" | "lg";
+  className?: string;
+}
+
+const CardContent: React.FC<CardContentProps> = ({
+  children,
+  padding = "md",
+  className,
+}) => {
+  const getPadding = () => {
+    switch (padding) {
+      case "none":
+        return 0;
+      case "sm":
+        return designSystem.spacing.sm;
+      case "lg":
+        return designSystem.spacing.lg;
+      default:
+        return designSystem.spacing.md;
+    }
   };
 
   return (
-    <div className={cn("mb-4", alignClasses[align], className)}>{children}</div>
+    <Box
+      sx={{
+        padding: getPadding(),
+      }}
+      className={className}
+    >
+      {children}
+    </Box>
   );
-}
-
-// Card Body Component
-interface CardBodyProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function CardBody({ children, className }: CardBodyProps) {
-  return <div className={cn("", className)}>{children}</div>;
-}
+};
 
 // Card Footer Component
 interface CardFooterProps {
   children: React.ReactNode;
   className?: string;
-  align?: "left" | "center" | "right";
 }
 
-export function CardFooter({
-  children,
-  className,
-  align = "left",
-}: CardFooterProps) {
-  const alignClasses = {
-    left: "justify-start",
-    center: "justify-center",
-    right: "justify-end",
-  };
+const CardFooter: React.FC<CardFooterProps> = ({ children, className }) => (
+  <Box
+    sx={{
+      marginTop: designSystem.spacing.lg,
+      paddingTop: designSystem.spacing.md,
+      borderTop: `1px solid ${designSystem.colors.neutral[200]}`,
+    }}
+    className={className}
+  >
+    {children}
+  </Box>
+);
 
-  return (
-    <div
-      className={cn(
-        "mt-4 pt-4 border-t border-gray-200 flex",
-        alignClasses[align],
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-}
-
-// Compound component exports
-Card.Header = CardHeader;
-Card.Body = CardBody;
-Card.Footer = CardFooter;
+export { Card, CardHeader, CardContent as CardBody, CardFooter };
+export default Card;

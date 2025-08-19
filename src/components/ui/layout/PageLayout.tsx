@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
-import { Typography, Box, Breadcrumbs } from "@mui/material";
+import { Typography, Box, Breadcrumbs, Paper } from "@mui/material";
 import { Container } from "@/components/ui/core/Container";
 import BreadcrumbItem from "../navigation/BreadcrumbItem";
 import { cn } from "@/lib/utils";
+import { designSystem } from "@/styles/design-system";
 
 interface BreadcrumbItemData {
   label: string;
@@ -28,40 +29,95 @@ export default function PageLayout({
   maxWidth = "lg",
   className,
 }: PageLayoutProps) {
-  // Extract breadcrumb rendering logic
+  // Extract breadcrumb rendering logic with improved design
   const renderBreadcrumbs = (breadcrumbItems: BreadcrumbItemData[]) => (
-    <Box className="mb-6 mt-8">
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        className="p-3 bg-gray-50 rounded-lg"
+    <Box
+      className="mb-8 mt-6"
+      sx={{
+        "& .MuiBreadcrumbs-root": {
+          "& .MuiBreadcrumbs-ol": {
+            gap: designSystem.spacing.sm,
+          },
+        },
+      }}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          background: designSystem.colors.surface.secondary,
+          border: `1px solid ${designSystem.colors.neutral[200]}`,
+          borderRadius: designSystem.borderRadius.lg,
+          padding: designSystem.spacing.md,
+          "&:hover": {
+            background: designSystem.colors.surface.tertiary,
+            borderColor: designSystem.colors.neutral[300],
+            transition: designSystem.transitions.normal,
+          },
+        }}
       >
-        {breadcrumbItems.map((crumb, index) => (
-          <BreadcrumbItem
-            key={`${crumb.label}-${index}`}
-            label={crumb.label}
-            href={crumb.href}
-            isActive={index === breadcrumbItems.length - 1}
-          />
-        ))}
-      </Breadcrumbs>
+        <Breadcrumbs
+          aria-label="breadcrumb"
+          separator={
+            <Box
+              component="span"
+              sx={{
+                width: "4px",
+                height: "4px",
+                borderRadius: "50%",
+                background: designSystem.colors.neutral[400],
+                display: "inline-block",
+              }}
+            />
+          }
+        >
+          {breadcrumbItems.map((crumb, index) => (
+            <BreadcrumbItem
+              key={`${crumb.label}-${index}`}
+              label={crumb.label}
+              href={crumb.href}
+              isActive={index === breadcrumbItems.length - 1}
+            />
+          ))}
+        </Breadcrumbs>
+      </Paper>
     </Box>
   );
 
   return (
     <Container
       maxWidth={maxWidth}
-      padding="md"
+      padding="lg"
       className={cn("page-layout-container", className)}
     >
       {/* Breadcrumbs */}
       {breadcrumbs && breadcrumbs.length > 0 && renderBreadcrumbs(breadcrumbs)}
 
-      {/* Page Header */}
-      <Box className="mb-8">
+      {/* Page Header with improved typography and spacing */}
+      <Box
+        className="mb-10"
+        sx={{
+          position: "relative",
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            bottom: "-24px",
+            left: 0,
+            right: 0,
+            height: "1px",
+            background: `linear-gradient(90deg, transparent 0%, ${designSystem.colors.neutral[200]} 50%, transparent 100%)`,
+          },
+        }}
+      >
         <Typography
-          variant="h4"
+          variant="h1"
           component="h1"
-          className="font-bold text-gray-800 mb-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl"
+          sx={{
+            ...designSystem.typography.h1,
+            color: designSystem.colors.text.primary,
+            marginBottom: designSystem.spacing.md,
+            fontWeight: 700,
+            textShadow: "none",
+          }}
         >
           {title}
         </Typography>
@@ -69,15 +125,13 @@ export default function PageLayout({
         {description && (
           <Typography
             variant="body1"
-            color="text.secondary"
-            className="max-w-3xl text-sm sm:text-base text-gray-600 leading-relaxed mb-1"
             sx={{
-              display: "-webkit-box",
-              WebkitLineClamp: 3,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              minHeight: "4.5rem", // Ensures consistent height for 3 lines
+              ...designSystem.typography.body1,
+              color: designSystem.colors.text.secondary,
+              maxWidth: "48rem",
+              lineHeight: 1.7,
+              marginBottom: 0,
+              opacity: 0.9,
             }}
           >
             {description}
@@ -85,8 +139,15 @@ export default function PageLayout({
         )}
       </Box>
 
-      {/* Page Content */}
-      <Box>{children}</Box>
+      {/* Page Content with improved spacing */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {children}
+      </Box>
     </Container>
   );
 }
