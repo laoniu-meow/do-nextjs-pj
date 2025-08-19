@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import Image from "next/image";
 import { ResponsiveHeader } from "./ResponsiveLayout";
 import { useCompanyLogo } from "@/hooks/useCompanyLogo";
 import { useStyling } from "@/hooks/useStyling";
+import { useResponsive } from "@/hooks/useResponsive";
 import { iconLibrary } from "@/components/ui/config/iconLibrary";
 
 interface HeaderProps {
@@ -95,41 +96,20 @@ export function Header({
   quickButtonShape = "rounded",
   quickButtonShadow = "light",
   quickButtonGap = "8px",
-  menuButtonBgColor = "#3b82f6",
-  menuButtonIconColor = "#ffffff",
-  menuButtonHoverBgColor = "#2563eb",
-  menuButtonHoverIconColor = "#ffffff",
+  menuButtonBgColor = "var(--color-neutral-200)",
+  menuButtonIconColor = "var(--color-neutral-700)",
+  menuButtonHoverBgColor = "var(--color-neutral-300)",
+  menuButtonHoverIconColor = "var(--color-neutral-800)",
   menuButtonIconId = "menu",
   menuButtonShape = "rounded",
   menuButtonShadow = "light",
 }: HeaderProps) {
-  const [currentDevice, setCurrentDevice] = useState<
-    "desktop" | "tablet" | "mobile"
-  >("desktop");
-
+  const { deviceType } = useResponsive();
   const { getShadow, getShape } = useStyling();
 
-  // Detect device size on mount and resize
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) {
-        setCurrentDevice("desktop");
-      } else if (width >= 768) {
-        setCurrentDevice("tablet");
-      } else {
-        setCurrentDevice("mobile");
-      }
-    };
-
-    handleResize(); // Set initial device
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   // Get current device settings
-  const getCurrentSettings = () => {
-    switch (currentDevice) {
+  const getCurrentSettings = useMemo(() => {
+    switch (deviceType) {
       case "tablet":
         return tablet;
       case "mobile":
@@ -137,9 +117,15 @@ export function Header({
       default:
         return desktop;
     }
-  };
+  }, [deviceType, desktop, tablet, mobile]);
 
-  const currentSettings = getCurrentSettings();
+  // Debug current device and settings
+  useEffect(() => {
+    console.log("Current device:", deviceType);
+    console.log("Current settings:", getCurrentSettings);
+  }, [deviceType, getCurrentSettings]);
+
+  const currentSettings = getCurrentSettings;
 
   const {
     logoUrl,
@@ -149,7 +135,10 @@ export function Header({
 
   // Get the selected menu button icon from the icon library
   const selectedMenuIcon = useMemo(() => {
-    return iconLibrary.find(icon => icon.id === menuButtonIconId) || iconLibrary.find(icon => icon.id === "menu");
+    const icon =
+      iconLibrary.find((icon) => icon.id === menuButtonIconId) ||
+      iconLibrary.find((icon) => icon.id === "menu");
+    return icon;
   }, [menuButtonIconId]);
 
   // Memoize header styles to prevent unnecessary recalculations
@@ -159,24 +148,6 @@ export function Header({
       backgroundColor,
       boxShadow: getShadow(dropShadow),
       padding: `${currentSettings.paddingVertical}px ${currentSettings.paddingHorizontal}px`,
-      position: "relative",
-      width: "100%",
-      maxWidth: "100%",
-      overflow: "hidden",
-      boxSizing: "border-box",
-      outline: "none",
-      border: "none",
-      fontFamily: "inherit",
-      fontSize: "inherit",
-      lineHeight: "inherit",
-      textDecoration: "none",
-      listStyle: "none",
-      letterSpacing: "normal",
-      wordSpacing: "normal",
-      textAlign: "left",
-      verticalAlign: "baseline",
-      transform: "none",
-      isolation: "isolate",
     }),
     [
       currentSettings.height,
@@ -190,10 +161,7 @@ export function Header({
 
   return (
     <ResponsiveHeader sticky={false} transparent={false}>
-      <div
-        style={headerStyles}
-        className="header-container no-margin no-padding no-border no-outline"
-      >
+      <div style={headerStyles} className="header-container">
         {/* Logo - Left side */}
         <div className="header-logo-container">
           {logoLoading ? (

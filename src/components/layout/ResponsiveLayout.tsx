@@ -174,6 +174,7 @@ export function ResponsiveHeader({
     maxWidth: "100%",
     overflow: "hidden",
     boxSizing: "border-box",
+    margin: 0,
     outline: "none",
     border: "none",
     fontFamily: "inherit",

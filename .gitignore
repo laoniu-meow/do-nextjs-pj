@@ -42,4 +42,5 @@ next-env.d.ts
 
 # Media folder
 /src/assets/*
+/src/scripts/*
 

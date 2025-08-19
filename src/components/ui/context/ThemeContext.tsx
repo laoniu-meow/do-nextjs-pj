@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, ReactNode } from "react";
+import { designSystem } from "../../../styles/design-system";
 
 // Theme interface
 interface Theme {
@@ -90,57 +91,57 @@ interface Theme {
   };
 }
 
-// Default theme
+// Default theme using design system values
 const defaultTheme: Theme = {
   colors: {
-    primary: "#3B82F6",
-    secondary: "#6B7280",
-    success: "#10B981",
-    warning: "#F59E0B",
-    error: "#EF4444",
-    info: "#3B82F6",
+    primary: designSystem.colors.primary[500],
+    secondary: designSystem.colors.neutral[500],
+    success: designSystem.colors.success[500],
+    warning: designSystem.colors.warning[500],
+    error: designSystem.colors.error[500],
+    info: designSystem.colors.primary[500],
     background: {
-      primary: "#FFFFFF",
-      secondary: "#F9FAFB",
-      tertiary: "#F3F4F6",
+      primary: designSystem.colors.background.primary,
+      secondary: designSystem.colors.background.secondary,
+      tertiary: designSystem.colors.background.tertiary,
     },
     text: {
-      primary: "#111827",
-      secondary: "#374151",
-      muted: "#6B7280",
-      inverse: "#FFFFFF",
+      primary: designSystem.colors.text.primary,
+      secondary: designSystem.colors.text.secondary,
+      muted: designSystem.colors.text.tertiary,
+      inverse: designSystem.colors.text.inverse,
     },
     border: {
-      primary: "#D1D5DB",
-      secondary: "#E5E7EB",
-      muted: "#F3F4F6",
+      primary: designSystem.colors.neutral[300],
+      secondary: designSystem.colors.neutral[200],
+      muted: designSystem.colors.neutral[100],
     },
   },
   spacing: {
-    xs: "4px",
-    sm: "8px",
-    md: "16px",
-    lg: "24px",
-    xl: "32px",
-    xxl: "48px",
+    xs: designSystem.spacing.XS,
+    sm: designSystem.spacing.SM,
+    md: designSystem.spacing.MD,
+    lg: designSystem.spacing.LG,
+    xl: designSystem.spacing.XL,
+    xxl: designSystem.spacing["2XL"],
   },
   typography: {
     fontFamily: {
-      sans: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
+      sans: designSystem.typography.fontFamily.BASE,
       serif: "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
-      mono: "ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace",
+      mono: designSystem.typography.fontFamily.MONO,
     },
     fontSize: {
-      xs: "12px",
-      sm: "14px",
-      base: "16px",
-      lg: "18px",
-      xl: "20px",
-      "2xl": "24px",
-      "3xl": "30px",
-      "4xl": "36px",
-      "5xl": "48px",
-      "6xl": "60px",
+      xs: designSystem.typography.fontSize.CAPTION,
+      sm: designSystem.typography.fontSize.BODY2,
+      base: designSystem.typography.fontSize.BODY1,
+      lg: designSystem.typography.fontSize.H5,
+      xl: designSystem.typography.fontSize.H4,
+      "2xl": designSystem.typography.fontSize.H3,
+      "3xl": designSystem.typography.fontSize.H2,
+      "4xl": designSystem.typography.fontSize.H1,
+      "5xl": "3rem",
+      "6xl": "3.75rem",
     },
     fontWeight: {
       light: 300,
@@ -157,18 +158,18 @@ const defaultTheme: Theme = {
     },
   },
   shadows: {
-    sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-    md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-    lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-    xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-    "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+    sm: designSystem.shadows.sm,
+    md: designSystem.shadows.md,
+    lg: designSystem.shadows.lg,
+    xl: designSystem.shadows.xl,
+    "2xl": designSystem.shadows["2xl"],
   },
   borderRadius: {
-    sm: "4px",
-    md: "6px",
-    lg: "8px",
-    xl: "12px",
-    full: "9999px",
+    sm: designSystem.borderRadius.sm,
+    md: designSystem.borderRadius.md,
+    lg: designSystem.borderRadius.lg,
+    xl: designSystem.borderRadius.xl,
+    full: designSystem.borderRadius.full,
   },
   breakpoints: {
     mobile: "640px",
@@ -183,12 +184,12 @@ const adminTheme: Theme = {
   ...defaultTheme,
   colors: {
     ...defaultTheme.colors,
-    primary: "#1F2937",
-    secondary: "#4B5563",
+    primary: designSystem.colors.neutral[800],
+    secondary: designSystem.colors.neutral[600],
     background: {
-      primary: "#FFFFFF",
-      secondary: "#F9FAFB",
-      tertiary: "#F3F4F6",
+      primary: designSystem.colors.surface.primary,
+      secondary: designSystem.colors.surface.secondary,
+      tertiary: designSystem.colors.surface.tertiary,
     },
   },
 };

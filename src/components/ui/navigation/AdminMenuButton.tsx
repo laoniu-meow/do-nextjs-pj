@@ -111,7 +111,7 @@ export default function AdminMenuButton({
           sx={{
             width: "100%",
             height: "100%",
-            p: SPACING.sm,
+            p: SPACING.SM,
             display: "flex",
             justifyContent: "center",
           }}

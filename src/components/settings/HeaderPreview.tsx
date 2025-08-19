@@ -62,6 +62,7 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
     overflow: "hidden",
     position: "relative",
     width: "100%",
+    maxWidth: "100%",
     height: "800px",
     padding: 0,
     boxSizing: "border-box",
@@ -86,7 +87,7 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
       <div className="w-full no-margin no-padding no-border">
         <div style={getPreviewContainerStyle()} className="shadow-lg">
           {/* Header Preview - Full width within container */}
-          <div className="w-full overflow-hidden no-margin no-padding no-border">
+          <div className="w-full no-margin no-padding no-border">
             <Header
               desktop={headerSettings.desktop}
               tablet={headerSettings.tablet}

@@ -258,305 +258,332 @@ body {
   box-sizing: border-box;
 }
 
-/* Ensure proper spacing for existing components */
-.admin-layout {
-  min-height: 100vh;
+/* Header Layout Styles - Simple Approach */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
   position: relative;
-  background-color: var(--color-neutral-50) !important;
-}
-
-.admin-content {
-  padding-top: var(--spacing-md);
-  padding-left: var(--spacing-md);
-  padding-right: var(--spacing-md);
-  padding-bottom: var(--spacing-md);
-  background-color: var(--color-neutral-50) !important;
-}
-
-/* Preserve existing MUI drawer styling */
-.MuiDrawer-root .MuiBackdrop-root {
-  pointer-events: auto !important;
-  z-index: 1200 !important;
-}
-
-.MuiDrawer-root .MuiDrawer-paper {
-  z-index: 1201 !important;
-}
-
-/* Ensure content inside MainContainerBox is properly constrained */
-.main-container-box > * {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.main-container-box .space-y-6 {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* Ensure proper width constraints for all containers */
-.container {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-}
-
-/* Ensure the main content area has no gaps */
-main {
-  margin: 0;
+  min-height: 64px;
   padding: 0;
-  width: 100%;
+  margin: 0;
   box-sizing: border-box;
+  /* Simple flexbox layout */
+  flex-wrap: nowrap;
+  overflow: visible;
 }
 
-/* Enhanced form styling */
-.form-field {
-  margin-bottom: var(--spacing-md);
+/* Logo - Left side, no padding/margin */
+.header-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  height: 100%;
+  min-height: 40px;
+  /* No padding or margin */
+  padding: 0;
+  margin: 0;
 }
 
-.form-field label {
+.header-logo-container img,
+.header-logo-container > div {
   display: block;
-  margin-bottom: var(--spacing-xs);
-  font-weight: 500;
-  color: var(--color-neutral-700);
+  max-width: 100%;
+  height: auto;
+  /* No padding or margin */
+  padding: 0;
+  margin: 0;
 }
 
-.form-field input,
-.form-field textarea,
-.form-field select {
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-neutral-300);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  transition: var(--transition-normal);
-}
-
-.form-field input:focus,
-.form-field textarea:focus,
-.form-field select:focus {
-  outline: none;
-  border-color: var(--color-primary-500);
-  box-shadow: 0 0 0 3px var(--color-primary-100);
-}
-
-/* Button enhancements */
-.btn {
-  display: inline-flex;
+/* Quick Navigation - Center */
+.header-quick-buttons {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: var(--transition-normal);
-  text-transform: none;
+  flex: 1;
+  height: 100%;
+  gap: 8px;
+  /* Center positioning */
+  margin: 0 auto;
 }
 
-.btn-primary {
-  background-color: var(--color-primary-600);
-  color: white;
+/* Menu Button - Right side, no padding/margin */
+.header-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  height: 100%;
+  min-width: 40px;
+  min-height: 40px;
+  /* No padding or margin */
+  padding: 0;
+  margin: 0;
 }
 
-.btn-primary:hover {
-  background-color: var(--color-primary-700);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
-}
-
-.btn-secondary {
-  background-color: var(--color-neutral-100);
-  color: var(--color-neutral-700);
-  border: 1px solid var(--color-neutral-300);
-}
-
-.btn-secondary:hover {
-  background-color: var(--color-neutral-200);
-  border-color: var(--color-neutral-400);
-}
-
-/* Card enhancements */
-.card {
+/* Ensure header has proper spacing and alignment */
+.responsive-header {
+  border-bottom: 1px solid var(--color-neutral-200);
   background: var(--color-neutral-50);
-  border: 1px solid var(--color-neutral-200);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  position: relative;
+  box-sizing: border-box;
+  /* Ensure content stays within boundaries */
+  overflow: visible;
 }
 
-.card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-neutral-300);
+.header-quick-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Use flexbox instead of absolute positioning */
+  position: relative;
+  flex: 1;
+  z-index: 1;
+  gap: 8px;
+  height: 100%;
+  pointer-events: auto;
+  /* Ensure buttons stay within center area */
+  max-width: 40%;
+  margin: 0 auto;
+  /* Force proper wrapping */
+  overflow: hidden;
+  flex-wrap: nowrap;
 }
 
-/* Focus states for accessibility */
-*:focus {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
+.header-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  z-index: 10;
+  height: 100%;
+  min-width: 40px;
+  min-height: 40px;
+  /* Ensure menu button stays within right boundary */
+  max-width: 30%;
+  /* Force proper wrapping */
+  overflow: hidden;
 }
 
-/* Ensure Settings Panel is always on top */
-.settings-panel {
-  z-index: 99999999 !important;
-  position: fixed !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+.header-menu-button button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: inherit;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 40px;
+  min-height: 40px;
+  /* No padding or margin */
+  padding: 0;
+  margin: 0;
+  /* Ensure button doesn't extend beyond container */
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }
 
-.settings-panel-header {
-  z-index: 99999999 !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+/* Responsive adjustments for header layout */
+@media (max-width: 768px) {
+  .header-quick-buttons {
+    /* Keep relative positioning for tablet */
+    position: relative;
+    flex: 1;
+    justify-content: center;
+    height: auto;
+    max-width: 50%;
+  }
+
+  .header-container {
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  /* Ensure menu button is visible on tablet */
+  .header-menu-button {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 10 !important;
+    max-width: 25%;
+  }
+
+  .header-logo-container {
+    max-width: 25%;
+  }
 }
 
-/* Force visibility for all settings panels */
-[class*="settings-panel"] {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  z-index: 99999999 !important;
+/* Quick navigation button enhancements */
+.header-quick-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: inherit;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  min-width: 40px;
+  min-height: 40px;
 }
 
-/* Ensure Settings Panel overlay is always on top */
-.fixed.inset-0[style*="z-index"] {
-  z-index: 99999999 !important;
+.header-quick-buttons button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Force Settings Panel above all Material-UI components */
-.settings-panel,
-.settings-panel *,
-[class*="settings-panel"] {
-  z-index: 99999999 !important;
+.header-quick-buttons button:active {
+  transform: scale(0.98);
+}
+
+.header-quick-buttons button svg {
+  width: 20px;
+  height: 20px;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Menu button enhancements */
+.header-menu-button button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: inherit;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.header-menu-button button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.header-menu-button button:active {
+  transform: scale(0.98);
+}
+
+.header-menu-button button svg,
+.header-menu-button button > * {
+  width: 20px;
+  height: 20px;
+  transition: color 0.2s ease-in-out;
+}
+
+@media (max-width: 480px) {
+  .header-quick-buttons {
+    gap: 4px;
+    max-width: 60%;
+  }
+
+  .header-container {
+    gap: 4px;
+    padding: 0 8px;
+  }
+
+  /* Ensure menu button is visible on mobile */
+  .header-menu-button {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 10 !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    max-width: 20%;
+  }
+
+  .header-menu-button button {
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+
+  .header-logo-container {
+    max-width: 20%;
+  }
+}
+
+/* Header Preview specific styling - Simple Approach */
+.header-preview-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   position: relative !important;
 }
 
-/* Settings Panel scrollbar styling */
-.settings-panel .overflow-y-auto {
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
-  height: 400px !important;
-  min-height: 300px !important;
-  max-height: calc(90vh - 200px) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+.header-preview-container .responsive-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  min-height: 64px !important;
+  box-sizing: border-box !important;
 }
 
-.settings-panel .overflow-y-auto::-webkit-scrollbar {
-  width: 8px;
-}
-
-.settings-panel .overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-
-.settings-panel .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-.settings-panel .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Ensure content area is scrollable */
-.settings-panel .design-system {
-  height: 400px !important;
-  min-height: 300px !important;
-  max-height: calc(90vh - 200px) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-}
-
-/* Remove any red borders and ensure clean Settings Panel styling */
-.settings-panel,
-.settings-panel * {
-  border-color: transparent !important;
-  outline-color: transparent !important;
-  box-shadow: none !important;
-}
-
-.settings-panel {
-  border: none !important;
-  outline: none !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-}
-
-/* Override any focus styles that might add red borders */
-.settings-panel:focus,
-.settings-panel:focus-within,
-.settings-panel *:focus {
-  border-color: transparent !important;
-  outline-color: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Ensure no red colors anywhere in the Settings Panel */
-.settings-panel,
-.settings-panel * {
-  color: inherit !important;
-}
-
-/* Ensure Settings Panel is rendered at document body level */
-body > .settings-panel,
-body > [class*="settings-panel"] {
-  position: fixed !important;
-  z-index: 99999999 !important;
-}
-
-/* Ensure Settings Panel is above MainContainerBox and all other components */
-.settings-panel {
-  position: fixed !important;
-  z-index: 99999999 !important;
-  isolation: isolate !important;
-  transform: translateZ(0) !important;
-  will-change: transform !important;
-}
-
-/* Force Settings Panel to break out of any stacking contexts */
-.settings-panel,
-.settings-panel * {
-  transform: translateZ(0) !important;
-  will-change: transform !important;
-}
-
-/* Override any Material-UI z-index */
-.MuiPaper-root,
-.MuiBox-root,
-.MuiContainer-root {
-  z-index: auto !important;
-}
-
-/* Prevent parent containers from clipping the Settings Panel */
-.admin-layout,
-.admin-content,
-.main-container-box,
-.container {
+.header-preview-container .header-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
   overflow: visible !important;
-  clip: auto !important;
-  clip-path: none !important;
+  position: relative !important;
+}
+
+/* Simple header element styling for preview */
+.header-preview-container .header-logo-container {
+  /* Logo container respects logo dimensions */
+  width: auto !important;
+  max-width: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.header-preview-container .header-quick-buttons {
+  /* Center navigation */
+  flex: 1 !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.header-preview-container .header-menu-button {
+  /* Right menu button */
+  width: auto !important;
+  max-width: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Force header preview alignment */
+.header-preview-container *,
+.header-preview-container *::before,
+.header-preview-container *::after {
+  box-sizing: border-box !important;
 }
 
 /* Ensure all modal overlays have proper z-index */
 .fixed.inset-0 {
   z-index: 999998 !important;
-}
-
-/* Ensure proper layering for admin components */
-.admin-layout {
-  z-index: 1;
-}
-
-.admin-content {
-  z-index: 1;
 }
 
 /* Dark mode support (future enhancement) */

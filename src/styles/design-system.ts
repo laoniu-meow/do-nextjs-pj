@@ -2,6 +2,15 @@
 export const designSystem = {
   // Spacing Scale (4px base unit)
   spacing: {
+    XS: '4px',
+    SM: '8px',
+    MD: '16px',
+    LG: '24px',
+    XL: '32px',
+    '2XL': '48px',
+    '3XL': '64px',
+    '4XL': '80px',
+    // Add lowercase keys for backward compatibility
     xs: '4px',
     sm: '8px',
     md: '16px',
@@ -12,58 +21,107 @@ export const designSystem = {
     '4xl': '80px',
   },
 
-  // Typography Scale
+  // Typography
   typography: {
+    fontFamily: {
+      BASE: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      MONO: '"SF Mono", Monaco, Inconsolata, "Roboto Mono", "Source Code Pro", monospace',
+    },
+    fontSize: {
+      H1: '2.5rem',
+      H2: '2rem',
+      H3: '1.5rem',
+      H4: '1.25rem',
+      H5: '1.125rem',
+      H6: '1rem',
+      BODY1: '1rem',
+      BODY2: '0.875rem',
+      CAPTION: '0.75rem',
+    },
+    lineHeight: {
+      H1: '1.2',
+      H2: '1.25',
+      H3: '1.33',
+      H4: '1.4',
+      H5: '1.44',
+      H6: '1.5',
+      BODY1: '1.6',
+      BODY2: '1.57',
+      CAPTION: '1.5',
+    },
+    fontWeight: {
+      H1: 700,
+      H2: 600,
+      H3: 600,
+      H4: 600,
+      H5: 600,
+      H6: 600,
+      BODY1: 400,
+      BODY2: 400,
+      CAPTION: 400,
+    },
+    letterSpacing: {
+      H1: '-0.025em',
+      H2: '-0.02em',
+      H3: '-0.015em',
+      H4: '-0.01em',
+      H5: '-0.01em',
+      H6: '0',
+      BODY1: '0.01em',
+      BODY2: '0.01em',
+      CAPTION: '0.02em',
+    },
+    // Add the old structure for backward compatibility
     h1: {
-      fontSize: '2.5rem', // 40px
+      fontSize: '2.5rem',
       lineHeight: '1.2',
       fontWeight: 700,
       letterSpacing: '-0.025em',
     },
     h2: {
-      fontSize: '2rem', // 32px
+      fontSize: '2rem',
       lineHeight: '1.25',
       fontWeight: 600,
       letterSpacing: '-0.02em',
     },
     h3: {
-      fontSize: '1.5rem', // 24px
+      fontSize: '1.5rem',
       lineHeight: '1.33',
       fontWeight: 600,
       letterSpacing: '-0.015em',
     },
     h4: {
-      fontSize: '1.25rem', // 20px
+      fontSize: '1.25rem',
       lineHeight: '1.4',
       fontWeight: 600,
       letterSpacing: '-0.01em',
     },
     h5: {
-      fontSize: '1.125rem', // 18px
+      fontSize: '1.125rem',
       lineHeight: '1.44',
       fontWeight: 600,
       letterSpacing: '-0.01em',
     },
     h6: {
-      fontSize: '1rem', // 16px
+      fontSize: '1rem',
       lineHeight: '1.5',
       fontWeight: 600,
       letterSpacing: '0',
     },
     body1: {
-      fontSize: '1rem', // 16px
+      fontSize: '1rem',
       lineHeight: '1.6',
       fontWeight: 400,
       letterSpacing: '0.01em',
     },
     body2: {
-      fontSize: '0.875rem', // 14px
+      fontSize: '0.875rem',
       lineHeight: '1.57',
       fontWeight: 400,
       letterSpacing: '0.01em',
     },
     caption: {
-      fontSize: '0.75rem', // 12px
+      fontSize: '0.75rem',
       lineHeight: '1.5',
       fontWeight: 400,
       letterSpacing: '0.02em',
@@ -102,11 +160,6 @@ export const designSystem = {
 
     // Semantic Colors
     success: {
-      50: '#f0fdf4',
-      100: '#dcfce7',
-      200: '#bbf7d0',
-      300: '#86efac',
-      400: '#4ade80',
       500: '#22c55e',
       600: '#16a34a',
       700: '#15803d',
@@ -115,11 +168,6 @@ export const designSystem = {
     },
     
     warning: {
-      50: '#fffbeb',
-      100: '#fef3c7',
-      200: '#fde68a',
-      300: '#fcd34d',
-      400: '#fbbf24',
       500: '#f59e0b',
       600: '#d97706',
       700: '#b45309',
@@ -128,11 +176,6 @@ export const designSystem = {
     },
     
     error: {
-      50: '#fef2f2',
-      100: '#fee2e2',
-      200: '#fecaca',
-      300: '#fca5a5',
-      400: '#f87171',
       500: '#ef4444',
       600: '#dc2626',
       700: '#b91c1c',
@@ -142,25 +185,25 @@ export const designSystem = {
 
     // Background Colors
     background: {
-      primary: '#ffffff',
-      secondary: '#f8fafc',
-      tertiary: '#f1f5f9',
+      primary: '#f8fafc', // neutral-50
+      secondary: '#f1f5f9', // neutral-100
+      tertiary: '#e2e8f0', // neutral-200
     },
 
     // Surface Colors
     surface: {
       primary: '#ffffff',
-      secondary: '#f8fafc',
-      tertiary: '#f1f5f9',
+      secondary: '#f8fafc', // neutral-50
+      tertiary: '#f1f5f9', // neutral-100
       elevated: '#ffffff',
     },
 
     // Text Colors
     text: {
-      primary: '#0f172a',
-      secondary: '#475569',
-      tertiary: '#64748b',
-      disabled: '#94a3b8',
+      primary: '#0f172a', // neutral-900
+      secondary: '#475569', // neutral-600
+      tertiary: '#64748b', // neutral-500
+      disabled: '#94a3b8', // neutral-400
       inverse: '#ffffff',
     },
   },
@@ -193,31 +236,14 @@ export const designSystem = {
     normal: '200ms ease-in-out',
     slow: '300ms ease-in-out',
   },
-
-  // Z-Index Scale
-  zIndex: {
-    hide: -1,
-    auto: 'auto',
-    base: 0,
-    docked: 10,
-    dropdown: 1000,
-    sticky: 1100,
-    banner: 1200,
-    overlay: 1300,
-    modal: 1400,
-    popover: 1500,
-    skipLink: 1600,
-    toast: 1700,
-    tooltip: 1800,
-  },
 };
 
-// Utility functions for consistent spacing
-export const getSpacing = (size: keyof typeof designSystem.spacing) => 
+// Utility functions
+export const getSpacing = (size: keyof typeof designSystem.spacing) =>
   designSystem.spacing[size];
 
-export const getTypography = (variant: keyof typeof designSystem.typography) => 
-  designSystem.typography[variant];
+export const getTypography = (variant: keyof typeof designSystem.typography.fontSize) => 
+  designSystem.typography.fontSize[variant];
 
 export const getColor = (colorPath: string) => {
   const path = colorPath.split('.');
@@ -234,8 +260,11 @@ export const getColor = (colorPath: string) => {
   return typeof value === 'string' ? value : designSystem.colors.neutral[500];
 };
 
-export const getShadow = (size: keyof typeof designSystem.shadows) => 
+export const getShadow = (size: keyof typeof designSystem.shadows) =>
   designSystem.shadows[size];
 
-export const getBorderRadius = (size: keyof typeof designSystem.borderRadius) => 
+export const getBorderRadius = (size: keyof typeof designSystem.borderRadius) =>
   designSystem.borderRadius[size];
+
+export const getTransition = (speed: keyof typeof designSystem.transitions) =>
+  designSystem.transitions[speed];

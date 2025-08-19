@@ -3,9 +3,39 @@
 @import "../styles/design-system.css";
 
 /* Force light theme - override any dark mode */
-html, body, .admin-layout, .admin-content {
+html,
+body,
+.admin-layout,
+.admin-content {
   background-color: #f8fafc !important;
   color: #0f172a !important;
+}
+
+/* Remove default margins and padding from body and html */
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+/* Ensure the root app container has no gaps */
+#__next {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ensure main page container has no gaps */
+main,
+.main {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove any default page margins */
+.page {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Admin Layout Styles */

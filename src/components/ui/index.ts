@@ -19,7 +19,7 @@ export { default as ResponsiveTabs } from "./ResponsiveTabs";
 export type { ResponsiveView } from "./ResponsiveTabs";
 
 // Admin Menu Button - Reusable admin menu button component
-export { default as AdminMenuButton } from "./AdminMenuButton";
+export { default as AdminMenuButton } from "./navigation/AdminMenuButton";
 
 // Settings Panel - Reusable settings panel component
 export { SettingsPanel } from "../settings/SettingsPanel";
@@ -55,6 +55,18 @@ export { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 // Hooks - Custom React hooks
 export { useMenuState } from "./hooks/useMenuState";
+export { 
+  useDesignSystem, 
+  useSpacing, 
+  useColors, 
+  useTypography, 
+  useBorderRadius, 
+  useShadows, 
+  useTransitions, 
+  useBreakpoints, 
+  useZIndex, 
+  useSizes 
+} from "./hooks/useDesignSystem";
 
 // Constants - Theme and configuration values
 export * from "./constants/theme";

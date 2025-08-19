@@ -36,7 +36,7 @@ export default function PageLayout({
       sx={{
         "& .MuiBreadcrumbs-root": {
           "& .MuiBreadcrumbs-ol": {
-            gap: designSystem.spacing.sm,
+            gap: designSystem.spacing.SM,
           },
         },
       }}
@@ -47,7 +47,7 @@ export default function PageLayout({
           background: designSystem.colors.surface.secondary,
           border: `1px solid ${designSystem.colors.neutral[200]}`,
           borderRadius: designSystem.borderRadius.lg,
-          padding: designSystem.spacing.md,
+          padding: designSystem.spacing.MD,
           "&:hover": {
             background: designSystem.colors.surface.tertiary,
             borderColor: designSystem.colors.neutral[300],
@@ -112,9 +112,9 @@ export default function PageLayout({
           variant="h1"
           component="h1"
           sx={{
-            ...designSystem.typography.h1,
+            fontSize: designSystem.typography.fontSize.H1,
             color: designSystem.colors.text.primary,
-            marginBottom: designSystem.spacing.md,
+            marginBottom: designSystem.spacing.MD,
             fontWeight: 700,
             textShadow: "none",
           }}
