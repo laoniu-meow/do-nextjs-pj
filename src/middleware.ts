@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { authenticateRequest } from './lib/auth'
 import { authRateLimiter, apiRateLimiter } from './lib/rate-limit'
+import { authenticateRequestEdge } from './lib/auth-edge'
 
 export function middleware(request: NextRequest) {
   const clientIP = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
@@ -63,8 +63,8 @@ export function middleware(request: NextRequest) {
       return NextResponse.next()
     }
     
-    // Check if user is authenticated
-    const user = authenticateRequest(request)
+    // Check if user is authenticated using Edge Runtime compatible function
+    const user = authenticateRequestEdge(request)
     if (!user) {
       return NextResponse.json(
         { success: false, message: 'Unauthorized' },

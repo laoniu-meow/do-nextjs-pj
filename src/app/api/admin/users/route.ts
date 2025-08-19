@@ -6,6 +6,7 @@ import { logger } from '@/lib/logger'
 export const runtime = 'nodejs'
 
 // GET /api/admin/users - Get all users (admin only)
+// Authentication is handled in middleware
 export async function GET() {
   try {
     const users = await prisma.user.findMany({
