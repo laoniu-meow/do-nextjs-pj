@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Container, GridContainer } from "@/components/ui/core/Container";
 import { cn } from "@/lib/utils";
@@ -76,6 +76,7 @@ export function ResponsiveLayout({
     <Container
       maxWidth={isMobile ? "full" : "lg"}
       padding={isMobile ? "md" : "lg"}
+      className="responsive-layout-container"
     >
       {renderLayout()}
     </Container>
@@ -119,8 +120,9 @@ interface ResponsiveHeaderProps {
 
 export function ResponsiveHeader({
   children,
-  transparent = false,
   className,
+  sticky = false,
+  transparent = false,
   desktop = {
     height: 64,
     paddingHorizontal: 16,
@@ -149,31 +151,10 @@ export function ResponsiveHeader({
     menuButtonSize: 40,
   },
 }: ResponsiveHeaderProps) {
-  const [currentDevice, setCurrentDevice] = useState<
-    "desktop" | "tablet" | "mobile"
-  >("desktop");
+  const { deviceType } = useResponsive();
 
-  // Detect device size on mount and resize
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) {
-        setCurrentDevice("desktop");
-      } else if (width >= 768) {
-        setCurrentDevice("tablet");
-      } else {
-        setCurrentDevice("mobile");
-      }
-    };
-
-    handleResize(); // Set initial device
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Get current device settings
   const getCurrentSettings = () => {
-    switch (currentDevice) {
+    switch (deviceType) {
       case "tablet":
         return tablet;
       case "mobile":
@@ -186,27 +167,26 @@ export function ResponsiveHeader({
   const currentSettings = getCurrentSettings();
 
   const headerStyles: React.CSSProperties = {
+    height: currentSettings.height,
+    padding: `${currentSettings.paddingVertical}px ${currentSettings.paddingHorizontal}px`,
     position: "relative",
-    backgroundColor: transparent ? "transparent" : "white",
-    borderBottom: "none",
-    padding: `${currentSettings.paddingVertical} ${currentSettings.paddingHorizontal}`,
-    margin: "0 !important", // Force zero margin with !important
-    transition: "all 0.2s ease-in-out",
-    width: "100%", // Ensure full width within container
-    height: "auto", // Auto height
-    display: "block", // Block display
-    boxSizing: "border-box", // Include padding in width calculation
-    outline: "none", // Remove any outline
-    border: "none", // Remove any border
-    // Additional aggressive overrides
-    paddingLeft: `${currentSettings.paddingHorizontal} !important`,
-    paddingRight: `${currentSettings.paddingHorizontal} !important`,
-    paddingTop: `${currentSettings.paddingVertical} !important`,
-    paddingBottom: `${currentSettings.paddingVertical} !important`,
-    marginLeft: "0 !important",
-    marginRight: "0 !important",
-    marginTop: "0 !important",
-    marginBottom: "0 !important",
+    width: "100%",
+    maxWidth: "100%",
+    overflow: "hidden",
+    boxSizing: "border-box",
+    outline: "none",
+    border: "none",
+    fontFamily: "inherit",
+    fontSize: "inherit",
+    lineHeight: "inherit",
+    textDecoration: "none",
+    listStyle: "none",
+    letterSpacing: "normal",
+    wordSpacing: "normal",
+    textAlign: "left",
+    verticalAlign: "baseline",
+    transform: "none",
+    isolation: "isolate",
   };
 
   return (
@@ -214,15 +194,12 @@ export function ResponsiveHeader({
       className={`responsive-header ${className || ""}`}
       style={{
         ...headerStyles,
-        // Additional browser reset overrides
-        all: "unset",
-        display: "block",
-        boxSizing: "border-box",
-        // Force zero spacing
-        padding: "0 !important",
-        margin: "0 !important",
-        border: "none !important",
-        outline: "none !important",
+        position: sticky ? "sticky" : "relative",
+        top: sticky ? 0 : "auto",
+        zIndex: sticky ? 100 : "auto",
+        backgroundColor: transparent ? "transparent" : "#ffffff",
+        backdropFilter: transparent ? "blur(8px)" : "none",
+        WebkitBackdropFilter: transparent ? "blur(8px)" : "none",
       }}
     >
       {children}

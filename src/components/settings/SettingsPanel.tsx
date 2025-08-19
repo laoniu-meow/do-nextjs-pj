@@ -9,18 +9,17 @@ interface SettingsPanelProps {
   isOpen: boolean;
   onClose: () => void;
   onApply: () => void;
-  children?: React.ReactNode;
+  children: React.ReactNode;
   title?: string;
-  showHeader?: boolean;
 }
 
-export const SettingsPanel: React.FC<SettingsPanelProps> = ({
+export function SettingsPanel({
   isOpen,
   onClose,
   onApply,
   children,
   title = "Settings Panel",
-}) => {
+}: SettingsPanelProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -39,7 +38,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       const isMobile = window.innerWidth <= 768;
       const panelWidth = isMobile
         ? Math.min(window.innerWidth - 20, 400)
-        : Math.min(500, window.innerWidth - 40);
+        : Math.min(600, window.innerWidth - 40);
       const centerX = (window.innerWidth - panelWidth) / 2;
       const centerY = (window.innerHeight - 200) / 2;
       setPosition({
@@ -73,78 +72,77 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
-    const isButton =
-      target.closest("button") || target.closest('[role="button"]');
-
-    if (!isButton && headerRef.current?.contains(target)) {
-      e.preventDefault();
-      setIsDragging(true);
-      const rect = panelRef.current?.getBoundingClientRect();
-      if (rect) {
-        setDragOffset({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        });
-      }
+    if (
+      target.closest("button") ||
+      target.closest("input") ||
+      target.closest("select")
+    ) {
+      return;
+    }
+    setIsDragging(true);
+    const rect = headerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      });
     }
   }, []);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const target = e.target as HTMLElement;
-    const isButton =
-      target.closest("button") || target.closest('[role="button"]');
-
-    if (!isButton && headerRef.current?.contains(target)) {
-      e.preventDefault();
-      setIsDragging(true);
-      const rect = panelRef.current?.getBoundingClientRect();
-      if (rect && e.touches[0]) {
-        setDragOffset({
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top,
-        });
-      }
+    if (
+      target.closest("button") ||
+      target.closest("input") ||
+      target.closest("select")
+    ) {
+      return;
+    }
+    setIsDragging(true);
+    const rect = headerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setDragOffset({
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+      });
     }
   }, []);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (isDragging) {
-        e.preventDefault();
-        const newX = e.clientX - dragOffset.x;
-        const newY = e.clientY - dragOffset.y;
-
-        const panelWidth = panelDimensions.width || 400;
-        const panelHeight = panelDimensions.height || 400;
-        const maxX = window.innerWidth - panelWidth;
-        const maxY = window.innerHeight - panelHeight;
-
-        setPosition({
-          x: Math.max(0, Math.min(newX, maxX)),
-          y: Math.max(0, Math.min(newY, maxY)),
-        });
-      }
+      if (!isDragging) return;
+      const newX = e.clientX - dragOffset.x;
+      const newY = e.clientY - dragOffset.y;
+      setPosition({
+        x: Math.max(
+          0,
+          Math.min(window.innerWidth - panelDimensions.width, newX)
+        ),
+        y: Math.max(
+          0,
+          Math.min(window.innerHeight - panelDimensions.height, newY)
+        ),
+      });
     },
     [isDragging, dragOffset, panelDimensions]
   );
 
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
-      if (isDragging && e.touches[0]) {
-        e.preventDefault();
-        const newX = e.touches[0].clientX - dragOffset.x;
-        const newY = e.touches[0].clientY - dragOffset.y;
-
-        const panelWidth = panelDimensions.width || 400;
-        const panelHeight = panelDimensions.height || 400;
-        const maxX = window.innerWidth - panelWidth;
-        const maxY = window.innerHeight - panelHeight;
-
-        setPosition({
-          x: Math.max(0, Math.min(newX, maxX)),
-          y: Math.max(0, Math.min(newY, maxY)),
-        });
-      }
+      if (!isDragging) return;
+      e.preventDefault();
+      const newX = e.touches[0].clientX - dragOffset.x;
+      const newY = e.touches[0].clientY - dragOffset.y;
+      setPosition({
+        x: Math.max(
+          0,
+          Math.min(window.innerWidth - panelDimensions.width, newX)
+        ),
+        y: Math.max(
+          0,
+          Math.min(window.innerHeight - panelDimensions.height, newY)
+        ),
+      });
     },
     [isDragging, dragOffset, panelDimensions]
   );
@@ -153,64 +151,67 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     setIsDragging(false);
   }, []);
 
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove, {
-        passive: false,
-      });
+      document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
       document.addEventListener("touchmove", handleTouchMove, {
         passive: false,
       });
-      document.addEventListener("touchend", handleMouseUp);
-      return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-        document.removeEventListener("touchmove", handleTouchMove);
-        document.removeEventListener("touchend", handleMouseUp);
-      };
+      document.addEventListener("touchend", handleTouchEnd);
     }
-    return () => {};
-  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove]);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [
+    isDragging,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50">
+    <div
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-50 p-4"
+      style={{ zIndex: 99999 }}
+    >
       <div
         ref={panelRef}
-        className="bg-white shadow-2xl overflow-hidden border-2 border-gray-300"
+        className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden transform transition-all duration-200 ease-out settings-panel"
         style={{
           position: "fixed",
-          top: position.y,
           left: position.x,
-          borderRadius: "8px",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          width:
-            window.innerWidth <= 768
-              ? Math.min(window.innerWidth - 20, 400)
-              : Math.min(500, window.innerWidth - 40),
-          maxWidth:
-            window.innerWidth <= 768
-              ? "calc(100vw - 20px)"
-              : "calc(100vw - 40px)",
-          minWidth: window.innerWidth <= 768 ? "280px" : "320px",
+          top: position.y,
+          width: "auto",
+          minWidth: "500px",
+          maxWidth: "90vw",
+          maxHeight: "90vh",
           cursor: isDragging ? "grabbing" : "default",
-          userSelect: isDragging ? "none" : "auto",
-          transition: "all 0.3s ease-in-out",
-          zIndex: 9999,
         }}
       >
         {/* Header - Drag Handle */}
         <div
           ref={headerRef}
+          className="settings-panel-header"
           style={{
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            borderRadius: "8px 8px 0 0",
-            padding: "12px 16px",
+            borderRadius: "16px 16px 0 0",
+            padding: "20px 24px",
             borderBottom: "2px solid #2563eb",
             cursor: "grab",
             userSelect: "none",
+            boxShadow: "0 4px 20px rgba(102, 126, 234, 0.3)",
           }}
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
@@ -223,12 +224,41 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               width: "100%",
             }}
           >
-            <h2
-              className="text-xl font-bold text-white"
-              style={{ userSelect: "none" }}
-            >
-              {title}
-            </h2>
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mr-3 icon-container">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h2
+                  className="text-xl font-bold text-white"
+                  style={{ userSelect: "none" }}
+                >
+                  {title}
+                </h2>
+                <p className="text-sm text-white text-opacity-80 mt-1">
+                  Drag to move • Click to apply changes
+                </p>
+              </div>
+            </div>
+
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <Button
                 variant="contained"
@@ -239,18 +269,22 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   "&:hover": {
                     background:
                       "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 8px 25px rgba(16, 185, 129, 0.4)",
                   },
-                  minWidth: "36px",
-                  width: "36px",
-                  height: "36px",
+                  minWidth: "44px",
+                  width: "44px",
+                  height: "44px",
                   padding: 0,
-                  boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
+                  boxShadow: "0 4px 15px rgba(16, 185, 129, 0.3)",
                   border: "none",
-                  borderRadius: "8px",
+                  borderRadius: "12px",
+                  transition: "all 0.2s ease-in-out",
                 }}
               >
-                <CheckIcon sx={{ fontSize: "18px" }} />
+                <CheckIcon sx={{ fontSize: "20px" }} />
               </Button>
+
               <Button
                 variant="contained"
                 onClick={onClose}
@@ -260,17 +294,20 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   "&:hover": {
                     background:
                       "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 8px 25px rgba(239, 68, 68, 0.4)",
                   },
-                  minWidth: "36px",
-                  width: "36px",
-                  height: "36px",
+                  minWidth: "44px",
+                  width: "44px",
+                  height: "44px",
                   padding: 0,
-                  boxShadow: "0 4px 12px rgba(239, 68, 68, 0.3)",
+                  boxShadow: "0 4px 15px rgba(239, 68, 68, 0.3)",
                   border: "none",
-                  borderRadius: "8px",
+                  borderRadius: "12px",
+                  transition: "all 0.2s ease-in-out",
                 }}
               >
-                <CloseIcon sx={{ fontSize: "18px" }} />
+                <CloseIcon sx={{ fontSize: "20px" }} />
               </Button>
             </div>
           </div>
@@ -278,13 +315,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
         {/* Content */}
         <div
+          className="overflow-y-auto design-system"
           style={{
-            padding: "16px",
-            backgroundColor: "#ffffff",
-            minHeight: "150px",
-            maxHeight: "70vh",
-            overflowY: "auto",
-            WebkitOverflowScrolling: "touch",
+            maxHeight: "calc(90vh - 100px)",
+            background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
           }}
         >
           {children}
@@ -292,4 +326,4 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       </div>
     </div>
   );
-};
+}

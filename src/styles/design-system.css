@@ -1,0 +1,590 @@
+/* Professional Design System - Enhanced utilities for modern UI */
+
+:root {
+  /* Essential spacing utilities */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Essential shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+
+  /* Professional color palette */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 200ms ease-in-out;
+  --transition-slow: 300ms ease-in-out;
+}
+
+/* Essential utility classes for common styling issues - Scoped to avoid conflicts */
+.design-system .no-margin {
+  margin: 0;
+}
+.design-system .no-padding {
+  padding: 0;
+}
+.design-system .no-border {
+  border: none;
+}
+.design-system .no-outline {
+  outline: none;
+}
+
+/* Icon sizing utilities - Clean, conflict-free sizing */
+.design-system .icon-xs {
+  width: 12px;
+  height: 12px;
+  font-size: 12px;
+}
+
+.design-system .icon-sm {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.design-system .icon-md {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.design-system .icon-lg {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+.design-system .icon-xl {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
+}
+
+.design-system .icon-2xl {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+}
+
+/* Professional form styling - Scoped to avoid conflicts */
+.design-system .form-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 hover:border-gray-400;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.design-system .form-input:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.design-system .form-select {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 hover:border-gray-400;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.design-system .form-select:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Professional button styles - Scoped to avoid conflicts */
+.design-system .btn-primary {
+  @apply px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
+}
+
+.design-system .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.design-system .btn-success {
+  @apply px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+  background: linear-gradient(
+    135deg,
+    var(--color-success-500) 0%,
+    var(--color-success-600) 100%
+  );
+}
+
+.design-system .btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+.design-system .btn-danger {
+  @apply px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+  background: linear-gradient(
+    135deg,
+    var(--color-danger-500) 0%,
+    var(--color-danger-600) 100%
+  );
+}
+
+.design-system .btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+/* Header component utilities - Preserved for existing components */
+.header-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.header-logo-container {
+  flex-shrink: 0;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.header-quick-buttons {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+}
+
+.header-menu-button {
+  flex-shrink: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Button base styles - Preserved for existing components */
+.btn-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.btn-hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Shape utilities - Preserved for existing components */
+.shape-rounded {
+  border-radius: var(--radius-md);
+}
+.shape-circle {
+  border-radius: 50%;
+}
+.shape-square {
+  border-radius: 0;
+}
+
+/* Professional card styles - Scoped to avoid conflicts */
+.design-system .card {
+  @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+  transition: all var(--transition-normal);
+}
+
+.design-system .card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.design-system .card-header {
+  @apply p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white;
+}
+
+.design-system .card-body {
+  @apply p-6;
+}
+
+.design-system .card-footer {
+  @apply p-6 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white;
+}
+
+/* Professional section headers - Scoped to avoid conflicts */
+.design-system .section-header {
+  @apply flex items-center mb-6;
+}
+
+.design-system .section-icon {
+  @apply w-10 h-10 rounded-lg flex items-center justify-center mr-4;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
+}
+
+.design-system .section-title {
+  @apply text-xl font-bold text-gray-900;
+}
+
+.design-system .section-description {
+  @apply text-sm text-gray-600;
+}
+
+/* Responsive utilities - Preserved for existing components */
+@media (max-width: 768px) {
+  .header-container {
+    padding: var(--spacing-sm);
+  }
+
+  .design-system .card {
+    @apply rounded-lg;
+  }
+
+  .design-system .card-header,
+  .design-system .card-body,
+  .design-system .card-footer {
+    @apply p-4;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: var(--spacing-xs);
+  }
+
+  .design-system .section-header {
+    @apply flex-col items-start space-y-3;
+  }
+
+  .design-system .section-icon {
+    @apply mr-0;
+  }
+}
+
+/* Professional focus states - Scoped to avoid conflicts */
+.design-system .focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.design-system .focus-ring-white {
+  @apply focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800;
+}
+
+/* Professional animations - Scoped to avoid conflicts */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.design-system .animate-fade-in {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+.design-system .animate-slide-in {
+  animation: slideIn var(--transition-normal) ease-out;
+}
+
+/* Professional gradients - Scoped to avoid conflicts */
+.design-system .gradient-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
+}
+
+.design-system .gradient-success {
+  background: linear-gradient(
+    135deg,
+    var(--color-success-500) 0%,
+    var(--color-success-600) 100%
+  );
+}
+
+.design-system .gradient-warning {
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-500) 0%,
+    var(--color-warning-600) 100%
+  );
+}
+
+.design-system .gradient-danger {
+  background: linear-gradient(
+    135deg,
+    var(--color-danger-500) 0%,
+    var(--color-danger-600) 100%
+  );
+}
+
+.design-system .gradient-gray {
+  background: linear-gradient(
+    135deg,
+    var(--color-gray-100) 0%,
+    var(--color-gray-200) 100%
+  );
+}
+
+/* Company Profile specific styles - Preserved */
+.company-profile-form {
+  /* Keep existing company profile styling intact */
+}
+
+.company-profile-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.company-profile-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.company-profile-form input,
+.company-profile-form textarea,
+.company-profile-form select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.company-profile-form input:focus,
+.company-profile-form textarea:focus,
+.company-profile-form select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Settings Panel specific icon sizing fixes - Using specific selectors instead of !important */
+.settings-panel.settings-panel-header svg {
+  max-width: 24px;
+  max-height: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.settings-panel .settings-panel-header .icon-container {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  max-width: 32px;
+  max-height: 32px;
+}
+
+/* Ensure all icons in settings panels respect sizing */
+.settings-panel svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Specific icon sizing for different container sizes */
+.settings-panel .w-8.h-8 svg {
+  width: 16px;
+  height: 16px;
+}
+
+.settings-panel .w-10.h-10 svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Additional specificity for settings panel icons */
+.settings-panel .settings-panel-header .icon-container svg {
+  width: 16px;
+  height: 16px;
+  max-width: 16px;
+  max-height: 16px;
+}
+
+/* Force icon sizing with higher specificity for settings panel */
+.settings-panel.settings-panel-header .icon-container svg {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+}
+
+/* Ensure form inputs maintain their styling */
+.settings-panel input[type="text"],
+.settings-panel input[type="number"] {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+/* Clean up any conflicting Tailwind classes */
+.settings-panel .w-8.h-8 {
+  width: 32px;
+  height: 32px;
+}
+
+.settings-panel .w-10.h-10 {
+  width: 40px;
+  height: 40px;
+}
+
+/* Responsive layout container styling */
+.responsive-layout-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure proper spacing for existing components */
+.admin-layout {
+  min-height: 100vh;
+  position: relative;
+}
+
+.admin-content {
+  padding-top: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Preserve existing MUI drawer styling */
+.MuiDrawer-root .MuiBackdrop-root {
+  pointer-events: auto !important;
+  z-index: 1200 !important;
+}
+
+.MuiDrawer-root .MuiDrawer-paper {
+  z-index: 1201 !important;
+}
+
+/* Ensure PageLayout has responsive padding like before */
+.page-layout-container {
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure MainContainerBox properly wraps content */
+.main-container-box {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Ensure content inside MainContainerBox is properly constrained */
+.main-container-box > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.main-container-box .space-y-6 {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure proper width constraints for all containers */
+.container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure the main content area has no gaps */
+main {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}

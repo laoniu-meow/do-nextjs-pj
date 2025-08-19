@@ -36,6 +36,7 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
 }) => {
   return (
     <Box
+      className="main-container-box"
       sx={{
         background:
           "linear-gradient(135deg, rgba(173, 216, 230, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)",
@@ -47,6 +48,10 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
         minHeight: "200px",
         position: "relative",
         overflow: "hidden",
+        width: "100%",
+        maxWidth: "100%",
+        margin: "0 auto",
+        boxSizing: "border-box",
         "&::before": {
           content: '""',
           position: "absolute",

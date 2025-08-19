@@ -48,50 +48,32 @@ interface HeaderPreviewProps {
     menuButtonIconColor: string;
     menuButtonHoverBgColor: string;
     menuButtonHoverIconColor: string;
+    menuButtonIconId: string;
     menuButtonShape: "rounded" | "circle" | "square";
     menuButtonShadow: "none" | "light" | "medium" | "strong";
   };
 }
 
 export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
-  const getPreviewContainerStyle = (): React.CSSProperties => {
-    const baseStyle: React.CSSProperties = {
-      border: "2px solid #e5e7eb",
-      backgroundColor: "#f9fafb",
-      margin: "0",
-      overflow: "hidden",
-      position: "relative",
-      width: "100%", // Use full width of parent container
-      height: "800px", // Fixed height for desktop view
-      // Override all parent padding
-      padding: "0 !important",
-      marginLeft: "0 !important",
-      marginRight: "0 !important",
-      marginTop: "0 !important",
-      marginBottom: "0 !important",
-      // Force no spacing
-      boxSizing: "border-box",
-      outline: "none",
-    };
-
-    return baseStyle;
-  };
+  const getPreviewContainerStyle = (): React.CSSProperties => ({
+    border: "2px solid #e5e7eb",
+    backgroundColor: "#f9fafb",
+    margin: 0,
+    overflow: "hidden",
+    position: "relative",
+    width: "100%",
+    height: "800px",
+    padding: 0,
+    boxSizing: "border-box",
+    outline: "none",
+  });
 
   const getDeviceLabel = (): string => {
     return "💻 Header Preview";
   };
 
   return (
-    <div
-      className="w-full"
-      style={{
-        // Override any parent padding/margin
-        padding: "0 !important",
-        margin: "0 !important",
-        // Force no spacing
-        boxSizing: "border-box",
-      }}
-    >
+    <div className="w-full no-margin no-padding no-border header-preview-container">
       {/* Device Label */}
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
@@ -101,28 +83,10 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
       </div>
 
       {/* Preview Container - Full width to match main card */}
-      <div
-        className="w-full"
-        style={{
-          // Override any parent padding/margin
-          padding: "0 !important",
-          margin: "0 !important",
-          // Force no spacing
-          boxSizing: "border-box",
-        }}
-      >
+      <div className="w-full no-margin no-padding no-border">
         <div style={getPreviewContainerStyle()} className="shadow-lg">
           {/* Header Preview - Full width within container */}
-          <div
-            className="w-full overflow-hidden"
-            style={{
-              // Override any parent padding/margin
-              padding: "0 !important",
-              margin: "0 !important",
-              // Force no spacing
-              boxSizing: "border-box",
-            }}
-          >
+          <div className="w-full overflow-hidden no-margin no-padding no-border">
             <Header
               desktop={headerSettings.desktop}
               tablet={headerSettings.tablet}
@@ -142,6 +106,7 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
               menuButtonIconColor={headerSettings.menuButtonIconColor}
               menuButtonHoverBgColor={headerSettings.menuButtonHoverBgColor}
               menuButtonHoverIconColor={headerSettings.menuButtonHoverIconColor}
+              menuButtonIconId={headerSettings.menuButtonIconId}
               menuButtonShape={headerSettings.menuButtonShape}
               menuButtonShadow={headerSettings.menuButtonShadow}
             />

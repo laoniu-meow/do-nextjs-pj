@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  PageLayout,
-  MainContainerBox,
-  SettingsPanel,
-  ResponsiveTabs,
-  ResponsiveView,
-} from "@/components/ui";
+import { PageLayout, MainContainerBox, SettingsPanel } from "@/components/ui";
 import { HeaderPreview } from "@/components/settings/HeaderPreview";
 import { HeaderSettingsForm } from "@/components/settings/HeaderSettingsForm";
 
@@ -55,24 +49,23 @@ interface HeaderSettingsData {
   menuButtonIconColor: string;
   menuButtonHoverBgColor: string;
   menuButtonHoverIconColor: string;
+  menuButtonIconId: string;
   menuButtonShape: "rounded" | "circle" | "square";
   menuButtonShadow: "none" | "light" | "medium" | "strong";
-  menuButtonIconId: string;
 }
 
 export default function HeaderSettingsPage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentView, setCurrentView] = useState<ResponsiveView>("desktop");
 
   // Default header settings
   const [headerSettings, setHeaderSettings] = useState<HeaderSettingsData>({
     // Responsive settings for Desktop, Tablet, Mobile
     desktop: {
       height: 64,
-      paddingHorizontal: 0,
-      paddingVertical: 0,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
       logoWidth: 40,
       logoHeight: 40,
       quickButtonSize: 40,
@@ -80,8 +73,8 @@ export default function HeaderSettingsPage() {
     },
     tablet: {
       height: 64,
-      paddingHorizontal: 0,
-      paddingVertical: 0,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
       logoWidth: 40,
       logoHeight: 40,
       quickButtonSize: 40,
@@ -89,8 +82,8 @@ export default function HeaderSettingsPage() {
     },
     mobile: {
       height: 64,
-      paddingHorizontal: 0,
-      paddingVertical: 0,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
       logoWidth: 40,
       logoHeight: 40,
       quickButtonSize: 40,
@@ -183,12 +176,6 @@ export default function HeaderSettingsPage() {
         saveDisabled={!hasUnsavedChanges || isLoading}
       >
         <div className="space-y-6">
-          {/* Device Tabs */}
-          <ResponsiveTabs
-            currentView={currentView}
-            onViewChange={setCurrentView}
-          />
-
           {/* Loading State */}
           {isLoading && (
             <div className="text-center py-4">

@@ -1,3 +1,7 @@
+@reference "tailwindcss";
+
+@import "../styles/design-system.css";
+
 /* Admin Layout Styles */
 .admin-layout {
   min-height: 100vh;

@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
-import { Container, Typography, Box, Breadcrumbs } from "@mui/material";
+import { Typography, Box, Breadcrumbs } from "@mui/material";
+import { Container } from "@/components/ui/core/Container";
 import BreadcrumbItem from "../navigation/BreadcrumbItem";
+import { cn } from "@/lib/utils";
 
 interface BreadcrumbItemData {
   label: string;
@@ -14,7 +16,7 @@ interface PageLayoutProps {
   description?: string;
   breadcrumbs?: BreadcrumbItemData[];
   children: React.ReactNode;
-  maxWidth?: "xs" | "sm" | "md" | "lg" | "xl";
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "full";
   className?: string;
 }
 
@@ -48,22 +50,8 @@ export default function PageLayout({
   return (
     <Container
       maxWidth={maxWidth}
-      className={className}
-      sx={{
-        "@media (max-width: 640px)": {
-          maxWidth: "100%",
-          paddingLeft: "0.25rem",
-          paddingRight: "0.25rem",
-        },
-        "@media (min-width: 641px) and (max-width: 768px)": {
-          paddingLeft: "1rem",
-          paddingRight: "1rem",
-        },
-        "@media (min-width: 769px)": {
-          paddingLeft: "1.5rem",
-          paddingRight: "1.5rem",
-        },
-      }}
+      padding="md"
+      className={cn("page-layout-container", className)}
     >
       {/* Breadcrumbs */}
       {breadcrumbs && breadcrumbs.length > 0 && renderBreadcrumbs(breadcrumbs)}

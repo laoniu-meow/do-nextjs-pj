@@ -133,11 +133,12 @@ export function Container({
     }
   };
 
-  const containerStyles = {
+  const containerStyles: React.CSSProperties = {
     maxWidth: getMaxWidth(),
     padding: getPadding(),
     margin: "0 auto",
     width: "100%",
+    boxSizing: "border-box",
   };
 
   const variantClasses = cn(
