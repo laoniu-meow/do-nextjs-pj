@@ -1,8 +1,13 @@
 "use client";
 
 import React from "react";
-import { Typography, Box, Breadcrumbs, Paper } from "@mui/material";
-import { Container } from "@/components/ui/core/Container";
+import {
+  Typography,
+  Box,
+  Breadcrumbs,
+  Container as MuiContainer,
+} from "@mui/material";
+
 import BreadcrumbItem from "../navigation/BreadcrumbItem";
 import { cn } from "@/lib/utils";
 import { designSystem } from "@/styles/design-system";
@@ -29,10 +34,10 @@ export default function PageLayout({
   maxWidth = "lg",
   className,
 }: PageLayoutProps) {
-  // Extract breadcrumb rendering logic with improved design
+  // Enhanced breadcrumb rendering with professional design
   const renderBreadcrumbs = (breadcrumbItems: BreadcrumbItemData[]) => (
     <Box
-      className="mb-8 mt-6"
+      className="mb-4 mt-8"
       sx={{
         "& .MuiBreadcrumbs-root": {
           "& .MuiBreadcrumbs-ol": {
@@ -41,70 +46,79 @@ export default function PageLayout({
         },
       }}
     >
-      <Paper
-        elevation={0}
-        sx={{
-          background: designSystem.colors.surface.secondary,
-          border: `1px solid ${designSystem.colors.neutral[200]}`,
-          borderRadius: designSystem.borderRadius.lg,
-          padding: designSystem.spacing.MD,
-          "&:hover": {
-            background: designSystem.colors.surface.tertiary,
-            borderColor: designSystem.colors.neutral[300],
-            transition: designSystem.transitions.normal,
-          },
-        }}
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        separator={
+          <Box
+            component="span"
+            sx={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: `linear-gradient(135deg, ${designSystem.colors.neutral[400]} 0%, ${designSystem.colors.neutral[500]} 100%)`,
+              display: "inline-block",
+              margin: "0 8px",
+            }}
+          />
+        }
       >
-        <Breadcrumbs
-          aria-label="breadcrumb"
-          separator={
-            <Box
-              component="span"
-              sx={{
-                width: "4px",
-                height: "4px",
-                borderRadius: "50%",
-                background: designSystem.colors.neutral[400],
-                display: "inline-block",
-              }}
-            />
-          }
-        >
-          {breadcrumbItems.map((crumb, index) => (
-            <BreadcrumbItem
-              key={`${crumb.label}-${index}`}
-              label={crumb.label}
-              href={crumb.href}
-              isActive={index === breadcrumbItems.length - 1}
-            />
-          ))}
-        </Breadcrumbs>
-      </Paper>
+        {breadcrumbItems.map((crumb, index) => (
+          <BreadcrumbItem
+            key={`${crumb.label}-${index}`}
+            label={crumb.label}
+            href={crumb.href}
+            isActive={index === breadcrumbItems.length - 1}
+          />
+        ))}
+      </Breadcrumbs>
     </Box>
   );
 
   return (
-    <Container
-      maxWidth={maxWidth}
-      padding="lg"
-      className={cn("page-layout-container", className)}
+    <MuiContainer
+      maxWidth={maxWidth === "full" ? false : maxWidth}
+      sx={{
+        padding: {
+          xs: designSystem.spacing.LG,
+          sm: designSystem.spacing.XL,
+          md: designSystem.spacing["2XL"],
+        },
+        margin: "0 auto",
+        width: "100%",
+        boxSizing: "border-box",
+      }}
+      className={cn(
+        "page-layout-container typography-enhanced page-components",
+        className
+      )}
     >
-      {/* Breadcrumbs */}
+      {/* Enhanced Breadcrumbs */}
       {breadcrumbs && breadcrumbs.length > 0 && renderBreadcrumbs(breadcrumbs)}
 
-      {/* Page Header with improved typography and spacing */}
+      {/* Enhanced Page Header with professional styling */}
       <Box
-        className="mb-10"
+        className="mb-12"
         sx={{
           position: "relative",
-          "&::after": {
+          padding: `${designSystem.spacing.MD} 0`,
+          "&::before": {
+            zIndex: 20,
             content: '""',
             position: "absolute",
-            bottom: "-24px",
+            top: 0,
             left: 0,
             right: 0,
             height: "1px",
-            background: `linear-gradient(90deg, transparent 0%, ${designSystem.colors.neutral[200]} 50%, transparent 100%)`,
+            background: `linear-gradient(90deg, transparent 0%, ${designSystem.colors.neutral[200]} 20%, ${designSystem.colors.neutral[300]} 50%, ${designSystem.colors.neutral[200]} 80%, transparent 100%)`,
+          },
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "1px",
+            background: `linear-gradient(90deg, transparent 0%, ${designSystem.colors.neutral[200]} 20%, ${designSystem.colors.neutral[300]} 50%, ${designSystem.colors.neutral[200]} 80%, transparent 100%)`,
           },
         }}
       >
@@ -112,11 +126,35 @@ export default function PageLayout({
           variant="h1"
           component="h1"
           sx={{
-            fontSize: designSystem.typography.fontSize.H1,
+            zIndex: 20,
+            fontSize: {
+              xs: "2rem",
+              sm: "2.25rem",
+              md: "2.5rem",
+              lg: "3rem",
+            },
             color: designSystem.colors.text.primary,
-            marginBottom: designSystem.spacing.MD,
-            fontWeight: 700,
+            marginBottom: designSystem.spacing.LG,
+            fontWeight: 800,
+            letterSpacing: "-0.025em",
+            lineHeight: 1.1,
+            background: `linear-gradient(135deg, ${designSystem.colors.neutral[900]} 0%, ${designSystem.colors.neutral[700]} 100%)`,
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
             textShadow: "none",
+            position: "relative",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: "-12px",
+              left: 0,
+              width: "80px",
+              height: "4px",
+              background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 100%)`,
+              borderRadius: designSystem.borderRadius.full,
+              boxShadow: `0 4px 12px ${designSystem.colors.primary[500]}40`,
+            },
           }}
         >
           {title}
@@ -128,10 +166,16 @@ export default function PageLayout({
             sx={{
               ...designSystem.typography.body1,
               color: designSystem.colors.text.secondary,
-              maxWidth: "48rem",
+              maxWidth: "56rem",
               lineHeight: 1.7,
               marginBottom: 0,
-              opacity: 0.9,
+              opacity: 0.85,
+              fontSize: {
+                xs: "1rem",
+                sm: "1.125rem",
+              },
+              fontWeight: 400,
+              letterSpacing: "0.01em",
             }}
           >
             {description}
@@ -139,15 +183,21 @@ export default function PageLayout({
         )}
       </Box>
 
-      {/* Page Content with improved spacing */}
+      {/* Enhanced Page Content with improved spacing and visual hierarchy */}
       <Box
         sx={{
           position: "relative",
           zIndex: 1,
+          "& > *:first-of-type": {
+            marginTop: 0,
+          },
+          "& > *:last-of-type": {
+            marginBottom: 0,
+          },
         }}
       >
         {children}
       </Box>
-    </Container>
+    </MuiContainer>
   );
 }

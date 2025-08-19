@@ -1,9 +1,22 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import { Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Paper,
+  Fade,
+  Slide,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import {
+  Check as CheckIcon,
+  Close as CloseIcon,
+  Settings as SettingsIcon,
+  DragIndicator as DragIcon,
+} from "@mui/icons-material";
 
 interface SettingsPanelProps {
   isOpen: boolean;
@@ -18,7 +31,7 @@ export function SettingsPanel({
   onClose,
   onApply,
   children,
-  title = "Settings Panel",
+  title = "Settings",
 }: SettingsPanelProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -27,46 +40,55 @@ export function SettingsPanel({
     width: 0,
     height: 0,
   });
+  const [isVisible, setIsVisible] = useState(false);
+
   const panelRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
 
     if (isOpen) {
-      // Responsive panel sizing for mobile
-      const isMobile = window.innerWidth <= 768;
-      const panelWidth = isMobile
-        ? Math.min(window.innerWidth - 20, 400)
-        : Math.min(600, window.innerWidth - 40);
+      setIsVisible(true);
 
-      // Always center the panel
+      // Responsive panel sizing
+      const panelWidth = isMobile
+        ? Math.min(window.innerWidth - 32, 520)
+        : Math.min(800, window.innerWidth - 64);
+
+      // Center the panel
       const centerX = (window.innerWidth - panelWidth) / 2;
-      const centerY = (window.innerHeight - 200) / 2;
+      const centerY = Math.max(32, (window.innerHeight - 600) / 2);
 
       setPosition({
-        x: Math.max(0, centerX),
-        y: Math.max(0, centerY),
+        x: Math.max(16, centerX),
+        y: centerY,
       });
 
-      // Re-center after content renders to get actual panel height
+      // Re-center after content renders
       timer = setTimeout(() => {
         if (panelRef.current) {
           const rect = panelRef.current.getBoundingClientRect();
           const actualHeight = rect.height;
           const actualWidth = rect.width;
 
-          // Always maintain center positioning
           const newCenterX = (window.innerWidth - actualWidth) / 2;
-          const newCenterY = (window.innerHeight - actualHeight) / 2;
+          const newCenterY = Math.max(
+            32,
+            (window.innerHeight - actualHeight) / 2
+          );
 
           setPosition({
-            x: Math.max(0, newCenterX),
-            y: Math.max(0, newCenterY),
+            x: Math.max(16, newCenterX),
+            y: newCenterY,
           });
           setPanelDimensions({ width: actualWidth, height: actualHeight });
         }
-      }, 150);
+      }, 200);
+    } else {
+      setIsVisible(false);
     }
 
     return () => {
@@ -74,79 +96,77 @@ export function SettingsPanel({
         clearTimeout(timer);
       }
     };
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
+    // Only handle if we're clicking on the draggable area
     if (
-      target.closest("button") ||
-      target.closest("input") ||
-      target.closest("select")
+      headerRef.current &&
+      headerRef.current.contains(e.target as HTMLElement)
     ) {
-      return;
-    }
-    setIsDragging(true);
-    const rect = headerRef.current?.getBoundingClientRect();
-    if (rect) {
-      setDragOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-    }
-  }, []);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const target = e.target as HTMLElement;
-    if (
-      target.closest("button") ||
-      target.closest("input") ||
-      target.closest("select")
-    ) {
-      return;
-    }
-    setIsDragging(true);
-    const rect = headerRef.current?.getBoundingClientRect();
-    if (rect) {
-      setDragOffset({
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top,
-      });
+      setIsDragging(true);
+      const rect = headerRef.current.getBoundingClientRect();
+      if (rect) {
+        setDragOffset({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+      }
     }
   }, []);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isDragging) return;
+
       const newX = e.clientX - dragOffset.x;
       const newY = e.clientY - dragOffset.y;
       setPosition({
         x: Math.max(
-          0,
-          Math.min(window.innerWidth - panelDimensions.width, newX)
+          16,
+          Math.min(window.innerWidth - panelDimensions.width - 16, newX)
         ),
         y: Math.max(
-          0,
-          Math.min(window.innerHeight - panelDimensions.height, newY)
+          16,
+          Math.min(window.innerHeight - panelDimensions.height - 16, newY)
         ),
       });
     },
     [isDragging, dragOffset, panelDimensions]
   );
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    // Only handle if we're touching the draggable area
+    if (
+      headerRef.current &&
+      headerRef.current.contains(e.target as HTMLElement)
+    ) {
+      setIsDragging(true);
+      const rect = headerRef.current.getBoundingClientRect();
+      if (rect) {
+        setDragOffset({
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top,
+        });
+      }
+    }
+  }, []);
+
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
       if (!isDragging) return;
+
       e.preventDefault();
       const newX = e.touches[0].clientX - dragOffset.x;
       const newY = e.touches[0].clientY - dragOffset.y;
       setPosition({
         x: Math.max(
-          0,
-          Math.min(window.innerWidth - panelDimensions.width, newX)
+          16,
+          Math.min(window.innerWidth - panelDimensions.width - 16, newX)
         ),
         y: Math.max(
-          0,
-          Math.min(window.innerHeight - panelDimensions.height, newY)
+          16,
+          Math.min(window.innerHeight - panelDimensions.height - 16, newY)
         ),
       });
     },
@@ -161,6 +181,7 @@ export function SettingsPanel({
     setIsDragging(false);
   }, []);
 
+  // Only add event listeners when actually dragging
   useEffect(() => {
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
@@ -188,156 +209,343 @@ export function SettingsPanel({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[99999999] flex items-center justify-center bg-black bg-opacity-50 p-4"
-      style={{ zIndex: 99999999 }}
-    >
-      <div
-        ref={panelRef}
-        className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden transform transition-all duration-200 ease-out settings-panel"
-        style={{
+    <Fade in={isVisible} timeout={300}>
+      <Box
+        sx={{
           position: "fixed",
-          left: position.x,
-          top: position.y,
-          width: "auto",
-          minWidth: "400px",
-          maxWidth: "500px",
-          height: "auto",
-          maxHeight: "90vh",
-          cursor: isDragging ? "grabbing" : "default",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 2,
+          zIndex: 999,
+          pointerEvents: "none",
+          isolation: "isolate",
         }}
       >
-        {/* Header - Drag Handle */}
-        <div
-          ref={headerRef}
-          className="settings-panel-header"
-          style={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            borderRadius: "16px 16px 0 0",
-            padding: "20px 24px",
-            borderBottom: "2px solid #2563eb",
-            cursor: "grab",
-            userSelect: "none",
-            boxShadow: "0 4px 20px rgba(102, 126, 234, 0.3)",
-          }}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
+        <Box sx={{ pointerEvents: "auto" }}>
+          <Slide
+            direction="up"
+            in={isVisible}
+            timeout={400}
+            mountOnEnter
+            unmountOnExit
           >
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mr-3 icon-container">
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h2
-                  className="text-xl font-bold text-white"
-                  style={{ userSelect: "none" }}
-                >
-                  {title}
-                </h2>
-                <p className="text-sm text-white text-opacity-80 mt-1">
-                  Drag to move • Click to apply changes
-                </p>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Button
-                variant="contained"
-                onClick={onApply}
+            <Paper
+              ref={panelRef}
+              elevation={0}
+              className="settings-panel"
+              sx={{
+                position: "fixed",
+                left: position.x,
+                top: position.y,
+                width: isMobile ? "calc(100% - 32px)" : "auto",
+                minWidth: isMobile ? "auto" : 520,
+                maxWidth: isMobile ? "calc(100% - 32px)" : 800,
+                maxHeight: isMobile
+                  ? "calc(100vh - 80px)"
+                  : "calc(100vh - 64px)",
+                cursor: isDragging ? "grabbing" : "default",
+                zIndex: 1000,
+                borderRadius: isMobile ? "16px" : "20px",
+                overflow: "hidden",
+                background: "#ffffff",
+                border: "1px solid #e5e7eb",
+                boxShadow: `
+                  0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                  0 10px 10px -5px rgba(0, 0, 0, 0.04),
+                  0 0 0 1px rgba(255, 255, 255, 0.8) inset
+                `,
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                pointerEvents: "auto",
+                isolation: "isolate",
+                transform: "translateZ(0)",
+                "&:hover": {
+                  boxShadow: `
+                    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+                    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                    0 0 0 1px rgba(255, 255, 255, 0.9) inset
+                  `,
+                },
+              }}
+            >
+              {/* Professional Header */}
+              <Box
                 sx={{
                   background:
-                    "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg, #059669 0%, #047857 100%)",
-                    transform: "translateY(-1px)",
-                    boxShadow: "0 8px 25px rgba(16, 185, 129, 0.4)",
-                  },
-                  minWidth: "44px",
-                  width: "44px",
-                  height: "44px",
-                  padding: 0,
-                  boxShadow: "0 4px 15px rgba(16, 185, 129, 0.3)",
-                  border: "none",
-                  borderRadius: "12px",
-                  transition: "all 0.2s ease-in-out",
+                    "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)",
+                  borderBottom: "none",
+                  padding: "0",
+                  position: "relative",
+                  zIndex: 1001,
+                  display: "flex",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                  boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+                  isolation: "isolate",
                 }}
               >
-                <CheckIcon sx={{ fontSize: "20px" }} />
-              </Button>
+                {/* Top Bar - Draggable Area with Icon + Title */}
+                <Box
+                  ref={headerRef}
+                  sx={{
+                    cursor: "grab",
+                    userSelect: "none",
+                    position: "relative",
+                    zIndex: 1002,
+                    padding: isMobile ? "16px 20px 12px" : "24px 32px 16px",
+                    background: "transparent",
+                    borderBottom: "none",
+                    isolation: "isolate",
+                    "&:active": {
+                      cursor: "grabbing",
+                    },
+                    "&::before": {
+                      content: '""',
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: "3px",
+                      background:
+                        "linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)",
+                      borderRadius: "0 0 2px 2px",
+                    },
+                  }}
+                  onMouseDown={handleMouseDown}
+                  onTouchStart={handleTouchStart}
+                >
+                  {/* Drag Handle Indicator */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: isMobile ? "4px" : "8px",
+                      right: isMobile ? "12px" : "16px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      color: "#64748b",
+                      fontSize: isMobile ? "11px" : "12px",
+                      fontWeight: 500,
+                      background: "rgba(255, 255, 255, 0.8)",
+                      padding: isMobile ? "4px 8px" : "6px 10px",
+                      borderRadius: "20px",
+                      border: "1px solid #e2e8f0",
+                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+                      zIndex: 1003,
+                    }}
+                  >
+                    <DragIcon sx={{ fontSize: isMobile ? 12 : 14 }} />
+                    <span>Drag to move</span>
+                  </Box>
 
-              <Button
-                variant="contained"
-                onClick={onClose}
+                  {/* Content Area */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: isMobile ? "16px" : "20px",
+                      maxWidth: "100%",
+                      position: "relative",
+                      zIndex: 1004,
+                    }}
+                  >
+                    {/* Settings Icon Container */}
+                    <Box
+                      sx={{
+                        width: isMobile ? 40 : 48,
+                        height: isMobile ? 40 : 48,
+                        borderRadius: isMobile ? "12px" : "14px",
+                        background:
+                          "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid #e2e8f0",
+                        boxShadow:
+                          "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+                        position: "relative",
+                        zIndex: 1005,
+                        "&::before": {
+                          content: '""',
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          borderRadius: isMobile ? "12px" : "14px",
+                          background:
+                            "linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)",
+                          opacity: 0,
+                          transition: "opacity 0.2s ease",
+                        },
+                        "&:hover::before": {
+                          opacity: 1,
+                        },
+                      }}
+                    >
+                      <SettingsIcon
+                        sx={{
+                          color: "#475569",
+                          fontSize: isMobile ? 18 : 22,
+                          transition: "color 0.2s ease",
+                        }}
+                      />
+                    </Box>
+
+                    {/* Title Section */}
+                    <Box sx={{ flex: 1, minWidth: 0, zIndex: 1006 }}>
+                      <Typography
+                        variant="h5"
+                        sx={{
+                          color: "#1e293b",
+                          fontWeight: 700,
+                          letterSpacing: "-0.02em",
+                          lineHeight: 1.2,
+                          marginBottom: isMobile ? "4px" : "6px",
+                          fontSize: isMobile ? "1.125rem" : "1.25rem",
+                        }}
+                      >
+                        {title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "#64748b",
+                          fontSize: isMobile ? "0.8125rem" : "0.875rem",
+                          fontWeight: 500,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        Configure your preferences and settings
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* Bottom Bar - Action Buttons */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    gap: isMobile ? "8px" : "12px",
+                    padding: isMobile ? "0 20px 16px" : "0 32px 20px",
+                    background: "transparent",
+                    borderTop: "none",
+                    boxShadow: "none",
+                    zIndex: 1007,
+                    isolation: "isolate",
+                  }}
+                >
+                  {/* Apply Button */}
+                  <IconButton
+                    onClick={onApply}
+                    data-testid="apply-button"
+                    sx={{
+                      width: isMobile ? 40 : 44,
+                      height: isMobile ? 40 : 44,
+                      background:
+                        "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                      color: "white",
+                      borderRadius: isMobile ? "10px" : "12px",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      boxShadow:
+                        "0 2px 8px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                      position: "relative",
+                      zIndex: 1008,
+                      "&:hover": {
+                        background:
+                          "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                        transform: "translateY(-1px)",
+                        boxShadow:
+                          "0 4px 16px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+                      },
+                      "&:active": {
+                        transform: "translateY(0)",
+                      },
+                    }}
+                  >
+                    <CheckIcon sx={{ fontSize: isMobile ? 18 : 20 }} />
+                  </IconButton>
+
+                  {/* Close Button */}
+                  <IconButton
+                    onClick={onClose}
+                    data-testid="close-button"
+                    sx={{
+                      width: isMobile ? 40 : 44,
+                      height: isMobile ? 40 : 44,
+                      background:
+                        "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                      color: "#64748b",
+                      borderRadius: isMobile ? "10px" : "10px",
+                      border: "1px solid #e2e8f0",
+                      boxShadow:
+                        "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                      position: "relative",
+                      zIndex: 1009,
+                      "&:hover": {
+                        background:
+                          "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
+                        color: "#475569",
+                        transform: "translateY(-1px)",
+                        boxShadow:
+                          "0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+                      },
+                      "&:active": {
+                        transform: "translateY(0)",
+                      },
+                    }}
+                  >
+                    <CloseIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Box>
+              </Box>
+
+              {/* Content Area */}
+              <Box
                 sx={{
-                  background:
-                    "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
-                    transform: "translateY(-1px)",
-                    boxShadow: "0 8px 25px rgba(239, 68, 68, 0.4)",
+                  height: "auto",
+                  maxHeight: isMobile
+                    ? "calc(90vh - 120px)"
+                    : "calc(90vh - 200px)",
+                  minHeight: isMobile ? 300 : 400,
+                  background: "#fafafa",
+                  padding: isMobile ? "20px" : "32px",
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#cbd5e1 #f1f5f9",
+                  "&::-webkit-scrollbar": {
+                    width: "8px",
                   },
-                  minWidth: "44px",
-                  width: "44px",
-                  height: "44px",
-                  padding: 0,
-                  boxShadow: "0 4px 15px rgba(239, 68, 68, 0.3)",
-                  border: "none",
-                  borderRadius: "12px",
-                  transition: "all 0.2s ease-in-out",
+                  "&::-webkit-scrollbar-track": {
+                    background: "#f1f5f9",
+                    borderRadius: "4px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#cbd5e1",
+                    borderRadius: "4px",
+                    border: "1px solid #f1f5f9",
+                    "&:hover": {
+                      background: "#94a3b8",
+                    },
+                  },
+                  position: "relative",
                 }}
               >
-                <CloseIcon sx={{ fontSize: "20px" }} />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div
-          className="overflow-y-auto design-system"
-          style={{
-            height: "400px",
-            maxHeight: "calc(90vh - 200px)",
-            minHeight: "300px",
-            background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-            padding: "20px",
-            scrollbarWidth: "thin",
-            scrollbarColor: "#cbd5e1 #f1f5f9",
-            overflowY: "auto",
-            overflowX: "hidden",
-          }}
-        >
-          {children}
-        </div>
-      </div>
-    </div>
+                {children}
+              </Box>
+            </Paper>
+          </Slide>
+        </Box>
+      </Box>
+    </Fade>
   );
 }

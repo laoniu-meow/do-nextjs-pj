@@ -581,9 +581,95 @@ body {
   box-sizing: border-box !important;
 }
 
-/* Ensure all modal overlays have proper z-index */
+/* Z-Index Hierarchy - Ensure proper layering */
+/* Base content - lowest priority */
+.main-container-box,
+.page-layout-container,
+.responsive-layout-container,
+.page-components {
+  position: relative;
+  z-index: 1;
+}
+
+/* Navigation and UI components */
+.responsive-header,
+.admin-menu-button,
+.drawer-component {
+  position: relative;
+  z-index: 100;
+}
+
+/* Dropdowns and overlays */
+.dropdown-menu,
+.popover-component {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Material-UI components */
+.MuiDrawer-root .MuiBackdrop-root {
+  z-index: 1000 !important;
+}
+
+.MuiDrawer-root .MuiDrawer-paper {
+  z-index: 1001 !important;
+}
+
+/* Modal overlays */
 .fixed.inset-0 {
-  z-index: 999998 !important;
+  z-index: 99999 !important;
+}
+
+/* Icon Picker Dialog */
+.icon-picker-dialog {
+  z-index: 99998 !important;
+}
+
+/* Settings Panel - Highest priority - above everything */
+.settings-panel {
+  z-index: 100000 !important;
+}
+
+/* Settings Panel Content Styling */
+.settings-panel .design-system {
+  padding: 20px 24px !important;
+}
+
+.settings-panel .design-system > * {
+  margin-bottom: 16px;
+}
+
+.settings-panel .design-system > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Settings Panel Form Elements */
+.settings-panel input,
+.settings-panel select,
+.settings-panel textarea,
+.settings-panel .MuiFormControl-root {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.settings-panel .MuiFormControl-root {
+  margin-bottom: 20px;
+}
+
+/* Settings Panel Section Spacing */
+.settings-panel .MuiBox-root,
+.settings-panel .MuiPaper-root,
+.settings-panel .MuiCard-root {
+  margin-bottom: 20px;
+  padding: 16px 20px;
+}
+
+/* Ensure all page content stays below Settings Panel */
+.page-content,
+.breadcrumb-item,
+.main-content {
+  position: relative;
+  z-index: 1;
 }
 
 /* Dark mode support (future enhancement) */
@@ -602,3 +688,265 @@ body {
     --color-neutral-900: #f8fafc;
   }
 } */
+
+/* Enhanced Layout Components - Professional Styling */
+
+/* Page Layout Enhancements */
+.page-layout-container {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.page-layout-container::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 20% 80%,
+      rgba(59, 130, 246, 0.03) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(99, 102, 241, 0.03) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(168, 85, 247, 0.02) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Enhanced Page Header */
+.page-layout-container h1 {
+  position: relative;
+  z-index: 1;
+}
+
+.page-layout-container h1::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+  border-radius: 24px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: -1;
+  opacity: 0;
+}
+
+/* Enhanced Main Container Box */
+.main-container-box {
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.main-container-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Enhanced Cards */
+.card-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-enhanced::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-enhanced:hover::before {
+  opacity: 1;
+}
+
+/* Enhanced Buttons */
+.button-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-enhanced::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.button-enhanced:hover::before {
+  opacity: 1;
+}
+
+/* Enhanced Form Elements */
+.form-enhanced input,
+.form-enhanced select,
+.form-enhanced textarea {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  background: #ffffff;
+}
+
+.form-enhanced input:focus,
+.form-enhanced select:focus,
+.form-enhanced textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Enhanced Shadows and Depth */
+.shadow-enhanced {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.shadow-enhanced:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced Transitions */
+.transition-enhanced {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-enhanced:hover {
+  transform: translateY(-2px);
+}
+
+/* Enhanced Typography */
+.typography-enhanced h1,
+.typography-enhanced h2,
+.typography-enhanced h3 {
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.typography-enhanced p {
+  color: #64748b;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* Enhanced Spacing */
+.spacing-enhanced > * + * {
+  margin-top: 1.5rem;
+}
+
+.spacing-enhanced > * + *:last-child {
+  margin-bottom: 0;
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 768px) {
+  .page-layout-container {
+    padding: 1rem;
+  }
+
+  .main-container-box {
+    margin: 1rem 0;
+  }
+
+  .card-enhanced {
+    margin: 1rem 0;
+  }
+}
+
+/* Enhanced Loading States */
+.loading-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-enhanced::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Enhanced Focus States */
+.focus-enhanced:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.focus-enhanced:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}

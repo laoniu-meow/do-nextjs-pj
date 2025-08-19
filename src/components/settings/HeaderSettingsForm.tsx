@@ -9,7 +9,6 @@ interface HeaderSettingsData {
   desktop: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -18,7 +17,6 @@ interface HeaderSettingsData {
   tablet: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -27,7 +25,6 @@ interface HeaderSettingsData {
   mobile: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -71,7 +68,6 @@ export function HeaderSettingsForm({
     key: keyof {
       height: number;
       paddingHorizontal: number;
-      paddingVertical: number;
       logoWidth: number;
       logoHeight: number;
       quickButtonSize: number;
@@ -379,20 +375,6 @@ export function HeaderSettingsForm({
           />
 
           <ResponsiveInputGroup
-            label="Vertical Padding"
-            desktopValue={settings.desktop.paddingVertical}
-            tabletValue={settings.tablet.paddingVertical}
-            mobileValue={settings.mobile.paddingVertical}
-            onChange={(device, value) =>
-              handleSettingChange(device, "paddingVertical", value)
-            }
-            placeholder="8"
-            helperText="Top & bottom padding in pixels"
-            min={0}
-            max={50}
-          />
-
-          <ResponsiveInputGroup
             label="Logo Width"
             desktopValue={settings.desktop.logoWidth}
             tabletValue={settings.tablet.logoWidth}
@@ -401,7 +383,7 @@ export function HeaderSettingsForm({
               handleSettingChange(device, "logoWidth", value)
             }
             placeholder="40"
-            helperText="Logo width in pixels"
+            helperText="Width in pixels for each device"
             min={20}
             max={100}
           />
@@ -415,7 +397,7 @@ export function HeaderSettingsForm({
               handleSettingChange(device, "logoHeight", value)
             }
             placeholder="40"
-            helperText="Logo height in pixels"
+            helperText="Height in pixels for each device"
             min={20}
             max={100}
           />
@@ -775,8 +757,8 @@ export function HeaderSettingsForm({
       {/* Icon Picker Dialog */}
       {isIconPickerOpen && (
         <div
-          className="fixed inset-0 z-[999998] flex items-center justify-center bg-black bg-opacity-50 p-4"
-          style={{ zIndex: 999998 }}
+          className="fixed inset-0 icon-picker-dialog flex items-center justify-center bg-black bg-opacity-50 p-4"
+          style={{ zIndex: 9998 }}
         >
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden transform transition-all duration-200 ease-out">
             {/* Header */}

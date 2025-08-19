@@ -34,22 +34,43 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const getVariantStyles = () => {
     const baseStyles = {
-      borderRadius: designSystem.borderRadius.md,
+      borderRadius: designSystem.borderRadius.lg,
       textTransform: "none" as const,
       fontWeight: 600,
-      transition: designSystem.transitions.normal,
+      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
       position: "relative" as const,
+      border: "none",
+      outline: "none",
+      cursor: "pointer",
       "&:hover": {
-        transform: "translateY(-1px)",
-        boxShadow: designSystem.shadows.lg,
+        transform: "translateY(-2px)",
+        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
       },
       "&:active": {
         transform: "translateY(0)",
+        boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
       },
       "&:disabled": {
         transform: "none",
         boxShadow: "none",
         cursor: "not-allowed",
+        opacity: 0.6,
+      },
+      "&::before": {
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderRadius: designSystem.borderRadius.lg,
+        background:
+          "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%)",
+        opacity: 0,
+        transition: "opacity 0.2s ease",
+      },
+      "&:hover::before": {
+        opacity: 1,
       },
     };
 
@@ -57,83 +78,98 @@ const Button: React.FC<ButtonProps> = ({
       case "primary":
         return {
           ...baseStyles,
-          background: designSystem.colors.primary[600],
+          background: `linear-gradient(135deg, ${designSystem.colors.primary[600]} 0%, ${designSystem.colors.primary[700]} 100%)`,
           color: designSystem.colors.text.inverse,
+          boxShadow: `0 4px 15px ${designSystem.colors.primary[600]}40`,
           "&:hover": {
             ...baseStyles["&:hover"],
-            background: designSystem.colors.primary[700],
+            background: `linear-gradient(135deg, ${designSystem.colors.primary[700]} 0%, ${designSystem.colors.primary[800]} 100%)`,
+            boxShadow: `0 10px 25px ${designSystem.colors.primary[600]}50`,
           },
           "&:disabled": {
             ...baseStyles["&:disabled"],
             background: designSystem.colors.neutral[300],
             color: designSystem.colors.text.disabled,
+            boxShadow: "none",
           },
         };
 
       case "secondary":
         return {
           ...baseStyles,
-          background: designSystem.colors.surface.primary,
+          background: `linear-gradient(135deg, ${designSystem.colors.surface.primary} 0%, ${designSystem.colors.surface.secondary} 100%)`,
           color: designSystem.colors.text.primary,
           border: `1px solid ${designSystem.colors.neutral[300]}`,
+          boxShadow: `0 2px 8px rgba(0, 0, 0, 0.08)`,
           "&:hover": {
             ...baseStyles["&:hover"],
-            background: designSystem.colors.surface.secondary,
+            background: `linear-gradient(135deg, ${designSystem.colors.surface.secondary} 0%, ${designSystem.colors.neutral[200]} 100%)`,
             borderColor: designSystem.colors.neutral[400],
+            boxShadow: `0 8px 20px rgba(0, 0, 0, 0.12)`,
           },
           "&:disabled": {
             ...baseStyles["&:disabled"],
             background: designSystem.colors.surface.tertiary,
             color: designSystem.colors.text.disabled,
             borderColor: designSystem.colors.neutral[200],
+            boxShadow: "none",
           },
         };
 
       case "success":
         return {
           ...baseStyles,
-          background: designSystem.colors.success[600],
+          background: `linear-gradient(135deg, ${designSystem.colors.success[600]} 0%, ${designSystem.colors.success[700]} 100%)`,
           color: designSystem.colors.text.inverse,
+          boxShadow: `0 4px 15px ${designSystem.colors.success[600]}40`,
           "&:hover": {
             ...baseStyles["&:hover"],
-            background: designSystem.colors.success[700],
+            background: `linear-gradient(135deg, ${designSystem.colors.success[700]} 0%, ${designSystem.colors.success[800]} 100%)`,
+            boxShadow: `0 10px 25px ${designSystem.colors.success[600]}50`,
           },
           "&:disabled": {
             ...baseStyles["&:disabled"],
             background: designSystem.colors.neutral[300],
             color: designSystem.colors.text.disabled,
+            boxShadow: "none",
           },
         };
 
       case "warning":
         return {
           ...baseStyles,
-          background: designSystem.colors.warning[600],
+          background: `linear-gradient(135deg, ${designSystem.colors.warning[600]} 0%, ${designSystem.colors.warning[700]} 100%)`,
           color: designSystem.colors.text.inverse,
+          boxShadow: `0 4px 15px ${designSystem.colors.warning[600]}40`,
           "&:hover": {
             ...baseStyles["&:hover"],
-            background: designSystem.colors.warning[700],
+            background: `linear-gradient(135deg, ${designSystem.colors.warning[700]} 0%, ${designSystem.colors.warning[800]} 100%)`,
+            boxShadow: `0 10px 25px ${designSystem.colors.warning[600]}50`,
           },
           "&:disabled": {
             ...baseStyles["&:disabled"],
             background: designSystem.colors.neutral[300],
             color: designSystem.colors.text.disabled,
+            boxShadow: "none",
           },
         };
 
       case "error":
         return {
           ...baseStyles,
-          background: designSystem.colors.error[600],
+          background: `linear-gradient(135deg, ${designSystem.colors.error[600]} 0%, ${designSystem.colors.error[700]} 100%)`,
           color: designSystem.colors.text.inverse,
+          boxShadow: `0 4px 15px ${designSystem.colors.error[600]}40`,
           "&:hover": {
             ...baseStyles["&:hover"],
-            background: designSystem.colors.error[700],
+            background: `linear-gradient(135deg, ${designSystem.colors.error[700]} 0%, ${designSystem.colors.error[800]} 100%)`,
+            boxShadow: `0 10px 25px ${designSystem.colors.error[600]}50`,
           },
           "&:disabled": {
             ...baseStyles["&:disabled"],
             background: designSystem.colors.neutral[300],
             color: designSystem.colors.text.disabled,
+            boxShadow: "none",
           },
         };
 
@@ -143,16 +179,20 @@ const Button: React.FC<ButtonProps> = ({
           background: "transparent",
           color: designSystem.colors.primary[600],
           border: `2px solid ${designSystem.colors.primary[600]}`,
+          boxShadow: "none",
           "&:hover": {
             ...baseStyles["&:hover"],
-            background: designSystem.colors.primary[50],
+            background: `linear-gradient(135deg, ${designSystem.colors.primary[50]} 0%, ${designSystem.colors.primary[100]} 100%)`,
             borderColor: designSystem.colors.primary[700],
+            color: designSystem.colors.primary[700],
+            boxShadow: `0 8px 20px ${designSystem.colors.primary[600]}20`,
           },
           "&:disabled": {
             ...baseStyles["&:disabled"],
             background: "transparent",
             color: designSystem.colors.text.disabled,
             borderColor: designSystem.colors.neutral[300],
+            boxShadow: "none",
           },
         };
 
@@ -161,15 +201,18 @@ const Button: React.FC<ButtonProps> = ({
           ...baseStyles,
           background: "transparent",
           color: designSystem.colors.text.secondary,
+          boxShadow: "none",
           "&:hover": {
             ...baseStyles["&:hover"],
-            background: designSystem.colors.neutral[100],
+            background: `linear-gradient(135deg, ${designSystem.colors.neutral[100]} 0%, ${designSystem.colors.neutral[200]} 100%)`,
             color: designSystem.colors.text.primary,
+            boxShadow: `0 4px 12px rgba(0, 0, 0, 0.08)`,
           },
           "&:disabled": {
             ...baseStyles["&:disabled"],
             background: "transparent",
             color: designSystem.colors.text.disabled,
+            boxShadow: "none",
           },
         };
 
@@ -183,23 +226,26 @@ const Button: React.FC<ButtonProps> = ({
       case "small":
         return {
           fontSize: designSystem.typography.caption.fontSize,
-          padding: `${designSystem.spacing.xs} ${designSystem.spacing.sm}`,
-          minHeight: "32px",
-          minWidth: "80px",
+          padding: `${designSystem.spacing.xs} ${designSystem.spacing.md}`,
+          minHeight: "28px",
+          minWidth: "88px",
+          borderRadius: designSystem.borderRadius.md,
         };
       case "large":
         return {
           fontSize: designSystem.typography.body1.fontSize,
-          padding: `${designSystem.spacing.md} ${designSystem.spacing.lg}`,
-          minHeight: "48px",
-          minWidth: "120px",
+          padding: `${designSystem.spacing.md} ${designSystem.spacing.xl}`,
+          minHeight: "44px",
+          minWidth: "140px",
+          borderRadius: designSystem.borderRadius.xl,
         };
       default:
         return {
           fontSize: designSystem.typography.body2.fontSize,
-          padding: `${designSystem.spacing.sm} ${designSystem.spacing.md}`,
-          minHeight: "40px",
-          minWidth: "100px",
+          padding: `${designSystem.spacing.sm} ${designSystem.spacing.lg}`,
+          minHeight: "36px",
+          minWidth: "112px",
+          borderRadius: designSystem.borderRadius.lg,
         };
     }
   };
@@ -209,16 +255,24 @@ const Button: React.FC<ButtonProps> = ({
 
     return {
       "& .MuiButton-startIcon": {
-        marginRight: designSystem.spacing.xs,
+        marginRight: designSystem.spacing.sm,
         "& svg": {
           fontSize: iconSize,
+          transition: "transform 0.2s ease",
         },
       },
       "& .MuiButton-endIcon": {
-        marginLeft: designSystem.spacing.xs,
+        marginLeft: designSystem.spacing.sm,
         "& svg": {
           fontSize: iconSize,
+          transition: "transform 0.2s ease",
         },
+      },
+      "&:hover .MuiButton-startIcon svg": {
+        transform: "scale(1.1)",
+      },
+      "&:hover .MuiButton-endIcon svg": {
+        transform: "scale(1.1)",
       },
     };
   };
@@ -233,8 +287,10 @@ const Button: React.FC<ButtonProps> = ({
         borderTop: `2px solid currentColor`,
         borderRadius: "50%",
         animation: "spin 1s linear infinite",
-        marginRight: leftIcon ? designSystem.spacing.xs : 0,
-        marginLeft: rightIcon ? designSystem.spacing.xs : 0,
+        marginRight: leftIcon ? designSystem.spacing.sm : 0,
+        marginLeft: rightIcon ? designSystem.spacing.sm : 0,
+        opacity: 0.8,
+        filter: "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))",
       }}
     />
   );
@@ -255,6 +311,7 @@ const Button: React.FC<ButtonProps> = ({
         disabled={disabled || loading}
         startIcon={loading ? <LoadingSpinner /> : leftIcon}
         endIcon={rightIcon}
+        className="button-enhanced focus-enhanced"
         sx={{
           ...getVariantStyles(),
           ...getSizeStyles(),

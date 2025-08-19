@@ -249,7 +249,7 @@ export const ADMIN_MENU_THEME = {
   positioning: {
     top: 16,
     right: 16,
-    zIndex: 9999,
+    zIndex: 1000,
     menuTopOffset: 8,
   },
   drawer: {

@@ -10,7 +10,6 @@ interface HeaderSettingsData {
   desktop: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -19,7 +18,6 @@ interface HeaderSettingsData {
   tablet: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -28,7 +26,6 @@ interface HeaderSettingsData {
   mobile: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -65,7 +62,6 @@ export default function HeaderSettingsPage() {
     desktop: {
       height: 64,
       paddingHorizontal: 16,
-      paddingVertical: 8,
       logoWidth: 40,
       logoHeight: 40,
       quickButtonSize: 40,
@@ -74,7 +70,6 @@ export default function HeaderSettingsPage() {
     tablet: {
       height: 64,
       paddingHorizontal: 16,
-      paddingVertical: 8,
       logoWidth: 40,
       logoHeight: 40,
       quickButtonSize: 40,
@@ -83,7 +78,6 @@ export default function HeaderSettingsPage() {
     mobile: {
       height: 64,
       paddingHorizontal: 16,
-      paddingVertical: 8,
       logoWidth: 40,
       logoHeight: 40,
       quickButtonSize: 40,

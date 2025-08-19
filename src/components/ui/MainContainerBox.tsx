@@ -39,15 +39,16 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
   return (
     <Paper
       elevation={0}
+      className="main-container-box card-enhanced page-components"
       sx={{
-        background: designSystem.colors.surface.primary,
+        background: `linear-gradient(135deg, ${designSystem.colors.surface.primary} 0%, ${designSystem.colors.surface.secondary} 100%)`,
         border: `1px solid ${designSystem.colors.neutral[200]}`,
         borderRadius: designSystem.borderRadius.xl,
-        boxShadow: designSystem.shadows.md,
+        boxShadow: `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`,
         padding: {
-          xs: designSystem.spacing.md,
-          sm: designSystem.spacing.lg,
-          md: designSystem.spacing.xl,
+          xs: designSystem.spacing.lg,
+          sm: designSystem.spacing.xl,
+          md: designSystem.spacing["2xl"],
         },
         minHeight: "200px",
         position: "relative",
@@ -56,10 +57,11 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
         maxWidth: "100%",
         margin: "0 auto",
         boxSizing: "border-box",
-        transition: designSystem.transitions.normal,
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         "&:hover": {
-          boxShadow: designSystem.shadows.lg,
+          boxShadow: `0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)`,
           borderColor: designSystem.colors.neutral[300],
+          transform: "translateY(-2px)",
         },
         "&::before": {
           content: '""',
@@ -67,53 +69,79 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
           top: 0,
           left: 0,
           right: 0,
-          height: "3px",
-          background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 100%)`,
+          height: "4px",
+          background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 25%, ${designSystem.colors.primary[700]} 50%, ${designSystem.colors.primary[600]} 75%, ${designSystem.colors.primary[500]} 100%)`,
           borderRadius: `${designSystem.borderRadius.xl} ${designSystem.borderRadius.xl} 0 0`,
+          boxShadow: `0 2px 8px ${designSystem.colors.primary[500]}40`,
+        },
+        "&::after": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `radial-gradient(circle at top right, ${designSystem.colors.primary[50]}20 0%, transparent 50%)`,
+          pointerEvents: "none",
+          borderRadius: designSystem.borderRadius.xl,
         },
       }}
     >
-      {/* Header Section */}
+      {/* Enhanced Header Section */}
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
           alignItems: { xs: "flex-start", sm: "center" },
           justifyContent: "space-between",
-          marginBottom: designSystem.spacing.xl,
-          gap: { xs: designSystem.spacing.md, sm: 0 },
-          paddingTop: designSystem.spacing.sm,
+          marginBottom: designSystem.spacing["2xl"],
+          gap: { xs: designSystem.spacing.lg, sm: 0 },
+          paddingTop: designSystem.spacing.md,
+          position: "relative",
+          zIndex: 2,
         }}
       >
-        <Typography
-          variant="h3"
-          component="h2"
-          sx={{
-            ...designSystem.typography.h3,
-            color: designSystem.colors.text.primary,
-            margin: 0,
-            position: "relative",
-            "&::after": {
-              content: '""',
-              position: "absolute",
-              bottom: "-8px",
-              left: 0,
-              width: "40px",
-              height: "3px",
-              background: designSystem.colors.primary[500],
-              borderRadius: designSystem.borderRadius.full,
-            },
-          }}
-        >
-          {title}
-        </Typography>
+        <Box sx={{ position: "relative" }}>
+          <Typography
+            variant="h3"
+            component="h2"
+            sx={{
+              ...designSystem.typography.h3,
+              color: designSystem.colors.text.primary,
+              margin: 0,
+              position: "relative",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                bottom: "-12px",
+                left: 0,
+                width: "60px",
+                height: "3px",
+                background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 100%)`,
+                borderRadius: designSystem.borderRadius.full,
+                boxShadow: `0 2px 8px ${designSystem.colors.primary[500]}40`,
+              },
+            }}
+          >
+            {title}
+          </Typography>
+        </Box>
 
         <Stack
           direction="row"
           spacing={1}
           sx={{
             flexWrap: "wrap",
-            gap: designSystem.spacing.sm,
+            gap: designSystem.spacing.md,
+            "& .MuiButton-root": {
+              transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+              "&:hover": {
+                transform: "translateY(-1px)",
+                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.15)",
+              },
+            },
           }}
         >
           {showBuild && (
@@ -160,13 +188,16 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
         </Stack>
       </Box>
 
-      {/* Content Section */}
+      {/* Enhanced Content Section */}
       <Box
         sx={{
           position: "relative",
-          zIndex: 1,
+          zIndex: 2,
           "& > *:first-of-type": {
             marginTop: 0,
+          },
+          "& > *:last-of-type": {
+            marginBottom: 0,
           },
         }}
       >

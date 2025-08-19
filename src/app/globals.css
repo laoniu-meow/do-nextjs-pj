@@ -54,10 +54,10 @@ main,
 /* Ensure backdrop is visible and clickable */
 .MuiDrawer-root .MuiBackdrop-root {
   pointer-events: auto !important;
-  z-index: 1200 !important;
+  z-index: 1000 !important;
 }
 
 /* Ensure drawer content is above backdrop */
 .MuiDrawer-root .MuiDrawer-paper {
-  z-index: 1201 !important;
+  z-index: 1001 !important;
 }

@@ -9,7 +9,6 @@ interface HeaderPreviewProps {
     desktop: {
       height: number;
       paddingHorizontal: number;
-      paddingVertical: number;
       logoWidth: number;
       logoHeight: number;
       quickButtonSize: number;
@@ -18,7 +17,6 @@ interface HeaderPreviewProps {
     tablet: {
       height: number;
       paddingHorizontal: number;
-      paddingVertical: number;
       logoWidth: number;
       logoHeight: number;
       quickButtonSize: number;
@@ -27,7 +25,6 @@ interface HeaderPreviewProps {
     mobile: {
       height: number;
       paddingHorizontal: number;
-      paddingVertical: number;
       logoWidth: number;
       logoHeight: number;
       quickButtonSize: number;

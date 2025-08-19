@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import { designSystem } from "@/styles/design-system";
+import { cn } from "@/lib/utils";
 
 interface CardProps {
   children: React.ReactNode;
@@ -29,41 +30,45 @@ const Card: React.FC<CardProps> = ({
     switch (variant) {
       case "elevated":
         return {
-          background: designSystem.colors.surface.primary,
+          background: `linear-gradient(135deg, ${designSystem.colors.surface.primary} 0%, ${designSystem.colors.surface.secondary} 100%)`,
           border: "none",
-          boxShadow: designSystem.shadows.lg,
+          boxShadow: `0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)`,
           "&:hover": {
-            boxShadow: designSystem.shadows.xl,
-            transform: "translateY(-2px)",
+            boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.1)`,
+            transform: "translateY(-4px)",
           },
         };
       case "outlined":
         return {
-          background: designSystem.colors.surface.primary,
+          background: `linear-gradient(135deg, ${designSystem.colors.surface.primary} 0%, ${designSystem.colors.surface.secondary} 100%)`,
           border: `1px solid ${designSystem.colors.neutral[200]}`,
           boxShadow: "none",
           "&:hover": {
             borderColor: designSystem.colors.neutral[300],
-            boxShadow: designSystem.shadows.sm,
+            boxShadow: `0 4px 12px rgba(0, 0, 0, 0.08)`,
+            transform: "translateY(-2px)",
           },
         };
       case "filled":
         return {
-          background: designSystem.colors.surface.secondary,
+          background: `linear-gradient(135deg, ${designSystem.colors.surface.secondary} 0%, ${designSystem.colors.surface.tertiary} 100%)`,
           border: "none",
           boxShadow: "none",
           "&:hover": {
-            background: designSystem.colors.surface.tertiary,
+            background: `linear-gradient(135deg, ${designSystem.colors.surface.tertiary} 0%, ${designSystem.colors.neutral[200]} 100%)`,
+            transform: "translateY(-1px)",
+            boxShadow: `0 4px 12px rgba(0, 0, 0, 0.06)`,
           },
         };
       default:
         return {
-          background: designSystem.colors.surface.primary,
+          background: `linear-gradient(135deg, ${designSystem.colors.surface.primary} 0%, ${designSystem.colors.surface.secondary} 100%)`,
           border: `1px solid ${designSystem.colors.neutral[200]}`,
-          boxShadow: designSystem.shadows.sm,
+          boxShadow: `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`,
           "&:hover": {
-            boxShadow: designSystem.shadows.md,
+            boxShadow: `0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)`,
             borderColor: designSystem.colors.neutral[300],
+            transform: "translateY(-2px)",
           },
         };
     }
@@ -92,10 +97,11 @@ const Card: React.FC<CardProps> = ({
   return (
     <Paper
       elevation={0}
+      className={cn("card-enhanced focus-enhanced", className)}
       sx={{
         ...getVariantStyles(),
         ...getSizeStyles(),
-        transition: designSystem.transitions.normal,
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         overflow: "hidden",
         position: "relative",
         "&::before":
@@ -106,15 +112,31 @@ const Card: React.FC<CardProps> = ({
                 top: 0,
                 left: 0,
                 right: 0,
-                height: "3px",
-                background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 100%)`,
+                height: "4px",
+                background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 25%, ${designSystem.colors.primary[700]} 50%, ${designSystem.colors.primary[600]} 75%, ${designSystem.colors.primary[500]} 100%)`,
                 borderRadius: `${getSizeStyles().borderRadius} ${
                   getSizeStyles().borderRadius
                 } 0 0`,
+                boxShadow: `0 2px 8px ${designSystem.colors.primary[500]}40`,
               }
             : {},
+        "&::after": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `radial-gradient(circle at top right, ${designSystem.colors.primary[50]}15 0%, transparent 50%)`,
+          pointerEvents: "none",
+          borderRadius: getSizeStyles().borderRadius,
+          opacity: 0,
+          transition: "opacity 0.3s ease",
+        },
+        "&:hover::after": {
+          opacity: 1,
+        },
       }}
-      className={className}
     >
       {/* Header Section */}
       {(title || subtitle || headerAction) && (
@@ -205,6 +227,17 @@ const CardHeader: React.FC<CardHeaderProps> = ({
       marginBottom: designSystem.spacing.lg,
       paddingBottom: designSystem.spacing.md,
       borderBottom: `1px solid ${designSystem.colors.neutral[200]}`,
+      position: "relative",
+      "&::after": {
+        content: '""',
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: "40px",
+        height: "2px",
+        background: `linear-gradient(90deg, ${designSystem.colors.primary[500]} 0%, ${designSystem.colors.primary[600]} 100%)`,
+        borderRadius: designSystem.borderRadius.full,
+      },
     }}
     className={className}
   >
@@ -221,12 +254,18 @@ const CardHeader: React.FC<CardHeaderProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: "40px",
-            height: "40px",
-            borderRadius: designSystem.borderRadius.md,
-            background: designSystem.colors.primary[50],
+            width: "44px",
+            height: "44px",
+            borderRadius: designSystem.borderRadius.lg,
+            background: `linear-gradient(135deg, ${designSystem.colors.primary[50]} 0%, ${designSystem.colors.primary[100]} 100%)`,
             color: designSystem.colors.primary[600],
             marginRight: designSystem.spacing.md,
+            boxShadow: `0 2px 8px ${designSystem.colors.primary[500]}20`,
+            transition: "all 0.2s ease",
+            "&:hover": {
+              transform: "scale(1.05)",
+              boxShadow: `0 4px 12px ${designSystem.colors.primary[500]}30`,
+            },
           }}
         >
           {icon}

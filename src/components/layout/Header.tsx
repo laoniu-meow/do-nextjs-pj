@@ -13,7 +13,6 @@ interface HeaderProps {
   desktop?: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -22,7 +21,6 @@ interface HeaderProps {
   tablet?: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -31,7 +29,6 @@ interface HeaderProps {
   mobile?: {
     height: number;
     paddingHorizontal: number;
-    paddingVertical: number;
     logoWidth: number;
     logoHeight: number;
     quickButtonSize: number;
@@ -62,7 +59,6 @@ export function Header({
   desktop = {
     height: 64,
     paddingHorizontal: 16,
-    paddingVertical: 8,
     logoWidth: 40,
     logoHeight: 40,
     quickButtonSize: 40,
@@ -71,7 +67,6 @@ export function Header({
   tablet = {
     height: 64,
     paddingHorizontal: 16,
-    paddingVertical: 8,
     logoWidth: 40,
     logoHeight: 40,
     quickButtonSize: 40,
@@ -80,7 +75,6 @@ export function Header({
   mobile = {
     height: 64,
     paddingHorizontal: 16,
-    paddingVertical: 8,
     logoWidth: 40,
     logoHeight: 40,
     quickButtonSize: 40,
@@ -147,11 +141,10 @@ export function Header({
       height: currentSettings.height,
       backgroundColor,
       boxShadow: getShadow(dropShadow),
-      padding: `${currentSettings.paddingVertical}px ${currentSettings.paddingHorizontal}px`,
+      padding: `0px ${currentSettings.paddingHorizontal}px`,
     }),
     [
       currentSettings.height,
-      currentSettings.paddingVertical,
       currentSettings.paddingHorizontal,
       backgroundColor,
       dropShadow,
