@@ -52,6 +52,7 @@ export interface HeaderMainState {
   isLoading: boolean;
   error: string | null;
   hasUnsavedChanges: boolean;
+  hasStagingData: boolean;
   isSettingsOpen: boolean;
 }
 
@@ -60,6 +61,7 @@ export type HeaderMainAction =
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SET_HEADER_SETTINGS'; payload: HeaderSettingsData }
   | { type: 'SET_HAS_UNSAVED_CHANGES'; payload: boolean }
+  | { type: 'SET_HAS_STAGING_DATA'; payload: boolean }
   | { type: 'SET_IS_SETTINGS_OPEN'; payload: boolean }
   | { type: 'RESET_STATE' };
 
@@ -106,4 +108,14 @@ export const DEFAULT_HEADER_SETTINGS: HeaderSettingsData = {
   menuButtonIconId: "menu",
   menuButtonShape: "rounded",
   menuButtonShadow: "light",
+};
+
+// Default State
+export const DEFAULT_HEADER_MAIN_STATE: HeaderMainState = {
+  headerSettings: DEFAULT_HEADER_SETTINGS,
+  isLoading: false,
+  error: null,
+  hasUnsavedChanges: false,
+  hasStagingData: false,
+  isSettingsOpen: false,
 };

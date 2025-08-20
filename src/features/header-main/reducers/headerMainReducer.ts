@@ -1,12 +1,6 @@
-import { HeaderMainState, HeaderMainAction, DEFAULT_HEADER_SETTINGS } from '../types/headerMain';
+import { HeaderMainState, HeaderMainAction, DEFAULT_HEADER_MAIN_STATE } from '../types/headerMain';
 
-export const initialState: HeaderMainState = {
-  headerSettings: DEFAULT_HEADER_SETTINGS,
-  isLoading: false,
-  error: null,
-  hasUnsavedChanges: false,
-  isSettingsOpen: false,
-};
+export const initialState: HeaderMainState = DEFAULT_HEADER_MAIN_STATE;
 
 export const headerMainReducer = (
   state: HeaderMainState,
@@ -29,13 +23,20 @@ export const headerMainReducer = (
       return {
         ...state,
         headerSettings: action.payload,
-        hasUnsavedChanges: true,
+        // Don't automatically set hasUnsavedChanges to true
+        // This should be controlled by the calling code
       };
 
     case 'SET_HAS_UNSAVED_CHANGES':
       return {
         ...state,
         hasUnsavedChanges: action.payload,
+      };
+
+    case 'SET_HAS_STAGING_DATA':
+      return {
+        ...state,
+        hasStagingData: action.payload,
       };
 
     case 'SET_IS_SETTINGS_OPEN':

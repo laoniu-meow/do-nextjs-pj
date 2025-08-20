@@ -12,25 +12,28 @@ export const HeaderMainPage: React.FC = () => {
     isLoading,
     error,
     hasUnsavedChanges,
+    hasStagingData,
     isSettingsOpen,
     handleSettingsChange,
     openSettings,
     closeSettings,
     saveHeaderSettings,
+    uploadHeaderSettings,
     clearError,
   } = useHeaderMain();
 
-  // Handle apply settings
+  // Handle apply settings (apply to preview only)
   const handleApplySettings = async () => {
     try {
-      await saveHeaderSettings(headerSettings);
+      // Apply settings to preview but don't save to database yet
+      // This keeps hasUnsavedChanges as true so Save button remains enabled
       closeSettings();
     } catch (error) {
       console.error("Failed to apply settings:", error);
     }
   };
 
-  // Handle save
+  // Handle save (save to staging database)
   const handleSave = async () => {
     try {
       await saveHeaderSettings(headerSettings);
@@ -42,6 +45,15 @@ export const HeaderMainPage: React.FC = () => {
   // Handle build (open settings)
   const handleBuild = () => {
     openSettings();
+  };
+
+  // Handle upload (move staging to production)
+  const handleUpload = async () => {
+    try {
+      await uploadHeaderSettings();
+    } catch (error) {
+      console.error("Failed to upload settings:", error);
+    }
   };
 
   // Handle refresh
@@ -68,9 +80,10 @@ export const HeaderMainPage: React.FC = () => {
         showRefresh={true}
         onBuild={handleBuild}
         onSave={handleSave}
-        onUpload={() => console.log("Upload clicked")}
+        onUpload={handleUpload}
         onRefresh={handleRefresh}
         saveDisabled={!hasUnsavedChanges || isLoading}
+        uploadDisabled={!hasStagingData || isLoading}
       >
         <div className="space-y-6">
           {/* Error Display */}

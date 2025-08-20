@@ -3,6 +3,8 @@ import { HeaderSettingsData } from '../types/headerMain';
 // API endpoints
 const API_ENDPOINTS = {
   HEADER_SETTINGS: '/api/settings/header-main',
+  HEADER_SETTINGS_STAGING: '/api/settings/header-main/staging',
+  HEADER_SETTINGS_PRODUCTION: '/api/settings/header-main/production',
 };
 
 // API service for Header & Main settings
@@ -24,8 +26,8 @@ export class HeaderMainApi {
     }
   }
 
-  // Save header settings to the server
-  static async saveHeaderSettings(settings: HeaderSettingsData): Promise<HeaderSettingsData> {
+  // Save header settings to the server (legacy method)
+  static async saveHeaderSettingsLegacy(settings: HeaderSettingsData): Promise<HeaderSettingsData> {
     try {
       const response = await fetch(API_ENDPOINTS.HEADER_SETTINGS, {
         method: 'POST',
@@ -102,6 +104,48 @@ export class HeaderMainApi {
     } catch (error) {
       console.error('Error resetting header settings:', error);
       throw new Error('Failed to reset header settings');
+    }
+  }
+
+  // Save header settings to staging database
+  static async saveHeaderSettings(settings: HeaderSettingsData): Promise<HeaderSettingsData> {
+    try {
+      const response = await fetch(API_ENDPOINTS.HEADER_SETTINGS_STAGING, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ settings }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.settings || data;
+    } catch (error) {
+      console.error('Error saving header settings to staging:', error);
+      throw new Error('Failed to save header settings to staging');
+    }
+  }
+
+  // Upload header settings from staging to production
+  static async uploadHeaderSettings(): Promise<void> {
+    try {
+      const response = await fetch(API_ENDPOINTS.HEADER_SETTINGS_PRODUCTION, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error uploading header settings to production:', error);
+      throw new Error('Failed to upload header settings to production');
     }
   }
 }
