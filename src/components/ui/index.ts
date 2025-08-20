@@ -50,7 +50,7 @@ export * from "../settings";
 // Utility Components - Error boundaries and utility components
 export * from "./utils";
 
-// Context - Theme and state management
+// Context - Theme and state management (only export what we need)
 export { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 // Hooks - Custom React hooks

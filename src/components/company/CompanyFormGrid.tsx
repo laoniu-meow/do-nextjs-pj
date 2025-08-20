@@ -45,6 +45,16 @@ export const CompanyFormGrid: React.FC<CompanyFormGridProps> = ({
 };
 
 // Specialized grid layouts for common company form patterns
+/**
+ * CompanyBasicInfoGrid - Single column layout for basic company information
+ *
+ * Responsive behavior:
+ * - Mobile (xs): 1 column
+ * - Tablet (sm, md): 1 column
+ * - Desktop (lg, xl): 1 column
+ *
+ * Use case: Company name, description, industry, etc.
+ */
 export const CompanyBasicInfoGrid: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
@@ -53,6 +63,16 @@ export const CompanyBasicInfoGrid: React.FC<{ children: React.ReactNode }> = ({
   </CompanyFormGrid>
 );
 
+/**
+ * CompanyContactGrid - Responsive multi-column layout for contact information
+ *
+ * Responsive behavior:
+ * - Mobile (xs): 1 column (stacked for mobile usability)
+ * - Tablet (sm, md): 2 columns (side-by-side on tablets)
+ * - Desktop (lg, xl): 3 columns (optimized for wide screens)
+ *
+ * Use case: Phone, email, website, contact person, etc.
+ */
 export const CompanyContactGrid: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
@@ -61,6 +81,16 @@ export const CompanyContactGrid: React.FC<{ children: React.ReactNode }> = ({
   </CompanyFormGrid>
 );
 
+/**
+ * CompanyAddressGrid - Single column layout for address information
+ *
+ * Responsive behavior:
+ * - Mobile (xs): 1 column
+ * - Tablet (sm, md): 1 column
+ * - Desktop (lg, xl): 1 column
+ *
+ * Use case: Street address, city, state, zip code, country, etc.
+ */
 export const CompanyAddressGrid: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (

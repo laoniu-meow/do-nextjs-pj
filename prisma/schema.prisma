@@ -84,18 +84,18 @@ model CompanyProfile {
 
 model CompanyProfileStaging {
   id               String   @id @default(cuid())
+  name             String
   companyRegNumber String?
+  email            String?
   address          String?
   country          String?
   postalCode       String?
-  email            String?
   contact          String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  isMainCompany    Boolean  @default(false)
   logo             String?
   logoUrl          String?
-  name             String
+  isMainCompany    Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@map("company_profile_staging")
 }
@@ -139,5 +139,5 @@ enum Status {
 
 enum CompanyProfileType {
   MAIN
-  BRANCH
+  REMOTE
 }

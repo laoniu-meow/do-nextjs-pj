@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export const runtime = 'nodejs';
 
@@ -95,7 +93,7 @@ export async function DELETE(request: NextRequest) {
       count: deletedCompany.count 
     });
   } catch (error) {
-    console.error("Error removing company from production:", error);
+  console.error("Error removing company from production:", error);
     return NextResponse.json(
       { success: false, error: "Failed to remove company from production" },
       { status: 500 }

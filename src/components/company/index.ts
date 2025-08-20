@@ -1,14 +1,14 @@
-// Core form field components
+// Core Components
+export { CompanyHeader } from "./CompanyHeader";
+export { CompanyForm } from "./CompanyForm";
+export { CompanyCreateForm } from "./CompanyCreateForm";
+export { CompanyFormModal } from "./CompanyFormModal";
+
+// Form Components
 export { CompanyFormField } from "./CompanyFormField";
 export { CompanyLogoUpload } from "./CompanyLogoUpload";
-
-// Layout and organization components
 export { CompanyFormSection } from "./CompanyFormSection";
-export { CompanyFormGrid, CompanyBasicInfoGrid, CompanyContactGrid, CompanyAddressGrid } from "./CompanyFormGrid";
+export { CompanyFormGrid } from "./CompanyFormGrid";
 
-// Complete form components
-export { CompanyCreateForm } from "./CompanyCreateForm";
-export { CompanyFormModal, CompanyFormInSettingsPanel } from "./CompanyFormModal";
-
-// Types (re-export from main types file)
-export type { CompanyFormData } from "@/types";
+// Utility Components
+// export { CompanyFormInSettingsPanel } from "./CompanyFormInSettingsPanel";

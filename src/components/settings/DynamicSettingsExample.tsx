@@ -9,7 +9,7 @@ import { useSettingsContent } from "@/hooks/useSettingsContent";
 export const DynamicSettingsExample: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [lastAppliedSettings, setLastAppliedSettings] = useState<string>("");
-  const settingsContent = useSettingsContent();
+  const settingsContent = useSettingsContent("company-profile");
 
   const handleOpenSettings = () => {
     setIsSettingsOpen(true);

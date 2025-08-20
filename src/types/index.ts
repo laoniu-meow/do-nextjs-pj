@@ -103,6 +103,7 @@ export interface CompanyFormData {
   postalCode?: string
   email?: string
   contact?: string
+  phone?: string
 }
 
 // Filter and search types

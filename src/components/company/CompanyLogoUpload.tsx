@@ -7,8 +7,10 @@ import {
   Typography,
   Avatar,
   CircularProgress,
+  Paper,
+  Chip,
 } from "@mui/material";
-import { CloudUpload, Delete } from "@mui/icons-material";
+import { CloudUpload, Delete, PhotoCamera } from "@mui/icons-material";
 import { cn } from "@/lib/utils";
 
 interface CompanyLogoUploadProps {
@@ -134,148 +136,218 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
   };
 
   return (
-    <Box
-      className={cn("company-logo-upload", className)}
-      sx={{
-        width: "100%",
-        "& .flex": { display: "flex !important" },
-        "& .items-center": { alignItems: "center !important" },
-      }}
-    >
-      <Typography
-        variant="subtitle2"
-        className="mb-2 font-medium text-gray-700"
-        sx={{
-          "&::after": required
-            ? { content: '"*"', ml: 0.5, color: "#dc2626" }
-            : {},
-        }}
-      >
-        Company Logo
-      </Typography>
-
+    <Box className={cn("company-logo-upload", className)}>
       {previewUrl ? (
-        <Box
+        // Logo Preview State
+        <Paper
+          elevation={0}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "12px",
+            p: 3,
+            borderRadius: "16px",
+            background: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)",
+            border: "2px solid #0ea5e9",
+            textAlign: "center",
           }}
         >
-          <Avatar
-            src={previewUrl}
-            alt="Company Logo"
-            sx={{
-              width: 70,
-              height: 70,
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-              border: "2px solid #f3f4f6",
-            }}
-            variant="rounded"
-          />
-          <Typography variant="body2" color="textSecondary" className="text-sm">
-            Logo uploaded successfully
-          </Typography>
-          <Typography
-            variant="caption"
-            color="textSecondary"
-            className="text-xs"
-          >
-            {currentLogo || "Logo file"}
-          </Typography>
-          <Button
-            variant="outlined"
-            color="error"
-            size="small"
-            startIcon={<Delete />}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleRemoveLogo();
-            }}
-            disabled={disabled || isUploading}
-            sx={{
-              fontSize: "0.75rem",
-              padding: "4px 12px",
-              minWidth: "auto",
-            }}
-          >
-            Remove Logo
-          </Button>
-        </Box>
-      ) : (
-        <Box
-          className="flex items-center space-x-6 w-full"
-          sx={{ display: "flex", alignItems: "center" }}
-        >
-          <Box sx={{ flexShrink: 0 }}>
-            {isUploading ? (
-              <CircularProgress size={36} color="primary" />
-            ) : (
-              <CloudUpload sx={{ fontSize: 36, color: "#9ca3af" }} />
-            )}
-          </Box>
           <Box
-            className={cn(
-              "border-2 border-dashed rounded-lg p-3 transition-all duration-200",
-              dragActive ? "border-blue-400 bg-blue-50" : "border-gray-300",
-              error || uploadError ? "border-red-300 bg-red-50" : "",
-              disabled || isUploading
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer"
-            )}
             sx={{
-              flex: 1,
-              minWidth: 0,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
-              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
-              "&:hover": {
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                borderColor: "#3b82f6",
-              },
+              gap: 2,
             }}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onClick={!disabled && !isUploading ? handleUploadClick : undefined}
           >
-            <Box
-              className="flex flex-col space-y-1"
-              style={{ textAlign: "left" }}
-            >
+            {/* Logo Preview */}
+            <Box sx={{ position: "relative" }}>
+              <Avatar
+                src={previewUrl}
+                alt="Company Logo"
+                sx={{
+                  width: 80,
+                  height: 80,
+                  boxShadow: "0 8px 25px rgba(14, 165, 233, 0.25)",
+                  border: "3px solid #ffffff",
+                }}
+                variant="rounded"
+              />
+              <Chip
+                label="✓ Uploaded"
+                size="small"
+                color="success"
+                sx={{
+                  position: "absolute",
+                  bottom: -8,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                }}
+              />
+            </Box>
+
+            {/* File Info */}
+            <Box>
               <Typography
                 variant="body2"
-                color="textSecondary"
-                className="text-sm"
-                style={{ textAlign: "left" }}
+                sx={{ color: "#0c4a6e", fontWeight: 600 }}
               >
-                {isUploading ? (
-                  <span className="text-blue-600 font-medium">
-                    Uploading...
-                  </span>
-                ) : (
-                  <>
-                    <span className="text-blue-600 font-medium">
-                      Click to upload
-                    </span>{" "}
-                    or drag and drop
-                  </>
-                )}
+                Logo uploaded successfully
               </Typography>
               <Typography
                 variant="caption"
-                color="textSecondary"
-                className="text-xs"
-                style={{ textAlign: "left" }}
+                sx={{ color: "#0369a1", fontSize: "0.75rem" }}
               >
-                PNG, JPG, GIF, SVG up to 5MB
+                {currentLogo || "Logo file"}
               </Typography>
             </Box>
+
+            {/* Remove Button */}
+            <Button
+              variant="outlined"
+              color="error"
+              size="small"
+              startIcon={<Delete />}
+              onClick={handleRemoveLogo}
+              disabled={disabled || isUploading}
+              sx={{
+                borderRadius: "8px",
+                borderColor: "#ef4444",
+                color: "#ef4444",
+                fontWeight: 600,
+                textTransform: "none",
+                "&:hover": {
+                  borderColor: "#dc2626",
+                  backgroundColor: "#fef2f2",
+                  transform: "translateY(-1px)",
+                },
+                transition: "all 0.2s ease",
+              }}
+            >
+              Remove Logo
+            </Button>
           </Box>
-        </Box>
+        </Paper>
+      ) : (
+        // Upload State
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            borderRadius: "16px",
+            background: dragActive
+              ? "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)"
+              : "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+            border: "2px dashed",
+            borderColor: dragActive ? "#3b82f6" : error ? "#ef4444" : "#cbd5e1",
+            transition: "all 0.2s ease",
+            cursor: disabled || isUploading ? "not-allowed" : "pointer",
+            opacity: disabled || isUploading ? 0.6 : 1,
+            "&:hover": {
+              borderColor: "#3b82f6",
+              background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
+              transform: "translateY(-2px)",
+              boxShadow: "0 8px 25px rgba(59, 130, 246, 0.15)",
+            },
+          }}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onClick={!disabled && !isUploading ? handleUploadClick : undefined}
+        >
+          <Box sx={{ textAlign: "center" }}>
+            {/* Upload Icon */}
+            <Box sx={{ mb: 2 }}>
+              {isUploading ? (
+                <CircularProgress size={48} sx={{ color: "#3b82f6" }} />
+              ) : (
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: "16px",
+                    background:
+                      "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto",
+                    boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                  }}
+                >
+                  {dragActive ? (
+                    <PhotoCamera sx={{ fontSize: 32, color: "white" }} />
+                  ) : (
+                    <CloudUpload sx={{ fontSize: 32, color: "white" }} />
+                  )}
+                </Box>
+              )}
+            </Box>
+
+            {/* Upload Text */}
+            <Typography
+              variant="h6"
+              sx={{
+                color: dragActive ? "#1e40af" : "#1e293b",
+                fontWeight: 600,
+                mb: 1,
+              }}
+            >
+              {isUploading
+                ? "Uploading..."
+                : dragActive
+                ? "Drop your logo here"
+                : "Upload Company Logo"}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#64748b",
+                mb: 2,
+                lineHeight: 1.5,
+              }}
+            >
+              {isUploading
+                ? "Please wait while we upload your logo..."
+                : "Click to browse or drag and drop your company logo"}
+            </Typography>
+
+            {/* File Requirements */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 1,
+                flexWrap: "wrap",
+              }}
+            >
+              <Chip
+                label="PNG, JPG, GIF, SVG"
+                size="small"
+                variant="outlined"
+                sx={{ fontSize: "0.75rem", borderColor: "#cbd5e1" }}
+              />
+              <Chip
+                label="Max 5MB"
+                size="small"
+                variant="outlined"
+                sx={{ fontSize: "0.75rem", borderColor: "#cbd5e1" }}
+              />
+              {required && (
+                <Chip
+                  label="Required"
+                  size="small"
+                  color="error"
+                  variant="outlined"
+                  sx={{ fontSize: "0.75rem" }}
+                />
+              )}
+            </Box>
+          </Box>
+        </Paper>
       )}
 
+      {/* Hidden File Input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -285,10 +357,23 @@ export const CompanyLogoUpload: React.FC<CompanyLogoUploadProps> = ({
         disabled={disabled || isUploading}
       />
 
+      {/* Error Display */}
       {(error || uploadError) && (
-        <Typography variant="caption" color="error" className="mt-1 block">
-          {error || uploadError}
-        </Typography>
+        <Box sx={{ mt: 2 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "#dc2626",
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
+          >
+            ⚠️ {error || uploadError}
+          </Typography>
+        </Box>
       )}
     </Box>
   );

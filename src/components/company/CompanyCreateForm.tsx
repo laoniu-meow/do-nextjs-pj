@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Box, Button, Paper, Typography, Chip, Alert } from "@mui/material";
 
 import {
@@ -120,7 +120,7 @@ export const CompanyCreateForm: React.FC<CompanyCreateFormProps> = ({
     [formData, onFormChange, validateForm]
   );
 
-  const isFormValid = validateForm();
+  const isFormValid = useMemo(() => validateForm(), [validateForm]);
 
   return (
     <Box className={cn("company-create-form", className)}>

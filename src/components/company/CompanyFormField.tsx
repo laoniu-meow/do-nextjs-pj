@@ -1,7 +1,7 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { TextField, TextFieldProps } from "@mui/material";
+import { TextField, TextFieldProps, Box, Typography } from "@mui/material";
 import { cn } from "@/lib/utils";
 
 interface CompanyFormFieldProps
@@ -39,92 +39,131 @@ export const CompanyFormField = forwardRef<
     ref
   ) => {
     return (
-      <div className={cn("company-form-field", className)} ref={ref}>
+      <Box className={cn("company-form-field", className)} ref={ref}>
+        {/* Enhanced Label */}
+        <Typography
+          variant="subtitle2"
+          sx={{
+            color: error ? "#dc2626" : "#374151",
+            fontSize: "0.875rem",
+            fontWeight: 600,
+            marginBottom: "8px",
+            letterSpacing: "0.025em",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            "&::after": required
+              ? { content: '"*"', color: "#dc2626", fontSize: "0.875rem" }
+              : {},
+          }}
+        >
+          {label}
+        </Typography>
+
+        {/* Enhanced TextField */}
         <TextField
           {...textFieldProps}
-          label={label}
           name={name}
           variant={variant}
           required={required}
           disabled={disabled}
           error={!!error}
-          helperText={error || helpText}
           size="medium"
+          fullWidth
           sx={{
             width: customWidth || "100%",
-            marginBottom: "16px",
-            textAlign: "left",
             "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
+              borderRadius: "12px",
               fontSize: "0.875rem",
-              height: textFieldProps.multiline ? "auto" : "36px",
-              //boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
-              transition: "all 0.2s ease-in-out",
-              //backgroundColor: "#ffffff",
-              textAlign: "left",
-              "& .MuiOutlinedInput-notchedOutline": {
-                //borderColor: "#d1d5db",
-                borderWidth: "0px", //  Remove border line
-              },
+              minHeight: textFieldProps.multiline ? "auto" : "48px",
+              background: "#ffffff",
+              border: "1px solid",
+              borderColor: error ? "#dc2626" : "#d1d5db",
+              transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+
               "&:hover": {
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                backgroundColor: "#fafafa",
+                borderColor: error ? "#dc2626" : "#3b82f6",
+                boxShadow: "0 2px 8px rgba(59, 130, 246, 0.15)",
+                transform: "translateY(-1px)",
               },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#3b82f6",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#3b82f6",
-                borderWidth: "0px",
+
+              "&.Mui-focused": {
+                borderColor: error ? "#dc2626" : "#3b82f6",
+                borderWidth: "2px",
                 boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.1)",
+                transform: "translateY(-1px)",
               },
+
+              "&.Mui-error": {
+                borderColor: "#dc2626",
+                "&:hover": {
+                  borderColor: "#dc2626",
+                  boxShadow: "0 2px 8px rgba(220, 38, 38, 0.15)",
+                },
+                "&.Mui-focused": {
+                  boxShadow: "0 0 0 3px rgba(220, 38, 38, 0.1)",
+                },
+              },
+
               "& .MuiOutlinedInput-input": {
-                padding: "12px 15px",
+                padding: "12px 16px",
                 height: "auto",
-                textAlign: "left",
+                color: "#1f2937",
                 "&::placeholder": {
                   color: "#9ca3af",
                   opacity: 0.8,
+                  fontSize: "0.875rem",
                 },
               },
+
               "& .MuiOutlinedInput-inputMultiline": {
-                padding: "6px 16px",
-                textAlign: "left",
-                "&::placeholder": {
-                  color: "#9ca3af",
-                  opacity: 0.8,
-                },
+                padding: "12px 16px",
+                minHeight: "48px",
+                lineHeight: "1.5",
                 "& textarea": {
-                  textAlign: "left !important",
-                  textAlignLast: "left !important",
+                  resize: "vertical",
+                  minHeight: "24px",
                 },
               },
             },
-            "& .MuiInputLabel-root": {
-              color: "#374151",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              marginBottom: "6px",
-              letterSpacing: "0.025em",
-              textAlign: "left",
-              "&:focus": {
-                color: "#3b82f6",
-              },
-            },
+
             "& .MuiFormHelperText-root": {
               marginLeft: 0,
-              fontSize: "0.75rem",
-              marginTop: "2px",
+              marginTop: "6px",
               marginBottom: 0,
-              textAlign: "left",
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              color: error ? "#dc2626" : "#6b7280",
               "&.Mui-error": {
                 color: "#dc2626",
               },
             },
+
+            "& .MuiInputLabel-root": {
+              display: "none", // We're using custom label above
+            },
+
             ...textFieldProps.sx,
           }}
         />
-      </div>
+
+        {/* Help Text */}
+        {helpText && !error && (
+          <Typography
+            variant="caption"
+            sx={{
+              color: "#6b7280",
+              fontSize: "0.75rem",
+              marginTop: "6px",
+              marginLeft: "4px",
+              fontStyle: "italic",
+            }}
+          >
+            {helpText}
+          </Typography>
+        )}
+      </Box>
     );
   }
 );

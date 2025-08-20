@@ -236,7 +236,7 @@ Components are designed to be easily testable with:
 
 ## 📚 Examples
 
-See `CompanyFormExample.tsx` for complete usage examples including:
+See the individual component files for complete usage examples including:
 
 - Basic form usage
 - Modal integration

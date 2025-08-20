@@ -1,28 +1,48 @@
 "use client";
 
 import React from "react";
-import { Typography, Link } from "@mui/material";
+import { Link, Typography } from "@mui/material";
+import { designSystem } from "@/styles/design-system";
 
 interface BreadcrumbItemProps {
   label: string;
   href?: string;
   isActive?: boolean;
-  className?: string;
 }
 
-export default function BreadcrumbItem({
+const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
   label,
   href,
   isActive = false,
-  className,
-}: BreadcrumbItemProps) {
-  if (href && !isActive) {
+}) => {
+  if (isActive) {
+    return (
+      <Typography
+        variant="body2"
+        sx={{
+          color: designSystem.colors.text.primary,
+          fontWeight: 600,
+          fontSize: "0.875rem",
+        }}
+      >
+        {label}
+      </Typography>
+    );
+  }
+
+  if (href) {
     return (
       <Link
         href={href}
-        color="text.secondary"
-        underline="hover"
-        className={`text-gray-600 hover:text-gray-900 ${className || ""}`}
+        sx={{
+          color: designSystem.colors.text.secondary,
+          textDecoration: "none",
+          fontSize: "0.875rem",
+          "&:hover": {
+            color: designSystem.colors.primary[600],
+            textDecoration: "underline",
+          },
+        }}
       >
         {label}
       </Link>
@@ -31,10 +51,15 @@ export default function BreadcrumbItem({
 
   return (
     <Typography
-      color="primary"
-      className={`font-semibold text-blue-600 ${className || ""}`}
+      variant="body2"
+      sx={{
+        color: designSystem.colors.text.secondary,
+        fontSize: "0.875rem",
+      }}
     >
       {label}
     </Typography>
   );
-}
+};
+
+export default BreadcrumbItem;

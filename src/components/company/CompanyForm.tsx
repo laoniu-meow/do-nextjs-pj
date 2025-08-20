@@ -6,6 +6,7 @@ import {
   Typography,
   Paper,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 
 import { Save, Cancel } from "@mui/icons-material";
@@ -14,72 +15,7 @@ import {
   CreateCompanyData,
   UpdateCompanyData,
 } from "../../types/company";
-
-// Form field configuration to eliminate duplication
-const formFields = [
-  {
-    name: "name" as keyof CreateCompanyData,
-    label: "Company Name *",
-    required: true,
-    placeholder: "",
-    helpText: "",
-    multiline: false,
-    rows: 1,
-    type: "text",
-  },
-  {
-    name: "website" as keyof CreateCompanyData,
-    label: "Website",
-    required: false,
-    placeholder: "https://example.com",
-    helpText: "Include http:// or https://",
-    multiline: false,
-    rows: 1,
-    type: "text",
-  },
-  {
-    name: "description" as keyof CreateCompanyData,
-    label: "Description *",
-    required: true,
-    placeholder: "",
-    helpText: "",
-    multiline: true,
-    rows: 3,
-    type: "text",
-    fullWidth: true, // This field spans full width
-  },
-  {
-    name: "email" as keyof CreateCompanyData,
-    label: "Email",
-    required: false,
-    placeholder: "contact@company.com",
-    helpText: "",
-    multiline: false,
-    rows: 1,
-    type: "email",
-  },
-  {
-    name: "phone" as keyof CreateCompanyData,
-    label: "Phone",
-    required: false,
-    placeholder: "+1 (555) 123-4567",
-    helpText: "",
-    multiline: false,
-    rows: 1,
-    type: "text",
-  },
-  {
-    name: "address" as keyof CreateCompanyData,
-    label: "Address",
-    required: false,
-    placeholder: "123 Business St, City, State, ZIP",
-    helpText: "",
-    multiline: true,
-    rows: 2,
-    type: "text",
-    fullWidth: true, // This field spans full width
-  },
-];
+import { useCompanyFieldConfig } from "../../hooks/useCompanyFieldConfig";
 
 export const CompanyForm: React.FC<CompanyFormProps> = ({
   company,
@@ -94,8 +30,20 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
     email: "",
     phone: "",
     address: "",
+    companyRegNumber: "",
+    country: "",
+    postalCode: "",
+    contact: "",
   });
   const [errors, setErrors] = useState<Partial<CreateCompanyData>>({});
+
+  // Fetch dynamic field configuration from database
+  const {
+    fieldConfigs,
+    isLoading: isConfigLoading,
+    error: configError,
+    source,
+  } = useCompanyFieldConfig();
 
   const isEditing = !!company;
 
@@ -108,6 +56,10 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
         email: company.email || "",
         phone: company.phone || "",
         address: company.address || "",
+        companyRegNumber: company.companyRegNumber || "",
+        country: company.country || "",
+        postalCode: company.postalCode || "",
+        contact: company.contact || "",
       });
     }
   }, [company]);
@@ -115,22 +67,70 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
   const validateForm = (): boolean => {
     const newErrors: Partial<CreateCompanyData> = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Company name is required";
-    }
+    // Dynamic validation based on field configuration
+    fieldConfigs.forEach((field) => {
+      const fieldName = field.name as keyof CreateCompanyData;
+      const fieldValue = formData[fieldName];
 
-    if (!formData.description.trim()) {
-      newErrors.description = "Company description is required";
-    }
+      // Required field validation
+      if (field.required && (!fieldValue || fieldValue.trim() === "")) {
+        newErrors[fieldName] = `${field.label.replace(" *", "")} is required`;
+        return;
+      }
 
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
+      // Pattern validation
+      if (field.validation?.pattern && fieldValue) {
+        const regex = new RegExp(field.validation.pattern);
+        if (!regex.test(fieldValue)) {
+          newErrors[fieldName] = `Invalid ${field.label.toLowerCase()} format`;
+          return;
+        }
+      }
 
-    if (formData.website && !/^https?:\/\/.+/.test(formData.website)) {
-      newErrors.website =
-        "Please enter a valid website URL (include http:// or https://)";
-    }
+      // Length validation
+      if (
+        field.validation?.minLength &&
+        fieldValue &&
+        fieldValue.length < field.validation.minLength
+      ) {
+        newErrors[
+          fieldName
+        ] = `${field.label} must be at least ${field.validation.minLength} characters`;
+        return;
+      }
+
+      if (
+        field.validation?.maxLength &&
+        fieldValue &&
+        fieldValue.length > field.validation.maxLength
+      ) {
+        newErrors[
+          fieldName
+        ] = `${field.label} must be no more than ${field.validation.maxLength} characters`;
+        return;
+      }
+
+      // Email validation
+      if (
+        field.type === "email" &&
+        fieldValue &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue)
+      ) {
+        newErrors[fieldName] = "Please enter a valid email address";
+        return;
+      }
+
+      // Website validation
+      if (
+        field.type === "url" &&
+        fieldValue &&
+        !/^https?:\/\/.+/.test(fieldValue)
+      ) {
+        newErrors[fieldName] =
+          "Please enter a valid website URL (include http:// or https://)";
+        return;
+      }
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -166,10 +166,53 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
       }
     };
 
+  // Show loading state while fetching field configuration
+  if (isConfigLoading) {
+    return (
+      <Paper sx={{ p: 3, maxWidth: 800, mx: "auto" }}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="200px"
+        >
+          <CircularProgress size={40} />
+          <Typography variant="body1" sx={{ ml: 2 }}>
+            Loading form configuration...
+          </Typography>
+        </Box>
+      </Paper>
+    );
+  }
+
+  // Show error state if field configuration fails to load
+  if (configError) {
+    return (
+      <Paper sx={{ p: 3, maxWidth: 800, mx: "auto" }}>
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          <Typography variant="body2">
+            Warning: Using default form configuration. {configError}
+          </Typography>
+        </Alert>
+        <Typography variant="h5" component="h2" gutterBottom>
+          {isEditing ? "Edit Company" : "Create New Company"}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Configuration source: {source}
+        </Typography>
+      </Paper>
+    );
+  }
+
   return (
     <Paper sx={{ p: 3, maxWidth: 800, mx: "auto" }}>
       <Typography variant="h5" component="h2" gutterBottom>
         {isEditing ? "Edit Company" : "Create New Company"}
+      </Typography>
+
+      {/* Show configuration source */}
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Form configuration loaded from: <strong>{source}</strong>
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
@@ -183,31 +226,39 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
             gap: 3,
           }}
         >
-          {formFields.map((field) => (
-            <Box
-              key={field.name}
-              sx={
-                field.fullWidth
-                  ? { gridColumn: { xs: "1", sm: "1 / -1" } }
-                  : {}
-              }
-            >
-              <TextField
-                fullWidth
-                label={field.label}
-                type={field.type}
-                value={formData[field.name]}
-                onChange={handleInputChange(field.name)}
-                error={!!errors[field.name]}
-                helperText={errors[field.name] || field.helpText}
-                disabled={isLoading}
-                required={field.required}
-                placeholder={field.placeholder}
-                multiline={field.multiline}
-                rows={field.rows}
-              />
-            </Box>
-          ))}
+          {fieldConfigs.map((field) => {
+            const fieldName = field.name as keyof CreateCompanyData;
+            return (
+              <Box
+                key={field.name}
+                sx={
+                  field.fullWidth
+                    ? { gridColumn: { xs: "1", sm: "1 / -1" } }
+                    : {}
+                }
+              >
+                <TextField
+                  fullWidth
+                  label={field.label}
+                  type={field.type}
+                  value={formData[fieldName] || ""}
+                  onChange={handleInputChange(fieldName)}
+                  error={!!errors[fieldName]}
+                  helperText={errors[fieldName] || field.helpText}
+                  disabled={isLoading}
+                  required={field.required}
+                  placeholder={field.placeholder}
+                  multiline={field.multiline}
+                  rows={field.rows}
+                  inputProps={{
+                    minLength: field.validation?.minLength,
+                    maxLength: field.validation?.maxLength,
+                    pattern: field.validation?.pattern,
+                  }}
+                />
+              </Box>
+            );
+          })}
         </Box>
 
         <Box

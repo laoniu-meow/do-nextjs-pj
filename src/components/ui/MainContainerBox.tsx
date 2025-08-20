@@ -46,11 +46,11 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
         borderRadius: designSystem.borderRadius.xl,
         boxShadow: `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`,
         padding: {
-          xs: designSystem.spacing.lg,
-          sm: designSystem.spacing.xl,
-          md: designSystem.spacing["2xl"],
+          xs: designSystem.spacing.md, // Reduced from lg
+          sm: designSystem.spacing.lg, // Reduced from xl
+          md: designSystem.spacing.xl, // Reduced from 2xl
         },
-        minHeight: "200px",
+        minHeight: "120px", // Reduced from 200px
         position: "relative",
         overflow: "hidden",
         width: "100%",
@@ -94,9 +94,8 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
           flexDirection: { xs: "column", sm: "row" },
           alignItems: { xs: "flex-start", sm: "center" },
           justifyContent: "space-between",
-          marginBottom: designSystem.spacing["2xl"],
+          marginBottom: designSystem.spacing.lg, // Reduced from 2xl to lg
           gap: { xs: designSystem.spacing.lg, sm: 0 },
-          paddingTop: designSystem.spacing.md,
           position: "relative",
           zIndex: 2,
         }}
@@ -106,11 +105,12 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
             variant="h3"
             component="h2"
             sx={{
-              ...designSystem.typography.h3,
+              fontSize: designSystem.typography.fontSize.H3,
+              lineHeight: 1.3,
+              fontWeight: 700,
               color: designSystem.colors.text.primary,
               margin: 0,
               position: "relative",
-              fontWeight: 700,
               letterSpacing: "-0.02em",
               "&::after": {
                 content: '""',

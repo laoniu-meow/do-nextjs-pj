@@ -3,7 +3,7 @@ import { logger } from "@/lib/logger";
 
 export interface CompanyProfileData {
   id?: string;
-  type: "MAIN" | "BRANCH";
+  type: "MAIN" | "REMOTE";
   companyName: string;
   companyRegNumber: string;
   address: string;
@@ -24,7 +24,7 @@ interface UseCompanyProfileReturn {
   saveToStaging: () => Promise<boolean>;
   uploadToProduction: () => Promise<boolean>;
   updateProfile: (index: number, data: Partial<CompanyProfileData>) => void;
-  addProfile: (type: "MAIN" | "BRANCH") => void;
+  addProfile: (type: "MAIN" | "REMOTE") => void;
   removeProfile: (index: number) => void;
   resetChanges: () => void;
 }
@@ -181,7 +181,7 @@ export function useCompanyProfile(): UseCompanyProfileReturn {
   }, []);
 
   // Add profile
-  const addProfile = useCallback((type: "MAIN" | "BRANCH") => {
+  const addProfile = useCallback((type: "MAIN" | "REMOTE") => {
     const newProfile: CompanyProfileData = {
       type,
       companyName: "",
