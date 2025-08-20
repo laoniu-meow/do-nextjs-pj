@@ -69,11 +69,11 @@ model CompanyProfile {
   postalCode       String
   email            String
   contact          String
-  logo             String?
-  logoUrl          String?
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  logo             String?
+  logoUrl          String?
 
   @@index([type])
   @@index([isActive])
@@ -84,18 +84,18 @@ model CompanyProfile {
 
 model CompanyProfileStaging {
   id               String   @id @default(cuid())
-  name             String
   companyRegNumber String?
-  email            String?
   address          String?
   country          String?
   postalCode       String?
+  email            String?
   contact          String?
-  logo             String?
-  logoUrl          String?
-  isMainCompany    Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  isMainCompany    Boolean  @default(false)
+  logo             String?
+  name             String
+  logoUrl          String?
 
   @@map("company_profile_staging")
 }
@@ -110,12 +110,159 @@ model CompanyProfileProduction {
   postalCode       String?
   contact          String?
   logo             String?
-  logoUrl          String?
   isMainCompany    Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  logoUrl          String?
 
   @@map("company_profile_production")
+}
+
+model HeaderSettings {
+  id                        String      @id @default(cuid())
+  name                      String      @default("Default Header Settings")
+  isActive                  Boolean     @default(true)
+  desktopHeight             Int         @default(64)
+  desktopPaddingHorizontal  Int         @default(16)
+  desktopLogoWidth          Int         @default(40)
+  desktopLogoHeight         Int         @default(40)
+  desktopQuickButtonSize    Int         @default(40)
+  desktopMenuButtonSize     Int         @default(40)
+  tabletHeight              Int         @default(64)
+  tabletPaddingHorizontal   Int         @default(16)
+  tabletLogoWidth           Int         @default(40)
+  tabletLogoHeight          Int         @default(40)
+  tabletQuickButtonSize     Int         @default(40)
+  tabletMenuButtonSize      Int         @default(40)
+  mobileHeight              Int         @default(64)
+  mobilePaddingHorizontal   Int         @default(16)
+  mobileLogoWidth           Int         @default(40)
+  mobileLogoHeight          Int         @default(40)
+  mobileQuickButtonSize     Int         @default(40)
+  mobileMenuButtonSize      Int         @default(40)
+  backgroundColor           String      @default("#ffffff")
+  pageBackgroundColor       String      @default("#ffffff")
+  dropShadow                DropShadow  @default(MEDIUM)
+  quickButtonBgColor        String      @default("#f3f4f6")
+  quickButtonIconColor      String      @default("#6b7280")
+  quickButtonHoverBgColor   String      @default("#e5e7eb")
+  quickButtonHoverIconColor String      @default("#374151")
+  quickButtonShape          ButtonShape @default(ROUNDED)
+  quickButtonShadow         DropShadow  @default(LIGHT)
+  quickButtonGap            String      @default("8px")
+  menuButtonBgColor         String      @default("var(--color-neutral-200)")
+  menuButtonIconColor       String      @default("var(--color-neutral-700)")
+  menuButtonHoverBgColor    String      @default("var(--color-neutral-300)")
+  menuButtonHoverIconColor  String      @default("var(--color-neutral-800)")
+  menuButtonIconId          String      @default("menu")
+  menuButtonShape           ButtonShape @default(ROUNDED)
+  menuButtonShadow          DropShadow  @default(LIGHT)
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("header_settings")
+}
+
+model HeaderSettingsStaging {
+  id                        String      @id @default(cuid())
+  name                      String      @default("Staging Header Settings")
+  isActive                  Boolean     @default(true)
+  desktopHeight             Int         @default(64)
+  desktopPaddingHorizontal  Int         @default(16)
+  desktopLogoWidth          Int         @default(40)
+  desktopLogoHeight         Int         @default(40)
+  desktopQuickButtonSize    Int         @default(40)
+  desktopMenuButtonSize     Int         @default(40)
+  tabletHeight              Int         @default(64)
+  tabletPaddingHorizontal   Int         @default(16)
+  tabletLogoWidth           Int         @default(40)
+  tabletLogoHeight          Int         @default(40)
+  tabletQuickButtonSize     Int         @default(40)
+  tabletMenuButtonSize      Int         @default(40)
+  mobileHeight              Int         @default(64)
+  mobilePaddingHorizontal   Int         @default(16)
+  mobileLogoWidth           Int         @default(40)
+  mobileLogoHeight          Int         @default(40)
+  mobileQuickButtonSize     Int         @default(40)
+  mobileMenuButtonSize      Int         @default(40)
+  backgroundColor           String      @default("#ffffff")
+  pageBackgroundColor       String      @default("#ffffff")
+  dropShadow                DropShadow  @default(MEDIUM)
+  quickButtonBgColor        String      @default("#f3f4f6")
+  quickButtonIconColor      String      @default("#6b7280")
+  quickButtonHoverBgColor   String      @default("#e5e7eb")
+  quickButtonHoverIconColor String      @default("#374151")
+  quickButtonShape          ButtonShape @default(ROUNDED)
+  quickButtonShadow         DropShadow  @default(LIGHT)
+  quickButtonGap            String      @default("8px")
+  menuButtonBgColor         String      @default("var(--color-neutral-200)")
+  menuButtonIconColor       String      @default("var(--color-neutral-700)")
+  menuButtonHoverBgColor    String      @default("var(--color-neutral-300)")
+  menuButtonHoverIconColor  String      @default("var(--color-neutral-800)")
+  menuButtonIconId          String      @default("menu")
+  menuButtonShape           ButtonShape @default(ROUNDED)
+  menuButtonShadow          DropShadow  @default(LIGHT)
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("header_settings_staging")
+}
+
+model HeaderSettingsProduction {
+  id                        String      @id @default(cuid())
+  name                      String      @default("Production Header Settings")
+  isActive                  Boolean     @default(true)
+  desktopHeight             Int         @default(64)
+  desktopPaddingHorizontal  Int         @default(16)
+  desktopLogoWidth          Int         @default(40)
+  desktopLogoHeight         Int         @default(40)
+  desktopQuickButtonSize    Int         @default(40)
+  desktopMenuButtonSize     Int         @default(40)
+  tabletHeight              Int         @default(64)
+  tabletPaddingHorizontal   Int         @default(16)
+  tabletLogoWidth           Int         @default(40)
+  tabletLogoHeight          Int         @default(40)
+  tabletQuickButtonSize     Int         @default(40)
+  tabletMenuButtonSize      Int         @default(40)
+  mobileHeight              Int         @default(64)
+  mobilePaddingHorizontal   Int         @default(16)
+  mobileLogoWidth           Int         @default(40)
+  mobileLogoHeight          Int         @default(40)
+  mobileQuickButtonSize     Int         @default(40)
+  mobileMenuButtonSize      Int         @default(40)
+  backgroundColor           String      @default("#ffffff")
+  pageBackgroundColor       String      @default("#ffffff")
+  dropShadow                DropShadow  @default(MEDIUM)
+  quickButtonBgColor        String      @default("#f3f4f6")
+  quickButtonIconColor      String      @default("#6b7280")
+  quickButtonHoverBgColor   String      @default("#e5e7eb")
+  quickButtonHoverIconColor String      @default("#374151")
+  quickButtonShape          ButtonShape @default(ROUNDED)
+  quickButtonShadow         DropShadow  @default(LIGHT)
+  quickButtonGap            String      @default("8px")
+  menuButtonBgColor         String      @default("var(--color-neutral-200)")
+  menuButtonIconColor       String      @default("var(--color-neutral-700)")
+  menuButtonHoverBgColor    String      @default("var(--color-neutral-300)")
+  menuButtonHoverIconColor  String      @default("var(--color-neutral-800)")
+  menuButtonIconId          String      @default("menu")
+  menuButtonShape           ButtonShape @default(ROUNDED)
+  menuButtonShadow          DropShadow  @default(LIGHT)
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("header_settings_production")
 }
 
 enum Role {
@@ -140,4 +287,17 @@ enum Status {
 enum CompanyProfileType {
   MAIN
   REMOTE
+}
+
+enum DropShadow {
+  NONE
+  LIGHT
+  MEDIUM
+  STRONG
+}
+
+enum ButtonShape {
+  ROUNDED
+  CIRCLE
+  SQUARE
 }
