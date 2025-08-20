@@ -1,12 +1,18 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper, Typography, Chip, Alert } from "@mui/material";
+
+import {
+  Business as BusinessIcon,
+  LocationOn as LocationIcon,
+  ContactMail as ContactIcon,
+  CloudUpload as UploadIcon,
+} from "@mui/icons-material";
 import { cn } from "@/lib/utils";
 
 import { CompanyFormField } from "./CompanyFormField";
 import { CompanyLogoUpload } from "./CompanyLogoUpload";
-import { CompanyFormSection } from "./CompanyFormSection";
 import { CompanyFormData } from "@/types";
 
 interface CompanyCreateFormProps {
@@ -66,7 +72,7 @@ export const CompanyCreateForm: React.FC<CompanyCreateFormProps> = ({
       const isValid = validateForm(formData);
       onFormChange(formData, isValid);
     }
-  }, [formData, onFormChange, validateForm]); // Include all dependencies
+  }, [formData, onFormChange, validateForm]);
 
   const handleInputChange = useCallback(
     (field: keyof CompanyFormData, value: string) => {
@@ -88,14 +94,12 @@ export const CompanyCreateForm: React.FC<CompanyCreateFormProps> = ({
   const handleLogoChange = useCallback(
     (file: File | null, logoUrl?: string) => {
       if (file && logoUrl) {
-        // File uploaded successfully, store both filename and URL
         setFormData((prev) => ({
           ...prev,
           logo: file.name,
           logoUrl: logoUrl,
         }));
       } else {
-        // Logo removed
         setFormData((prev) => ({
           ...prev,
           logo: "",
@@ -116,128 +120,319 @@ export const CompanyCreateForm: React.FC<CompanyCreateFormProps> = ({
     [formData, onFormChange, validateForm]
   );
 
+  const isFormValid = validateForm();
+
   return (
-    <Box className={cn("", className)}>
-      {/* 1. Company Logo */}
-      <CompanyFormSection showDivider={false}>
+    <Box className={cn("company-create-form", className)}>
+      {/* Form Validation Status */}
+      {!isFormValid && (
+        <Alert
+          severity="warning"
+          sx={{
+            mb: 3,
+            borderRadius: "12px",
+            "& .MuiAlert-message": { fontSize: "0.875rem" },
+          }}
+        >
+          Please fill in all required fields before saving.
+        </Alert>
+      )}
+
+      {/* Company Logo Section */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "16px",
+          background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+          border: "1px solid #e2e8f0",
+          position: "relative",
+          overflow: "hidden",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "3px",
+            background: "linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)",
+          },
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <UploadIcon sx={{ color: "#3b82f6", mr: 1, fontSize: 20 }} />
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "#1e293b" }}>
+            Company Branding
+          </Typography>
+        </Box>
         <CompanyLogoUpload
           currentLogo={formData.logoUrl}
           onLogoChange={handleLogoChange}
           error={errors.logo}
         />
-      </CompanyFormSection>
+      </Paper>
 
-      {/* MASSIVE SPACING AFTER LOGO */}
-      <Box sx={{ marginBottom: "20px" }} />
+      {/* Basic Information Section */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "16px",
+          background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+          border: "1px solid #e2e8f0",
+          position: "relative",
+          overflow: "hidden",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "3px",
+            background: "linear-gradient(90deg, #10b981 0%, #059669 100%)",
+          },
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <BusinessIcon sx={{ color: "#10b981", mr: 1, fontSize: 20 }} />
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "#1e293b" }}>
+            Basic Information
+          </Typography>
+          <Chip
+            label="Required"
+            size="small"
+            color="error"
+            variant="outlined"
+            sx={{ ml: 2, fontSize: "0.75rem" }}
+          />
+        </Box>
 
-      {/* 2. Company Name */}
-      <CompanyFormSection required showDivider={false}>
-        <CompanyFormField
-          label=""
-          name="name"
-          value={formData.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
-          error={errors.name}
-          required
-          placeholder="Enter company name"
-        />
-      </CompanyFormSection>
-
-      {/* 3. Company Registration Number */}
-      <CompanyFormSection showDivider={false}>
-        <CompanyFormField
-          label="Company Registration Number"
-          name="companyRegNumber"
-          value={formData.companyRegNumber || ""}
-          onChange={(e) =>
-            handleInputChange("companyRegNumber", e.target.value)
-          }
-          placeholder="Enter company registration number"
-        />
-      </CompanyFormSection>
-
-      {/* 4. Address */}
-      <CompanyFormSection showDivider={false}>
-        <CompanyFormField
-          label="Address"
-          name="address"
-          value={formData.address || ""}
-          onChange={(e) => handleInputChange("address", e.target.value)}
-          multiline
-          rows={2}
-          placeholder="Enter company address"
+        <Box
           sx={{
-            "& .MuiInputBase-root": {
-              padding: "0px 0px",
-              alignItems: "flex-start",
-              alignContent: "flex-start",
-              height: "55px",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
             },
+            gap: 3,
           }}
-        />
-      </CompanyFormSection>
+        >
+          <Box>
+            <CompanyFormField
+              label="Company Name"
+              name="name"
+              value={formData.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              error={errors.name}
+              required
+              placeholder="Enter your company name"
+            />
+          </Box>
 
-      {/* 5. Country */}
-      <CompanyFormSection showDivider={false}>
-        <CompanyFormField
-          label="Country"
-          name="country"
-          value={formData.country || ""}
-          onChange={(e) => handleInputChange("country", e.target.value)}
-          placeholder="Enter country"
-        />
-      </CompanyFormSection>
+          <Box>
+            <CompanyFormField
+              label="Company Registration Number"
+              name="companyRegNumber"
+              value={formData.companyRegNumber || ""}
+              onChange={(e) =>
+                handleInputChange("companyRegNumber", e.target.value)
+              }
+              placeholder="Enter registration number"
+              helpText="Official business registration identifier"
+            />
+          </Box>
 
-      {/* 6. Postal Code */}
-      <CompanyFormSection showDivider={false}>
-        <CompanyFormField
-          label="Postal Code"
-          name="postalCode"
-          value={formData.postalCode || ""}
-          onChange={(e) => handleInputChange("postalCode", e.target.value)}
-          placeholder="Enter postal code"
-        />
-      </CompanyFormSection>
+          <Box>
+            <CompanyFormField
+              label="Email Address"
+              name="email"
+              type="email"
+              value={formData.email || ""}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              error={errors.email}
+              placeholder="contact@company.com"
+              helpText="Primary business email address"
+            />
+          </Box>
+        </Box>
+      </Paper>
 
-      {/* 7. Email */}
-      <CompanyFormSection showDivider={false}>
-        <CompanyFormField
-          label="Email Address"
-          name="email"
-          type="email"
-          value={formData.email || ""}
-          onChange={(e) => handleInputChange("email", e.target.value)}
-          error={errors.email}
-          placeholder="contact@company.com"
-        />
-      </CompanyFormSection>
+      {/* Location Information Section */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "16px",
+          background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+          border: "1px solid #e2e8f0",
+          position: "relative",
+          overflow: "hidden",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "3px",
+            background: "linear-gradient(90deg, #f59e0b 0%, #d97706 100%)",
+          },
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <LocationIcon sx={{ color: "#f59e0b", mr: 1, fontSize: 20 }} />
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "#1e293b" }}>
+            Location & Address
+          </Typography>
+        </Box>
 
-      {/* 8. Contact */}
-      <CompanyFormSection showDivider={false}>
-        <CompanyFormField
-          label="Contact"
-          name="contact"
-          value={formData.contact || ""}
-          onChange={(e) => handleInputChange("contact", e.target.value)}
-          placeholder="Enter contact number"
-        />
-      </CompanyFormSection>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 3,
+          }}
+        >
+          <Box>
+            <CompanyFormField
+              label="Company Address"
+              name="address"
+              value={formData.address || ""}
+              onChange={(e) => handleInputChange("address", e.target.value)}
+              multiline
+              rows={3}
+              placeholder="Enter complete company address"
+              helpText="Full street address including city and state"
+            />
+          </Box>
 
-      {/* Submit and Cancel Buttons */}
+          <Box>
+            <CompanyFormField
+              label="Country"
+              name="country"
+              value={formData.country || ""}
+              onChange={(e) => handleInputChange("country", e.target.value)}
+              placeholder="Select or enter country"
+              helpText="Country where company is registered"
+            />
+          </Box>
+
+          <Box>
+            <CompanyFormField
+              label="Postal Code"
+              name="postalCode"
+              value={formData.postalCode || ""}
+              onChange={(e) => handleInputChange("postalCode", e.target.value)}
+              placeholder="Enter postal/zip code"
+              helpText="Postal code for the address"
+            />
+          </Box>
+        </Box>
+      </Paper>
+
+      {/* Contact Information Section */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "16px",
+          background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+          border: "1px solid #e2e8f0",
+          position: "relative",
+          overflow: "hidden",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "3px",
+            background: "linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%)",
+          },
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <ContactIcon sx={{ color: "#8b5cf6", mr: 1, fontSize: 20 }} />
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "#1e293b" }}>
+            Contact Details
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 3,
+          }}
+        >
+          <Box>
+            <CompanyFormField
+              label="Contact Person"
+              name="contact"
+              value={formData.contact || ""}
+              onChange={(e) => handleInputChange("contact", e.target.value)}
+              placeholder="Enter contact person name"
+              helpText="Primary contact person for inquiries"
+            />
+          </Box>
+
+          <Box>
+            <CompanyFormField
+              label="Phone Number"
+              name="phone"
+              value={formData.phone || ""}
+              onChange={(e) => handleInputChange("phone", e.target.value)}
+              placeholder="+1 (555) 123-4567"
+              helpText="Business phone number"
+            />
+          </Box>
+        </Box>
+      </Paper>
+
+      {/* Action Buttons */}
       {(onSubmit || onCancel) && (
-        <Box className="flex justify-end space-x-3 mt-6">
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            borderRadius: "16px",
+            background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+            border: "1px solid #e2e8f0",
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 2,
+            flexWrap: "wrap",
+          }}
+        >
           {onCancel && (
             <Button
               variant="outlined"
               onClick={onCancel}
               disabled={isLoading}
               sx={{
+                px: 3,
+                py: 1.5,
+                borderRadius: "12px",
                 borderColor: "#6b7280",
                 color: "#6b7280",
+                fontWeight: 600,
+                textTransform: "none",
+                fontSize: "0.875rem",
                 "&:hover": {
                   borderColor: "#4b5563",
                   backgroundColor: "#f3f4f6",
+                  transform: "translateY(-1px)",
                 },
+                transition: "all 0.2s ease",
               }}
             >
               Cancel
@@ -247,17 +442,34 @@ export const CompanyCreateForm: React.FC<CompanyCreateFormProps> = ({
             <Button
               variant="contained"
               onClick={() => onSubmit(formData)}
-              disabled={isLoading || !validateForm()}
+              disabled={isLoading || !isFormValid}
               sx={{
-                backgroundColor: "#3b82f6",
-                "&:hover": { backgroundColor: "#2563eb" },
-                "&:disabled": { backgroundColor: "#9ca3af" },
+                px: 3,
+                py: 1.5,
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                fontWeight: 600,
+                textTransform: "none",
+                fontSize: "0.875rem",
+                boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 6px 16px rgba(59, 130, 246, 0.4)",
+                },
+                "&:disabled": {
+                  background: "#9ca3af",
+                  transform: "none",
+                  boxShadow: "none",
+                },
+                transition: "all 0.2s ease",
               }}
             >
-              {isLoading ? "Submitting..." : "Submit"}
+              {isLoading ? "Saving..." : "Save Company Profile"}
             </Button>
           )}
-        </Box>
+        </Paper>
       )}
     </Box>
   );
