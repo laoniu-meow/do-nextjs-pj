@@ -251,7 +251,7 @@ export function SettingsPanel({
                 cursor: isDragging ? "grabbing" : "default",
                 zIndex: 1000,
                 borderRadius: isMobile ? "20px" : "24px",
-                overflow: "hidden",
+                overflow: "visible",
                 background: "#ffffff",
                 border: "1px solid #e2e8f0",
                 boxShadow: `
@@ -287,7 +287,7 @@ export function SettingsPanel({
                   zIndex: 1001,
                   display: "flex",
                   flexDirection: "column",
-                  overflow: "hidden",
+                  overflow: "visible",
                   boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.8)",
                   isolation: "isolate",
                 }}
@@ -530,35 +530,41 @@ export function SettingsPanel({
                 sx={{
                   height: "auto",
                   maxHeight: isMobile
-                    ? "calc(90vh - 140px)"
-                    : "calc(90vh - 220px)",
+                    ? "calc(100vh - 180px)"
+                    : "calc(100vh - 200px)",
                   minHeight: isMobile ? 320 : 420,
                   background:
                     "linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%)",
-                  padding: isMobile ? "24px" : "36px",
+                  padding: isMobile ? "20px" : "32px",
                   overflowY: "auto",
                   overflowX: "hidden",
+                  // Ensure scrolling works properly
+                  position: "relative",
+                  zIndex: 1002,
                   scrollbarWidth: "thin",
                   scrollbarColor: "#cbd5e1 #f1f5f9",
                   "&::-webkit-scrollbar": {
-                    width: "10px",
+                    width: "8px",
                   },
                   "&::-webkit-scrollbar-track": {
                     background: "#f1f5f9",
-                    borderRadius: "8px",
-                    margin: "4px",
+                    borderRadius: "6px",
+                    margin: "2px",
                   },
                   "&::-webkit-scrollbar-thumb": {
                     background:
                       "linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%)",
-                    borderRadius: "6px",
-                    border: "2px solid #f1f5f9",
+                    borderRadius: "4px",
+                    border: "1px solid #f1f5f9",
                     "&:hover": {
                       background:
                         "linear-gradient(135deg, #94a3b8 0%, #64748b 100%)",
                     },
                   },
-                  position: "relative",
+                  "&::-webkit-scrollbar-thumb:active": {
+                    background:
+                      "linear-gradient(135deg, #64748b 0%, #475569 100%)",
+                  },
                 }}
               >
                 {children}

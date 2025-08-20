@@ -2,7 +2,10 @@
 
 import React from "react";
 import { CompanyProfileSettings } from "./content/CompanyProfileSettings";
-import { HeaderMainSettings } from "./content/HeaderMainSettings";
+import {
+  HeaderSettingsForm,
+  DEFAULT_HEADER_SETTINGS,
+} from "@/features/header-main";
 import { CompanyFormData } from "@/types";
 
 interface SettingsContentFactoryProps {
@@ -25,9 +28,19 @@ export const SettingsContentFactory: React.FC<SettingsContentFactoryProps> = ({
         />
       );
     case "header-settings":
-      return <HeaderMainSettings onApply={() => {}} onCancel={() => {}} />;
+      return (
+        <HeaderSettingsForm
+          initialSettings={DEFAULT_HEADER_SETTINGS}
+          onSettingsChange={() => {}}
+        />
+      );
     case "header-main":
-      return <HeaderMainSettings onApply={() => {}} onCancel={() => {}} />;
+      return (
+        <HeaderSettingsForm
+          initialSettings={DEFAULT_HEADER_SETTINGS}
+          onSettingsChange={() => {}}
+        />
+      );
     default:
       return (
         <div className="text-center py-8">

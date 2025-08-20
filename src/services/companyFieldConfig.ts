@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db';
-import { Company } from '../types/company';
+import { CompanyFormData } from '@/types';
 import type { CompanyProfileStaging } from '@prisma/client';
 
 export interface CompanyFieldConfig {
@@ -122,7 +122,7 @@ export const companyFieldConfigService = {
    * Transform company data to field configuration
    * Dynamically generates field configuration based on database data
    */
-  transformCompanyDataToFieldConfig(companyData?: Company | CompanyProfileStaging): CompanyFieldConfig[] {
+  transformCompanyDataToFieldConfig(companyData?: CompanyFormData | CompanyProfileStaging): CompanyFieldConfig[] {
     if (!companyData) {
       // Fallback to default configuration if no data provided
       return this.getDefaultFieldConfig();

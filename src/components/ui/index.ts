@@ -9,6 +9,7 @@ export { default as Button, ButtonGroup } from "./core/Button";
 
 // Color Components
 export { ColorPicker } from "./ColorPicker";
+export { ColorPickerDialog } from "./ColorPickerDialog";
 
 // Icon Library Component
 export { IconLibrary } from "./IconLibrary";

@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Typography, Alert } from "@mui/material";
-import { CompanyCreateForm } from "@/components/company";
+import { Typography, Alert, TextField, Box } from "@mui/material";
 import { CompanyFormData } from "@/types";
 
 interface CompanyProfileSettingsProps {
@@ -67,10 +66,81 @@ export const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({
       )}
 
       {/* Company Form */}
-      <CompanyCreateForm
-        initialData={formData}
-        onFormChange={handleFormChange}
-      />
+      <Box component="form" className="space-y-4">
+        <TextField
+          fullWidth
+          label="Company Name"
+          value={formData.name}
+          onChange={(e) =>
+            handleFormChange(
+              { ...formData, name: e.target.value },
+              e.target.value.length > 0
+            )
+          }
+          required
+          variant="outlined"
+        />
+        <TextField
+          fullWidth
+          label="Company Registration Number"
+          value={formData.companyRegNumber}
+          onChange={(e) =>
+            handleFormChange(
+              { ...formData, companyRegNumber: e.target.value },
+              true
+            )
+          }
+          variant="outlined"
+        />
+        <TextField
+          fullWidth
+          label="Email"
+          type="email"
+          value={formData.email}
+          onChange={(e) =>
+            handleFormChange({ ...formData, email: e.target.value }, true)
+          }
+          variant="outlined"
+        />
+        <TextField
+          fullWidth
+          label="Address"
+          value={formData.address}
+          onChange={(e) =>
+            handleFormChange({ ...formData, address: e.target.value }, true)
+          }
+          variant="outlined"
+          multiline
+          rows={2}
+        />
+        <TextField
+          fullWidth
+          label="Country"
+          value={formData.country}
+          onChange={(e) =>
+            handleFormChange({ ...formData, country: e.target.value }, true)
+          }
+          variant="outlined"
+        />
+        <TextField
+          fullWidth
+          label="Postal Code"
+          value={formData.postalCode}
+          onChange={(e) =>
+            handleFormChange({ ...formData, postalCode: e.target.value }, true)
+          }
+          variant="outlined"
+        />
+        <TextField
+          fullWidth
+          label="Contact Person"
+          value={formData.contact}
+          onChange={(e) =>
+            handleFormChange({ ...formData, contact: e.target.value }, true)
+          }
+          variant="outlined"
+        />
+      </Box>
     </div>
   );
 };

@@ -136,25 +136,25 @@ export function Header({
   }, [menuButtonIconId]);
 
   // Memoize header styles to prevent unnecessary recalculations
-  const headerStyles = useMemo(
-    (): React.CSSProperties => ({
+  const headerStyles = useMemo((): React.CSSProperties => {
+    return {
       height: currentSettings.height,
       backgroundColor,
-      boxShadow: getShadow(dropShadow),
       padding: `0px ${currentSettings.paddingHorizontal}px`,
-    }),
-    [
-      currentSettings.height,
-      currentSettings.paddingHorizontal,
-      backgroundColor,
-      dropShadow,
-      getShadow,
-    ]
-  );
+    };
+  }, [
+    currentSettings.height,
+    currentSettings.paddingHorizontal,
+    backgroundColor,
+  ]);
 
   return (
     <ResponsiveHeader sticky={false} transparent={false}>
-      <div style={headerStyles} className="header-container">
+      <div
+        style={headerStyles}
+        className={`header-container header-shadow-${dropShadow}`}
+        data-drop-shadow={dropShadow}
+      >
         {/* Logo - Left side */}
         <div className="header-logo-container">
           {logoLoading ? (
@@ -221,6 +221,7 @@ export function Header({
                 width: currentSettings.quickButtonSize,
                 height: currentSettings.quickButtonSize,
                 backgroundColor: quickButtonBgColor,
+                color: quickButtonIconColor,
                 boxShadow: getShadow(quickButtonShadow),
                 flexShrink: 0,
               }}
@@ -238,7 +239,6 @@ export function Header({
                 height="20"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                style={{ color: quickButtonIconColor }}
               >
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
@@ -254,6 +254,7 @@ export function Header({
               width: currentSettings.menuButtonSize,
               height: currentSettings.menuButtonSize,
               backgroundColor: menuButtonBgColor,
+              color: menuButtonIconColor,
               boxShadow: getShadow(menuButtonShadow),
             }}
             onMouseEnter={(e) => {
@@ -270,7 +271,6 @@ export function Header({
                 style={{
                   width: 20,
                   height: 20,
-                  color: menuButtonIconColor,
                 }}
               />
             ) : (
@@ -283,7 +283,6 @@ export function Header({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                style={{ color: menuButtonIconColor }}
               >
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <line x1="3" y1="12" x2="21" y2="12"></line>

@@ -3,7 +3,6 @@ import { Box, Alert, Typography } from "@mui/material";
 import { PageLayout, MainContainerBox } from "@/components/ui";
 import { DynamicSettingsPanel } from "@/components/settings";
 import { useCompanyProfile } from "../hooks/useCompanyProfile";
-import { CompanyProfileActions } from "./CompanyProfileActions";
 import { CompanyProfileGrid } from "./CompanyProfileGrid";
 import { CompanyProfileEmptyState } from "./CompanyProfileEmptyState";
 import { CompanyProfileLoading } from "./CompanyProfileLoading";
@@ -15,7 +14,6 @@ export const CompanyProfilePage: React.FC = () => {
     isLoading,
     error,
     hasUnsavedChanges,
-    hasStagingData,
     isEditMode,
     isSettingsOpen,
     currentCompany,
@@ -78,24 +76,18 @@ export const CompanyProfilePage: React.FC = () => {
         </Alert>
       )}
 
-      {/* Action Buttons and Status */}
-      <CompanyProfileActions
-        hasUnsavedChanges={hasUnsavedChanges || false}
-        hasStagingData={hasStagingData || false}
-        isLoading={isLoading || false}
+      {/* Main Content with Built-in Action Buttons */}
+      <MainContainerBox
+        title="Configuration"
+        showBuild={true}
+        showSave={true}
+        showUpload={true}
+        showRefresh={true}
         onBuild={handleBuild}
         onSave={handleSave}
         onUpload={handleUpload}
         onRefresh={handleRefresh}
-      />
-
-      {/* Main Content */}
-      <MainContainerBox
-        title="Configuration"
-        showBuild={false} // We handle this in our custom actions
-        showSave={false}
-        showUpload={false}
-        showRefresh={false}
+        saveDisabled={!hasUnsavedChanges || isLoading}
       >
         <Box sx={{ minHeight: "400px" }}>
           {isLoading ? (
