@@ -125,21 +125,6 @@ export function ColorPickerDialog({
           placeholder="#000000"
           maxLength={7}
         />
-
-        {/* Open Dialog Button */}
-        <button
-          type="button"
-          onClick={handleOpen}
-          disabled={disabled}
-          className={`
-            px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 
-            rounded-md transition-colors duration-200
-            disabled:opacity-50 disabled:cursor-not-allowed
-            ${disabled ? "" : "cursor-pointer"}
-          `}
-        >
-          Open Picker
-        </button>
       </div>
 
       {/* Color Picker Dialog */}
