@@ -15,6 +15,72 @@ import {
   UpdateCompanyData,
 } from "../../types/company";
 
+// Form field configuration to eliminate duplication
+const formFields = [
+  {
+    name: "name" as keyof CreateCompanyData,
+    label: "Company Name *",
+    required: true,
+    placeholder: "",
+    helpText: "",
+    multiline: false,
+    rows: 1,
+    type: "text",
+  },
+  {
+    name: "website" as keyof CreateCompanyData,
+    label: "Website",
+    required: false,
+    placeholder: "https://example.com",
+    helpText: "Include http:// or https://",
+    multiline: false,
+    rows: 1,
+    type: "text",
+  },
+  {
+    name: "description" as keyof CreateCompanyData,
+    label: "Description *",
+    required: true,
+    placeholder: "",
+    helpText: "",
+    multiline: true,
+    rows: 3,
+    type: "text",
+    fullWidth: true, // This field spans full width
+  },
+  {
+    name: "email" as keyof CreateCompanyData,
+    label: "Email",
+    required: false,
+    placeholder: "contact@company.com",
+    helpText: "",
+    multiline: false,
+    rows: 1,
+    type: "email",
+  },
+  {
+    name: "phone" as keyof CreateCompanyData,
+    label: "Phone",
+    required: false,
+    placeholder: "+1 (555) 123-4567",
+    helpText: "",
+    multiline: false,
+    rows: 1,
+    type: "text",
+  },
+  {
+    name: "address" as keyof CreateCompanyData,
+    label: "Address",
+    required: false,
+    placeholder: "123 Business St, City, State, ZIP",
+    helpText: "",
+    multiline: true,
+    rows: 2,
+    type: "text",
+    fullWidth: true, // This field spans full width
+  },
+];
+
 export const CompanyForm: React.FC<CompanyFormProps> = ({
   company,
   onSubmit,
@@ -117,84 +183,31 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
             gap: 3,
           }}
         >
-          <Box>
-            <TextField
-              fullWidth
-              label="Company Name *"
-              value={formData.name}
-              onChange={handleInputChange("name")}
-              error={!!errors.name}
-              helperText={errors.name}
-              disabled={isLoading}
-              required
-            />
-          </Box>
-
-          <Box>
-            <TextField
-              fullWidth
-              label="Website"
-              value={formData.website}
-              onChange={handleInputChange("website")}
-              error={!!errors.website}
-              helperText={errors.website || "Include http:// or https://"}
-              disabled={isLoading}
-              placeholder="https://example.com"
-            />
-          </Box>
-
-          <Box sx={{ gridColumn: { xs: "1", sm: "1 / -1" } }}>
-            <TextField
-              fullWidth
-              label="Description *"
-              value={formData.description}
-              onChange={handleInputChange("description")}
-              error={!!errors.description}
-              helperText={errors.description}
-              disabled={isLoading}
-              multiline
-              rows={3}
-              required
-            />
-          </Box>
-
-          <Box>
-            <TextField
-              fullWidth
-              label="Email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange("email")}
-              error={!!errors.email}
-              helperText={errors.email}
-              disabled={isLoading}
-              placeholder="contact@company.com"
-            />
-          </Box>
-
-          <Box>
-            <TextField
-              fullWidth
-              label="Phone"
-              value={formData.phone}
-              onChange={handleInputChange("phone")}
-              disabled={isLoading}
-              placeholder="+1 (555) 123-4567"
-            />
-          </Box>
-
-          <Box sx={{ gridColumn: { xs: "1", sm: "1 / -1" } }}>
-            <TextField
-              fullWidth
-              label="Address"
-              value={formData.address}
-              onChange={handleInputChange("address")}
-              disabled={isLoading}
-              multiline
-              rows={2}
-              placeholder="123 Business St, City, State, ZIP"
-            />
-          </Box>
+          {formFields.map((field) => (
+            <Box
+              key={field.name}
+              sx={
+                field.fullWidth
+                  ? { gridColumn: { xs: "1", sm: "1 / -1" } }
+                  : {}
+              }
+            >
+              <TextField
+                fullWidth
+                label={field.label}
+                type={field.type}
+                value={formData[field.name]}
+                onChange={handleInputChange(field.name)}
+                error={!!errors[field.name]}
+                helperText={errors[field.name] || field.helpText}
+                disabled={isLoading}
+                required={field.required}
+                placeholder={field.placeholder}
+                multiline={field.multiline}
+                rows={field.rows}
+              />
+            </Box>
+          ))}
         </Box>
 
         <Box
