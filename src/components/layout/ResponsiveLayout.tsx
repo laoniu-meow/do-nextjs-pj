@@ -168,7 +168,7 @@ export function ResponsiveHeader({
 
   const headerStyles: React.CSSProperties = {
     height: currentSettings.height,
-    padding: `${currentSettings.paddingVertical}px ${currentSettings.paddingHorizontal}px`,
+    // Remove padding from ResponsiveHeader since it's now handled by inner container
     position: "relative",
     width: "100%",
     maxWidth: "100%",

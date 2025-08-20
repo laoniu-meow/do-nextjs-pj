@@ -267,13 +267,12 @@ body {
   height: 100%;
   position: relative;
   min-height: 64px;
-  padding: 0;
+  /* Remove padding override to allow inline styles to work */
   margin: 0;
   box-sizing: border-box;
   /* Simple flexbox layout */
   flex-wrap: nowrap;
   overflow: visible;
-
 }
 
 /* Drop Shadow Classes for Header */
@@ -292,8 +291,6 @@ body {
 .header-shadow-strong {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25), 0 4px 8px rgba(0, 0, 0, 0.2) !important;
 }
-
-
 
 /* Logo - Left side, no padding/margin */
 .header-logo-container {
@@ -351,7 +348,7 @@ body {
   align-items: center;
   justify-content: center;
   margin: 0 !important;
-  padding: 0 !important;
+  /* Remove padding override to allow inline styles to work */
   width: 100% !important;
   max-width: 100% !important;
   position: relative;
@@ -427,7 +424,7 @@ body {
 
   .header-container {
     gap: 8px;
-    padding: 0 12px;
+    /* Remove fixed padding to allow inline styles from settings to work */
   }
 
   /* Ensure menu button is visible on tablet */
@@ -512,7 +509,7 @@ body {
 
   .header-container {
     gap: 4px;
-    padding: 0 8px;
+    /* Remove fixed padding to allow inline styles from settings to work */
   }
 
   /* Ensure menu button is visible on mobile */
@@ -541,7 +538,7 @@ body {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 0 !important;
+  /* Remove padding override to allow inline styles to work */
   box-sizing: border-box !important;
   overflow: visible !important;
   position: relative !important;
@@ -551,7 +548,7 @@ body {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 0 !important;
+  /* Remove padding override to allow inline styles to work */
   overflow: visible !important;
   position: relative !important;
   min-height: 64px !important;
@@ -562,7 +559,7 @@ body {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 0 !important;
+  /* Remove padding override to allow inline styles to work */
   box-sizing: border-box !important;
   overflow: visible !important;
   position: relative !important;
