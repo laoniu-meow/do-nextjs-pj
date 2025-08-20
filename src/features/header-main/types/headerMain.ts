@@ -28,6 +28,7 @@ export interface HeaderSettingsData {
 
   // Global settings (not device-specific)
   backgroundColor: string;
+  pageBackgroundColor: string;
   dropShadow: "none" | "light" | "medium" | "strong";
   quickButtonBgColor: string;
   quickButtonIconColor: string;
@@ -89,6 +90,7 @@ export const DEFAULT_HEADER_SETTINGS: HeaderSettingsData = {
     menuButtonSize: 40,
   },
   backgroundColor: "#ffffff",
+  pageBackgroundColor: "#ffffff",
   dropShadow: "medium",
   quickButtonBgColor: "#f3f4f6",
   quickButtonIconColor: "#6b7280",

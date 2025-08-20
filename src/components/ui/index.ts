@@ -15,6 +15,9 @@ export { ColorPickerDialog } from "./ColorPickerDialog";
 export { IconLibrary } from "./IconLibrary";
 export { IconSelector } from "./IconSelector";
 
+// New IconPicker Component
+export { IconPicker } from "./IconPicker";
+
 // Responsive Tabs - Device view switcher (Desktop, Tablet, Mobile)
 export { default as ResponsiveTabs } from "./ResponsiveTabs";
 export type { ResponsiveView } from "./ResponsiveTabs";

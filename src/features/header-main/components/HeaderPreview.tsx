@@ -9,7 +9,7 @@ interface HeaderPreviewProps {
 export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
   const getPreviewContainerStyle = (): React.CSSProperties => ({
     border: "2px solid #e5e7eb",
-    backgroundColor: "#f9fafb",
+    backgroundColor: headerSettings.pageBackgroundColor || "#f9fafb",
     margin: 0,
     overflow: "hidden",
     position: "relative",
@@ -66,7 +66,12 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
           </div>
 
           {/* Content Area (placeholder) */}
-          <div className="flex-1 bg-gray-50 p-8">
+          <div
+            className="flex-1 p-8"
+            style={{
+              backgroundColor: headerSettings.pageBackgroundColor || "#f9fafb",
+            }}
+          >
             <div className="text-center text-gray-500">
               <p className="text-lg">Content area preview</p>
               <p className="text-sm">Your main content will appear here</p>

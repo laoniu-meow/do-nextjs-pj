@@ -40,6 +40,7 @@ export const ColorSettings: React.FC<ColorSettingsProps> = ({
       menuButtonSize: 40,
     },
     backgroundColor: "#ffffff",
+    pageBackgroundColor: "#ffffff",
     dropShadow: "medium",
     quickButtonBgColor: "#f3f4f6",
     quickButtonIconColor: "#6b7280",
