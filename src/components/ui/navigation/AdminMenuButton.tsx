@@ -7,6 +7,7 @@ import MenuItemList from "./MenuItemList";
 import { useMenuState } from "../hooks/useMenuState";
 import { ADMIN_MENU_THEME, SPACING } from "../constants/theme";
 import { MenuConfig, MenuItem } from "../config/menuConfig";
+import { usePathname } from "next/navigation";
 
 interface AdminMenuButtonProps {
   className?: string;
@@ -30,6 +31,8 @@ export default function AdminMenuButton({
     open: openDrawer,
     close: closeDrawer,
   } = useMenuState({ autoClose: false }); // Disable auto-close to prevent interference
+
+  const pathname = usePathname();
 
   const toggleDrawer = () => {
     if (isDrawerOpen) {
@@ -57,6 +60,11 @@ export default function AdminMenuButton({
 
   // Don't render until mounted to prevent hydration mismatch
   if (!mounted) {
+    return null;
+  }
+
+  // Hide on Frontend Index page only
+  if (pathname === "/") {
     return null;
   }
 

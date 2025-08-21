@@ -19,8 +19,17 @@ export async function GET(
       );
     }
 
-    // Construct the file path
-    const filePath = join(process.cwd(), 'src', uploadConfig.logosDir, filename);
+    // Construct the file path, supporting both src/* and public/* based on env setting
+    const resolveLogosDir = (subPath: string): string => {
+      // If configured under public/, do not prefix with src
+      if (subPath.startsWith('public/')) {
+        return join(process.cwd(), subPath);
+      }
+      // Default to src/* structure
+      return join(process.cwd(), 'src', subPath);
+    };
+
+    const filePath = join(resolveLogosDir(uploadConfig.logosDir), filename);
     
     // Read the file
     const fileBuffer = await readFile(filePath);

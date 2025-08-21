@@ -20,6 +20,8 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
       <Typography
         variant="body2"
         sx={{
+          position: "relative",
+          zIndex: 1,
           color: designSystem.colors.text.primary,
           fontWeight: 600,
           fontSize: "0.875rem",
@@ -35,6 +37,8 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
       <Link
         href={href}
         sx={{
+          position: "relative",
+          zIndex: 1,
           color: designSystem.colors.text.secondary,
           textDecoration: "none",
           fontSize: "0.875rem",
@@ -53,6 +57,8 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
     <Typography
       variant="body2"
       sx={{
+        position: "relative",
+        zIndex: 1,
         color: designSystem.colors.text.secondary,
         fontSize: "0.875rem",
       }}

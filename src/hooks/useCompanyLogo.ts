@@ -49,6 +49,12 @@ export function useCompanyLogo(): CompanyLogoData {
 				return value;
 			}
 
+			// Allow direct public paths like /logos/...
+			if (value.startsWith("/")) {
+				console.log("Public path detected, using as-is:", value);
+				return value;
+			}
+
 			// Extract filename and build our asset API path
 			const filename = value.split("/").pop() ?? value;
 			const apiPath = `/api/assets/logo/${filename}`;

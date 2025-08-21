@@ -37,8 +37,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create upload directory if it doesn't exist
-    const uploadDir = join(process.cwd(), 'src', uploadConfig.logosDir);
+    // Create upload directory if it doesn't exist (support public/* and src/*)
+    const resolveUploadDir = (subPath: string): string => {
+      if (subPath.startsWith('public/')) {
+        return join(process.cwd(), subPath);
+      }
+      return join(process.cwd(), 'src', subPath);
+    };
+
+    const uploadDir = resolveUploadDir(uploadConfig.logosDir);
     await mkdir(uploadDir, { recursive: true });
 
     // Generate unique filename
@@ -52,8 +59,9 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     await writeFile(filePath, buffer);
 
-    // Return the URL path (this will be served by Next.js)
-    const logoUrl = `/api/assets/logo/${fileName}`;
+    // Return the URL path: if saving under public/, prefer direct public URL; else use API route
+    const isPublic = uploadConfig.logosDir.startsWith('public/');
+    const logoUrl = isPublic ? `/${uploadConfig.logosDir.replace('public/', '')}/${fileName}` : `/api/assets/logo/${fileName}`;
 
     return NextResponse.json({
       success: true,

@@ -136,6 +136,10 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
             flexWrap: "wrap",
             gap: designSystem.spacing.md,
             "& .MuiButton-root": {
+              minWidth: 120,
+              height: 32,
+              minHeight: 32,
+              padding: "6px 14px",
               transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
               "&:hover": {
                 transform: "translateY(-1px)",
@@ -147,6 +151,7 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
           {showBuild && (
             <Button
               variant="primary"
+              size="small"
               leftIcon={<BuildIcon />}
               onClick={onBuild}
             >
@@ -157,6 +162,7 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
           {showSave && (
             <Button
               variant="success"
+              size="small"
               leftIcon={<SaveIcon />}
               onClick={onSave}
               disabled={saveDisabled}
@@ -168,6 +174,7 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
           {showUpload && (
             <Button
               variant="secondary"
+              size="small"
               leftIcon={<CloudUploadIcon />}
               onClick={onUpload}
               disabled={uploadDisabled}
@@ -179,6 +186,7 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
           {showRefresh && (
             <Button
               variant="warning"
+              size="small"
               leftIcon={<ReplayCircleFilledIcon />}
               onClick={onRefresh}
             >

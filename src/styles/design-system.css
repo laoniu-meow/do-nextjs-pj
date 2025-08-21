@@ -1441,6 +1441,14 @@ body {
   z-index: 100000 !important;
 }
 
+/* Force breadcrumbs to sit behind overlays and settings panel */
+.page-layout-container .MuiBreadcrumbs-root,
+.page-layout-container .MuiBreadcrumbs-root *,
+.page-layout-container .MuiBreadcrumbs-separator {
+  position: relative !important;
+  z-index: 0 !important;
+}
+
 /* Settings Panel Content Styling */
 .settings-panel .design-system {
   padding: 20px 24px !important;
@@ -1467,12 +1475,38 @@ body {
   margin-bottom: 20px;
 }
 
+/* Standardize single-line input and select heights in Settings Panel */
+.settings-panel .MuiInputBase-root:not(.MuiInputBase-multiline) {
+  min-height: 40px; /* slimmer control height */
+}
+.settings-panel .MuiOutlinedInput-root {
+  border-radius: 10px;
+}
+.settings-panel .MuiOutlinedInput-input {
+  padding: 10px 12px; /* slightly tighter vertical rhythm */
+  font-size: 0.95rem;
+}
+.settings-panel .MuiSelect-select {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Ensure dense fields from `size="small"` still respect the min height */
+.settings-panel .MuiInputBase-sizeSmall:not(.MuiInputBase-multiline) {
+  min-height: 40px;
+}
+
 /* Settings Panel Section Spacing */
-.settings-panel .MuiBox-root,
 .settings-panel .MuiPaper-root,
 .settings-panel .MuiCard-root {
   margin-bottom: 20px;
   padding: 16px 20px;
+}
+
+/* Do NOT auto-apply spacing to header box; let component control it */
+.settings-panel .settings-panel-header {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Ensure all page content stays below Settings Panel */
