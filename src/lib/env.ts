@@ -26,7 +26,7 @@ const envSchema = z.object({
 
   // File Upload
   MAX_FILE_SIZE: z.string().regex(/^\d+$/).transform(Number).default(5242880),
-  UPLOAD_LOGOS_DIR: z.string().min(1).default("assets/logos"),
+  UPLOAD_LOGOS_DIR: z.string().min(1).default("public/logos"),
   UPLOAD_MEDIA_DIR: z.string().min(1).default("assets/media"),
   UPLOAD_DOCS_DIR: z.string().min(1).default("assets/docs"),
 

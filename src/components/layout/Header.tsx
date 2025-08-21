@@ -286,7 +286,12 @@ export function Header({
           <div
             className="header-quick-buttons"
             style={{
-              gap: quickButtonGap,
+              gap:
+                typeof quickButtonGap === "number"
+                  ? quickButtonGap
+                  : /^(\d+)$/.test(String(quickButtonGap))
+                  ? `${quickButtonGap}px`
+                  : quickButtonGap,
             }}
           >
             {[1, 2, 3, 4].map((index) => (

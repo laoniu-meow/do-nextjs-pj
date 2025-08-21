@@ -756,17 +756,27 @@ export function HeaderSettingsForm({
             <label className="block text-sm font-semibold text-gray-700">
               Button Gap
             </label>
-            <input
-              type="number"
-              value={settings.quickButtonGap}
-              onChange={(e) =>
-                handleGlobalSettingChange("quickButtonGap", e.target.value)
-              }
-              placeholder="8"
-              min="0"
-              max="32"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 hover:border-gray-400"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={
+                  parseInt(
+                    String(settings.quickButtonGap).replace(/[^0-9]/g, "")
+                  ) || 0
+                }
+                onChange={(e) =>
+                  handleGlobalSettingChange(
+                    "quickButtonGap",
+                    `${Math.max(0, parseInt(e.target.value) || 0)}px`
+                  )
+                }
+                placeholder="8"
+                min="0"
+                max="32"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 hover:border-gray-400"
+              />
+              <span className="text-sm text-gray-500">px</span>
+            </div>
             <p className="text-xs text-gray-500">
               Spacing between quick buttons in pixels
             </p>
@@ -833,7 +843,7 @@ export function HeaderSettingsForm({
               style={{ borderWidth: "3px" }}
             >
               <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg border group-hover:bg-blue-100 transition-colors">
-                    <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                <div className="w-6 h-6 bg-gray-300 rounded"></div>
               </div>
               <div className="text-left">
                 <span className="text-sm text-blue-700 block font-bold">

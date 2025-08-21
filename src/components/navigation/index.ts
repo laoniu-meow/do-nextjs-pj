@@ -1,7 +1,1 @@
-export { 
-  Navigation, 
-  HorizontalNavigation, 
-  VerticalNavigation, 
-  MobileNavigation, 
-  DrawerNavigation 
-} from "./Navigation";
+export { Navigation } from "../layout/Navigation";

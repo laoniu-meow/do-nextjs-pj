@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { authRateLimiter, apiRateLimiter } from './lib/rate-limit'
 import { authenticateRequestEdge } from './lib/auth-edge'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const clientIP = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
   
   // Rate limiting for authentication endpoints
@@ -64,7 +64,7 @@ export function middleware(request: NextRequest) {
     }
     
     // Check if user is authenticated using Edge Runtime compatible function
-    const user = authenticateRequestEdge(request)
+    const user = await authenticateRequestEdge(request)
     if (!user) {
       return NextResponse.json(
         { success: false, message: 'Unauthorized' },

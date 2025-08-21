@@ -54,5 +54,3 @@ export function Navigation({ className = "" }: NavigationProps) {
     </nav>
   );
 }
-
-export default Navigation;

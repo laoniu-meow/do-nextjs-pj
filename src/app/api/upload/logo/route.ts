@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, unlink, stat } from 'fs/promises';
 import { join } from 'path';
 import { uploadConfig } from '@/lib/env';
 
@@ -48,10 +48,11 @@ export async function POST(request: NextRequest) {
     const uploadDir = resolveUploadDir(uploadConfig.logosDir);
     await mkdir(uploadDir, { recursive: true });
 
-    // Generate unique filename
+    // Generate unique filename with basic sanitization
     const timestamp = Date.now();
-    const fileExtension = file.name.split('.').pop();
-    const fileName = `logo_${timestamp}.${fileExtension}`;
+    const originalExt = file.name.split('.').pop()?.toLowerCase() || 'png'
+    const safeExt = ['jpg','jpeg','png','gif','svg','webp'].includes(originalExt) ? originalExt : 'png'
+    const fileName = `logo_${timestamp}.${safeExt}`;
     const filePath = join(uploadDir, fileName);
 
     // Convert file to buffer and save
@@ -61,18 +62,26 @@ export async function POST(request: NextRequest) {
 
     // Return the URL path: if saving under public/, prefer direct public URL; else use API route
     const isPublic = uploadConfig.logosDir.startsWith('public/');
-    const logoUrl = isPublic ? `/${uploadConfig.logosDir.replace('public/', '')}/${fileName}` : `/api/assets/logo/${fileName}`;
+    const publicPath = uploadConfig.logosDir.replace(/^public\//, '')
+    const logoUrl = isPublic ? `/${publicPath}/${fileName}` : `/api/assets/logo/${fileName}`;
 
-    return NextResponse.json({
-      success: true,
-      message: 'Logo uploaded successfully',
-              data: {
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Logo uploaded successfully',
+        data: {
           fileName,
           filePath: logoUrl,
           fileSize: file.size,
           mimeType: file.type
         }
-    });
+      },
+      {
+        headers: {
+          'X-Content-Type-Options': 'nosniff'
+        }
+      }
+    );
 
   } catch (error) {
     console.error('Error uploading logo:', error);
@@ -91,21 +100,23 @@ export async function DELETE(request: NextRequest) {
   try {
     const { fileName } = await request.json();
 
-    if (!fileName) {
+    if (!fileName || /\.\./.test(fileName)) {
       return NextResponse.json(
-        { success: false, message: 'No filename provided' },
+        { success: false, message: 'Invalid filename' },
         { status: 400 }
       );
     }
 
           // Delete file from upload directory
-      const uploadDir = join(process.cwd(), 'src', uploadConfig.logosDir);
-      const filePath = join(uploadDir, fileName);
+      const baseDir = uploadConfig.logosDir.startsWith('public/')
+        ? join(process.cwd(), uploadConfig.logosDir)
+        : join(process.cwd(), 'src', uploadConfig.logosDir)
+      const filePath = join(baseDir, fileName);
 
     try {
-      await writeFile(filePath, ''); // This will overwrite the file
-      // Note: In production, you might want to use proper file deletion
-      // For now, we'll just overwrite it
+      // Ensure file exists before attempting deletion
+      await stat(filePath)
+      await unlink(filePath)
     } catch (deleteError) {
       console.error('Error deleting file:', deleteError);
     }
