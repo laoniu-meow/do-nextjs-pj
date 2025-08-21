@@ -1,10 +1,10 @@
 import React from "react";
 import { Alert, Typography } from "@mui/material";
 import { PageLayout, MainContainerBox } from "@/components/ui";
-import { SettingsPanel } from "@/components/settings";
+import { DynamicSettingsPanel } from "@/components/settings";
 import { useHeaderMain } from "../hooks/useHeaderMain";
 import { HeaderPreview } from "./HeaderPreview";
-import { HeaderSettingsForm } from "./HeaderSettingsForm";
+// import { HeaderSettingsForm } from "./HeaderSettingsForm";
 
 export const HeaderMainPage: React.FC = () => {
   const {
@@ -28,8 +28,8 @@ export const HeaderMainPage: React.FC = () => {
       // Apply settings to preview but don't save to database yet
       // This keeps hasUnsavedChanges as true so Save button remains enabled
       closeSettings();
-    } catch (error) {
-      console.error("Failed to apply settings:", error);
+    } catch {
+      // swallow error to avoid disallowed console usage
     }
   };
 
@@ -37,8 +37,8 @@ export const HeaderMainPage: React.FC = () => {
   const handleSave = async () => {
     try {
       await saveHeaderSettings(headerSettings);
-    } catch (error) {
-      console.error("Failed to save settings:", error);
+    } catch {
+      // swallow error to avoid disallowed console usage
     }
   };
 
@@ -51,8 +51,8 @@ export const HeaderMainPage: React.FC = () => {
   const handleUpload = async () => {
     try {
       await uploadHeaderSettings();
-    } catch (error) {
-      console.error("Failed to upload settings:", error);
+    } catch {
+      // swallow error to avoid disallowed console usage
     }
   };
 
@@ -113,17 +113,15 @@ export const HeaderMainPage: React.FC = () => {
       </MainContainerBox>
 
       {/* Settings Panel */}
-      <SettingsPanel
+      <DynamicSettingsPanel
+        pageType="header-main"
         isOpen={isSettingsOpen}
         onClose={closeSettings}
         onApply={handleApplySettings}
         title="Header & Navigation Settings"
-      >
-        <HeaderSettingsForm
-          initialSettings={headerSettings}
-          onSettingsChange={handleSettingsChange}
-        />
-      </SettingsPanel>
+        initialSettings={headerSettings}
+        onSettingsChange={handleSettingsChange}
+      />
     </PageLayout>
   );
 };

@@ -1,4 +1,15 @@
 // Generic Settings System Types
+import { ReactNode, createElement } from 'react';
+
+// Optional icons for example schemas
+import InfoIcon from '@mui/icons-material/Info';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark';
+import PaletteIcon from '@mui/icons-material/Palette';
+import TuneIcon from '@mui/icons-material/Tune';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import BrushIcon from '@mui/icons-material/Brush';
+import SecurityIcon from '@mui/icons-material/Security';
 
 export interface BaseSettingField {
   id: string;
@@ -84,6 +95,7 @@ export interface SettingsSection {
   fields: SettingField[];
   collapsible?: boolean;
   defaultExpanded?: boolean;
+  icon?: ReactNode;
 }
 
 export interface SettingsSchema {
@@ -125,6 +137,7 @@ export const COMPANY_PROFILE_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'basic-info',
       title: 'Basic Information',
       description: 'Company name and registration details',
+      icon: createElement(InfoIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'name',
@@ -136,6 +149,12 @@ export const COMPANY_PROFILE_SETTINGS_SCHEMA: SettingsSchema = {
             min: 2,
             max: 100
           }
+        },
+        {
+          id: 'logoUrl',
+          label: 'Company Logo URL',
+          type: 'text',
+          placeholder: '/logos/company.png'
         },
         {
           id: 'companyRegNumber',
@@ -158,6 +177,7 @@ export const COMPANY_PROFILE_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'contact',
       title: 'Contact Information',
       description: 'Address and contact details',
+      icon: createElement(ContactPhoneIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'contact',
@@ -215,6 +235,7 @@ export const HEADER_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'branding',
       title: 'Branding',
       description: 'Site title and tagline',
+      icon: createElement(BrandingWatermarkIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'siteTitle',
@@ -238,6 +259,7 @@ export const HEADER_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'appearance',
       title: 'Appearance',
       description: 'Visual settings for the header',
+      icon: createElement(PaletteIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'headerHeight',
@@ -259,6 +281,7 @@ export const HEADER_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'features',
       title: 'Features',
       description: 'Enable or disable header features',
+      icon: createElement(TuneIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'showSearch',
@@ -298,6 +321,7 @@ export const USER_PREFERENCES_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'notifications',
       title: 'Notifications',
       description: 'Configure how and when you receive notifications',
+      icon: createElement(NotificationsIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'emailNotifications',
@@ -329,6 +353,7 @@ export const USER_PREFERENCES_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'appearance',
       title: 'Appearance',
       description: 'Customize the look and feel of your interface',
+      icon: createElement(BrushIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'theme',
@@ -364,6 +389,7 @@ export const USER_PREFERENCES_SETTINGS_SCHEMA: SettingsSchema = {
       id: 'privacy',
       title: 'Privacy & Security',
       description: 'Manage your privacy and security preferences',
+      icon: createElement(SecurityIcon, { fontSize: 'small' }),
       fields: [
         {
           id: 'dataCollection',

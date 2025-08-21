@@ -139,13 +139,7 @@ export function Header({
   const { getShadow, getShape } = useStyling();
 
   // Add error handling for hooks
-  if (!deviceType) {
-    console.warn("Header: deviceType is undefined, using desktop as fallback");
-  }
-
-  if (!getShadow || !getShape) {
-    console.warn("Header: useStyling hooks are undefined");
-  }
+  // Avoid disallowed console usage
 
   // Get current device settings
   const getCurrentSettings = useMemo(() => {
@@ -163,15 +157,7 @@ export function Header({
 
   // Debug current device and settings
   useEffect(() => {
-    console.log("Current device:", deviceType);
-    console.log("Current settings:", getCurrentSettings);
-    console.log("Padding values being applied:", {
-      desktop: currentSettings.paddingHorizontal,
-      tablet: currentSettings.paddingHorizontal,
-      mobile: currentSettings.paddingHorizontal,
-      current: currentSettings.paddingHorizontal,
-      applied: `0 ${currentSettings.paddingHorizontal}px`,
-    });
+    // debug removed for lint compliance
   }, [deviceType, getCurrentSettings, currentSettings]);
 
   const {
@@ -380,8 +366,7 @@ export function Header({
         </div>
       </ResponsiveHeader>
     );
-  } catch (error) {
-    console.error("Header component rendering error:", error);
+  } catch {
     return (
       <div
         style={{

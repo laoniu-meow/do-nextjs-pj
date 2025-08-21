@@ -31,6 +31,7 @@ export default function UsersPage() {
       {/* Your user management content goes here */}
 
       <DynamicSettingsPanel
+        pageType="company-profile"
         isOpen={isSettingsOpen}
         onClose={handleCloseSettings}
         onApply={handleApplySettings}

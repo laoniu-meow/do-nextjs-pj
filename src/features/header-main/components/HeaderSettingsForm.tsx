@@ -68,15 +68,9 @@ export function HeaderSettingsForm({
     key: keyof Omit<HeaderSettingsData, "desktop" | "tablet" | "mobile">,
     value: string
   ) => {
-    console.log(
-      `handleGlobalSettingChange called with key: ${key}, value: ${value}`
-    );
-    console.log("Current settings:", settings);
     const newSettings = { ...settings, [key]: value };
-    console.log("New settings:", newSettings);
     setSettings(newSettings);
     onSettingsChange(newSettings);
-    console.log("Settings updated and onSettingsChange called");
   };
 
   const handleColorChange = (
@@ -110,29 +104,34 @@ export function HeaderSettingsForm({
     <div className="space-y-8 p-6 pb-12 bg-gradient-to-br from-gray-50 to-white design-system">
       {/* Header Layout Settings */}
       <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex items-center mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-4">
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Header Layout Settings
-            </h3>
-            <p className="text-sm text-gray-600">
-              Configure responsive dimensions for different devices
-            </p>
+        <div className="mb-6">
+          <div
+            className="grid gap-4 items-start"
+            style={{ gridTemplateColumns: "40px 1fr" }}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Header Layout Settings
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Configure responsive dimensions for different devices
+              </p>
+            </div>
           </div>
         </div>
 
@@ -563,29 +562,34 @@ export function HeaderSettingsForm({
 
       {/* Global Header Settings */}
       <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex items-center mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-4">
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a2 2 0 004 4h4a2 2 0 002-2V5z"
-              />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Global Header Settings
-            </h3>
-            <p className="text-sm text-gray-600">
-              Configure appearance and behavior across all devices
-            </p>
+        <div className="mb-6">
+          <div
+            className="grid gap-4 items-start"
+            style={{ gridTemplateColumns: "40px 1fr" }}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a2 2 0 004 4h4a2 2 0 002-2V5z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Global Header Settings
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Configure appearance and behavior across all devices
+              </p>
+            </div>
           </div>
         </div>
 
@@ -618,29 +622,34 @@ export function HeaderSettingsForm({
 
       {/* Global Page Settings */}
       <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex items-center mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center mr-4">
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Global Page Settings
-            </h3>
-            <p className="text-sm text-gray-600">
-              Configure global page appearance
-            </p>
+        <div className="mb-6">
+          <div
+            className="grid gap-4 items-start"
+            style={{ gridTemplateColumns: "40px 1fr" }}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Global Page Settings
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Configure global page appearance
+              </p>
+            </div>
           </div>
         </div>
 
@@ -657,29 +666,34 @@ export function HeaderSettingsForm({
 
       {/* Quick Button Settings */}
       <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex items-center mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-4">
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Quick Button Settings
-            </h3>
-            <p className="text-sm text-gray-600">
-              Customize the appearance of quick action buttons
-            </p>
+        <div className="mb-6">
+          <div
+            className="grid gap-4 items-start"
+            style={{ gridTemplateColumns: "40px 1fr" }}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Quick Button Settings
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Customize the appearance of quick action buttons
+              </p>
+            </div>
           </div>
         </div>
 
@@ -786,29 +800,34 @@ export function HeaderSettingsForm({
 
       {/* Menu Button Settings */}
       <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex items-center mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-4">
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Menu Button Settings
-            </h3>
-            <p className="text-sm text-gray-600">
-              Customize the main navigation menu button
-            </p>
+        <div className="mb-6">
+          <div
+            className="grid gap-4 items-start"
+            style={{ gridTemplateColumns: "40px 1fr" }}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Menu Button Settings
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Customize the main navigation menu button
+              </p>
+            </div>
           </div>
         </div>
 

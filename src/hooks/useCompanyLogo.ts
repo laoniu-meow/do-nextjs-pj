@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { logger } from '@/lib/logger';
 
 interface CompanyLogoData {
 	logoUrl: string | null;
@@ -27,38 +28,38 @@ export function useCompanyLogo(): CompanyLogoData {
 		const selectLogoFromRecords = (records: CompanyProfileRecord[] | undefined): string | null => {
 			if (!records || records.length === 0) return null;
 			const main = records.find((r) => r.isMainCompany) ?? records[0];
-			console.log("Selected company record:", main);
+			// debug removed for lint compliance
 			
 			// Check both logo and logoUrl fields
 			const logoValue = main.logoUrl ?? main.logo ?? "";
-			console.log("Logo value from record:", logoValue);
+			// debug removed for lint compliance
 			
 			return logoValue.trim().length > 0 ? logoValue : null;
 		};
 
 		const normalizeLogoPath = (value: string): string => {
-			console.log("Normalizing logo path:", value);
+			// debug removed for lint compliance
 			
 			// Already an absolute API path or remote URL
 			if (value.startsWith("/api/assets/logo/")) {
-				console.log("Already correct API path:", value);
+				// debug removed for lint compliance
 				return value;
 			}
 			if (value.startsWith("http://") || value.startsWith("https://")) {
-				console.log("Remote URL, using as-is:", value);
+				// debug removed for lint compliance
 				return value;
 			}
 
 			// Allow direct public paths like /logos/...
 			if (value.startsWith("/")) {
-				console.log("Public path detected, using as-is:", value);
+				// debug removed for lint compliance
 				return value;
 			}
 
 			// Extract filename and build our asset API path
 			const filename = value.split("/").pop() ?? value;
 			const apiPath = `/api/assets/logo/${filename}`;
-			console.log("Constructed API path:", apiPath);
+			// debug removed for lint compliance
 			return apiPath;
 		};
 
@@ -66,10 +67,10 @@ export function useCompanyLogo(): CompanyLogoData {
 			const res = await fetch(endpoint, { cache: "no-store" });
 			if (!res.ok) return null;
 			const payload = (await res.json()) as ApiResponse<CompanyProfileRecord[]>;
-			console.log(`API Response from ${endpoint}:`, payload);
+			// debug removed for lint compliance
 			if (!payload.success) return null;
 			const selected = selectLogoFromRecords(payload.data);
-			console.log(`Selected logo from ${endpoint}:`, selected);
+			// debug removed for lint compliance
 			return selected ? normalizeLogoPath(selected) : null;
 		};
 
@@ -80,15 +81,15 @@ export function useCompanyLogo(): CompanyLogoData {
 
 				// Prefer staging, then fallback to production
 				const fromStaging = await fetchFromEndpoint("/api/company-profile/staging");
-				console.log("Logo from staging:", fromStaging);
+				// debug removed for lint compliance
 				const fromProduction = await fetchFromEndpoint("/api/company-profile/production");
-				console.log("Logo from production:", fromProduction);
+				// debug removed for lint compliance
 				const finalUrl = fromStaging ?? fromProduction;
-				console.log("Final logo URL:", finalUrl);
+				// debug removed for lint compliance
 
 				setLogoUrl(finalUrl ?? null);
 			} catch (err) {
-				console.error("Error fetching company logo:", err);
+				logger.error('Error fetching company logo', { error: err instanceof Error ? err.message : String(err) });
 				setError("Failed to fetch company logo");
 				setLogoUrl(null);
 			} finally {

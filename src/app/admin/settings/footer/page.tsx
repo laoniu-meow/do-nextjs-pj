@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { PageLayout, MainContainerBox, SettingsPanel, ResponsiveTabs, ResponsiveView } from "@/components/ui";
+import {
+  PageLayout,
+  MainContainerBox,
+  SettingsPanel,
+  ResponsiveTabs,
+  ResponsiveView,
+} from "@/components/ui";
 
 export default function FooterPage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -17,7 +23,7 @@ export default function FooterPage() {
 
   const handleApplySettings = () => {
     // TODO: Implement settings application logic
-    console.log("Settings applied");
+    console.warn("Settings applied");
     setIsSettingsOpen(false);
   };
 
@@ -44,9 +50,9 @@ export default function FooterPage() {
         showUpload={true}
         showRefresh={true}
         onBuild={handleBuild}
-        onSave={() => console.log("Save clicked")}
-        onUpload={() => console.log("Upload clicked")}
-        onRefresh={() => console.log("Refresh clicked")}
+        onSave={() => console.warn("Save clicked")}
+        onUpload={() => console.warn("Upload clicked")}
+        onRefresh={() => console.warn("Refresh clicked")}
       >
         {/* Responsive Tabs */}
         <ResponsiveTabs

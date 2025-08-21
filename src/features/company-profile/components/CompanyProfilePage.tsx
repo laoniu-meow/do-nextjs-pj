@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Box, Alert, Typography } from "@mui/material";
 import { PageLayout, MainContainerBox } from "@/components/ui";
-import { DynamicSettingsPanel } from "@/components/settings";
+import { GenericSettingsPanel } from "@/components/settings";
+import {
+  COMPANY_PROFILE_SETTINGS_SCHEMA,
+  SettingsData,
+} from "@/types/settings";
 import { useCompanyProfile } from "../hooks/useCompanyProfile";
 import { CompanyProfileGrid } from "./CompanyProfileGrid";
 import { CompanyProfileEmptyState } from "./CompanyProfileEmptyState";
@@ -37,17 +41,15 @@ export const CompanyProfilePage: React.FC = () => {
 
   // Handle form data changes
   const handleFormDataChange = (formData: CompanyFormData) => {
-    console.log("Form data changed in CompanyProfilePage:", formData);
     setCurrentFormData(formData);
   };
 
   // Handle apply settings with current form data
   const handleApplySettingsWithData = () => {
     if (currentFormData) {
-      console.log("Applying settings with data:", currentFormData);
       handleApplySettings(currentFormData);
     } else {
-      console.warn("No form data to apply");
+      // no-op when no form data
     }
   };
 
@@ -104,14 +106,39 @@ export const CompanyProfilePage: React.FC = () => {
         </Box>
       </MainContainerBox>
 
-      {/* Settings Panel */}
-      <DynamicSettingsPanel
+      {/* Settings Panel - schema-driven, preserving existing fields */}
+      <GenericSettingsPanel<SettingsData>
         isOpen={isSettingsOpen || false}
         onClose={handleCloseSettings}
-        onApply={handleApplySettingsWithData}
-        onFormDataChange={handleFormDataChange}
+        onApply={() => handleApplySettingsWithData()}
+        schema={COMPANY_PROFILE_SETTINGS_SCHEMA}
+        data={{
+          name: currentCompany?.name ?? "",
+          companyRegNumber: currentCompany?.companyRegNumber ?? "",
+          email: currentCompany?.email ?? "",
+          address: currentCompany?.address ?? "",
+          country: currentCompany?.country ?? "",
+          postalCode: currentCompany?.postalCode ?? "",
+          contact: currentCompany?.contact ?? "",
+          logoUrl: currentCompany?.logoUrl ?? "",
+        }}
+        onDataChange={(newData) => {
+          // Keep the same CompanyFormData shape
+          const mapped: CompanyFormData = {
+            name: String(newData.name || ""),
+            companyRegNumber: String(newData.companyRegNumber || ""),
+            email: String(newData.email || ""),
+            address: String(newData.address || ""),
+            country: String(newData.country || ""),
+            postalCode: String(newData.postalCode || ""),
+            contact: String(newData.contact || ""),
+            logoUrl: newData.logoUrl ? String(newData.logoUrl) : undefined,
+          };
+          handleFormDataChange(mapped);
+        }}
         title={isEditMode ? "Edit Company Profile" : "Add Company Profile"}
-        initialData={currentCompany || undefined}
+        showSectionHeaders
+        collapsibleSections
       />
     </PageLayout>
   );

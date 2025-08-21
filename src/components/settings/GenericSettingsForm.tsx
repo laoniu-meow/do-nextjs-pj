@@ -45,6 +45,14 @@ interface GenericSettingsFormProps<T extends SettingsData = SettingsData> {
   showSectionHeaders?: boolean;
   collapsibleSections?: boolean;
   onReset?: () => void;
+  renderFieldOverride?: (
+    field: SettingField,
+    value: string | number | boolean | string[] | File | File[] | null,
+    onChange: (
+      fieldId: string,
+      value: string | number | boolean | string[] | File | File[] | null
+    ) => void
+  ) => React.ReactNode | undefined;
 }
 
 export function GenericSettingsForm<T extends SettingsData = SettingsData>({
@@ -56,6 +64,7 @@ export function GenericSettingsForm<T extends SettingsData = SettingsData>({
   showSectionHeaders = true,
   collapsibleSections = true,
   onReset,
+  renderFieldOverride,
 }: GenericSettingsFormProps<T>) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(schema.sections.map((s) => s.id))
@@ -96,6 +105,11 @@ export function GenericSettingsForm<T extends SettingsData = SettingsData>({
         },
       },
     };
+
+    const overridden = renderFieldOverride?.(field, value, onFieldChange);
+    if (overridden !== undefined) {
+      return overridden;
+    }
 
     switch (field.type) {
       case "text":
@@ -390,14 +404,29 @@ export function GenericSettingsForm<T extends SettingsData = SettingsData>({
           {showSectionHeaders && (
             <Box
               sx={{
-                display: "flex",
+                display: "grid",
+                gridTemplateColumns: "auto 1fr auto",
                 alignItems: "center",
-                justifyContent: "space-between",
+                columnGap: 1,
+                rowGap: 0.5,
                 cursor: collapsibleSections ? "pointer" : "default",
-                "&:hover": collapsibleSections ? { opacity: 0.8 } : {},
+                "&:hover": collapsibleSections ? { opacity: 0.9 } : {},
               }}
               onClick={() => toggleSection(section.id)}
             >
+              {/* Icon */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 32,
+                  height: 32,
+                }}
+              >
+                {section.icon}
+              </Box>
+              {/* Title + Description */}
               <Box>
                 <Typography
                   variant="h6"
@@ -411,6 +440,7 @@ export function GenericSettingsForm<T extends SettingsData = SettingsData>({
                   </Typography>
                 )}
               </Box>
+              {/* Expand/Collapse */}
               {collapsibleSections && (
                 <IconButton size="small">
                   {expandedSections.has(section.id) ? (

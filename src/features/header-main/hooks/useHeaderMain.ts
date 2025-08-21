@@ -2,6 +2,7 @@
 
 import { useReducer, useCallback, useEffect } from 'react';
 import { headerMainReducer, initialState } from '../reducers/headerMainReducer';
+import { notifySuccess } from '@/lib/notifications';
 import { HeaderMainApi } from '../services/headerMainApi';
 import { HeaderSettingsData, DEFAULT_HEADER_SETTINGS } from '../types/headerMain';
 
@@ -235,8 +236,7 @@ export const useHeaderMain = () => {
       dispatch({ type: 'SET_HAS_STAGING_DATA', payload: false });
       dispatch({ type: 'SET_HAS_UNSAVED_CHANGES', payload: false });
       
-      // Show success message
-      alert("Header settings uploaded to production successfully!");
+      notifySuccess('Header settings uploaded to production successfully');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to upload header settings';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });

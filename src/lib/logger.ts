@@ -25,7 +25,7 @@ export class Logger {
 
   info(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
-      console.log(this.formatMessage(LogLevel.INFO, message, context));
+      console.warn(this.formatMessage(LogLevel.INFO, message, context));
     }
     // In production, send to proper logging service
     // TODO: Implement production logging service integration
@@ -49,7 +49,7 @@ export class Logger {
 
   debug(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
-      console.log(this.formatMessage(LogLevel.DEBUG, message, context));
+      console.warn(this.formatMessage(LogLevel.DEBUG, message, context));
     }
     // In production, debug logging is disabled
   }

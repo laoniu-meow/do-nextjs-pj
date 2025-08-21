@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { CompanyFormData } from "@/types";
+import { logger } from "@/lib/logger";
 
 interface CompanyProfileSettingsProps {
   onFormDataChange?: (data: CompanyFormData) => void;
@@ -43,24 +44,12 @@ export const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({
   }, [initialData]);
 
   const handleFormChange = (data: CompanyFormData, isValid: boolean) => {
-    console.log(
-      "CompanyProfileSettings - Form data changed:",
-      data,
-      "Valid:",
-      isValid
-    );
     setFormData(data);
     setIsFormValid(isValid);
 
     // Pass form data to parent component
     if (onFormDataChange) {
-      console.log(
-        "CompanyProfileSettings - Calling onFormDataChange with:",
-        data
-      );
       onFormDataChange(data);
-    } else {
-      console.log("CompanyProfileSettings - onFormDataChange is not defined");
     }
   };
 
@@ -96,7 +85,9 @@ export const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({
       const updated: CompanyFormData = { ...formData, logoUrl: uploadedPath };
       handleFormChange(updated, isFormValid);
     } catch (err) {
-      console.error("Logo upload failed:", err);
+      logger.error("Logo upload failed", {
+        error: err instanceof Error ? err.message : String(err),
+      });
       setUploadError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setIsUploading(false);

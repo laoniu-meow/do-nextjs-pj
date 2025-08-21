@@ -93,8 +93,7 @@ export function Main({
 
   // Debug current device and settings
   useEffect(() => {
-    console.log("Main - Current device:", deviceType);
-    console.log("Main - Current settings:", getCurrentSettings);
+    // debug removed for lint compliance
   }, [deviceType, getCurrentSettings]);
 
   const currentSettings = getCurrentSettings;

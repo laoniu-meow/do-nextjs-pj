@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CompanyFieldConfig } from '@/services/companyFieldConfig';
+import { logger } from '@/lib/logger';
 
 interface UseCompanyFieldConfigReturn {
   fieldConfigs: CompanyFieldConfig[];
@@ -36,13 +37,12 @@ export const useCompanyFieldConfig = (): UseCompanyFieldConfigReturn => {
       if (result.success && result.data) {
         setFieldConfigs(result.data);
         setSource(result.source);
-        console.log(`Field configuration loaded from ${result.source}:`, result.data);
       } else {
         throw new Error(result.error || 'Failed to load field configuration');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      console.error('Error fetching field configuration:', errorMessage);
+      logger.error('Error fetching field configuration', { error: errorMessage });
       setError(errorMessage);
       
       // Fallback to default configuration

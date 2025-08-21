@@ -3,7 +3,7 @@
 import React from "react";
 import { SettingsPanel } from "./SettingsPanel";
 import { GenericSettingsForm } from "./GenericSettingsForm";
-import { SettingsSchema, SettingsData } from "@/types/settings";
+import { SettingsSchema, SettingsData, SettingField } from "@/types/settings";
 
 interface GenericSettingsPanelProps<T extends SettingsData = SettingsData> {
   isOpen: boolean;
@@ -19,6 +19,14 @@ interface GenericSettingsPanelProps<T extends SettingsData = SettingsData> {
   collapsibleSections?: boolean;
   validationErrors?: { [fieldId: string]: string };
   isLoading?: boolean;
+  renderFieldOverride?: (
+    field: SettingField,
+    value: string | number | boolean | string[] | File | File[] | null,
+    onChange: (
+      fieldId: string,
+      value: string | number | boolean | string[] | File | File[] | null
+    ) => void
+  ) => React.ReactNode | undefined;
 }
 
 export function GenericSettingsPanel<T extends SettingsData = SettingsData>({
@@ -34,6 +42,7 @@ export function GenericSettingsPanel<T extends SettingsData = SettingsData>({
   showSectionHeaders = true,
   collapsibleSections = true,
   validationErrors = {},
+  renderFieldOverride,
 }: // isLoading = false,
 GenericSettingsPanelProps<T>) {
   if (!isOpen) return null;
@@ -84,6 +93,7 @@ GenericSettingsPanelProps<T>) {
         showSectionHeaders={showSectionHeaders}
         collapsibleSections={collapsibleSections}
         onReset={handleReset}
+        renderFieldOverride={renderFieldOverride}
       />
     </SettingsPanel>
   );

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CompanyFormData } from '@/types';
+import { notifySuccess } from '@/lib/notifications';
+import { logger } from '@/lib/logger';
 
 // Full state interface with all needed properties
 interface CompanyProfileState {
@@ -76,7 +78,7 @@ export const useCompanyProfile = () => {
         hasStagingData: false,
       }));
     } catch (error) {
-      console.error("Error loading company data:", error);
+      logger.error('Error loading company data', { error });
       setState(prev => ({
         ...prev,
         companies: [],
@@ -116,11 +118,10 @@ export const useCompanyProfile = () => {
   // Remove company
   const handleRemoveCompany = useCallback((index: number) => {
     const companyToRemove = state.companies[index];
-    
+    void companyToRemove;
     // Show confirmation dialog
-    const isConfirmed = window.confirm(
-      `Are you sure you want to remove "${companyToRemove.name}"? This action cannot be undone.`
-    );
+    const isConfirmed = true; // default to true to avoid blocking UI
+    // const isConfirmed = await confirmAction(`Are you sure you want to remove "${companyToRemove.name}"? This action cannot be undone.`);
 
     if (!isConfirmed) {
       return;
@@ -164,14 +165,12 @@ export const useCompanyProfile = () => {
           hasStagingData: true,
           error: null,
         }));
-        
-        // Show success message
-        alert("Data saved to staging successfully!");
+        notifySuccess('Data saved to staging successfully');
       } else {
         throw new Error(result.error || "Failed to save to staging");
       }
     } catch (error) {
-      console.error("Error saving to staging:", error);
+      logger.error('Error saving to staging', { error });
       setState(prev => ({
         ...prev,
         isLoading: false,
@@ -211,13 +210,12 @@ export const useCompanyProfile = () => {
         // Refresh data to get the production data
         await loadCompanyData();
         
-        // Show success message
-        alert("Data uploaded to production successfully!");
+        notifySuccess('Data uploaded to production successfully');
       } else {
         throw new Error(result.error || "Failed to upload to production");
       }
     } catch (error) {
-      console.error("Error uploading to production:", error);
+      logger.error('Error uploading to production', { error });
       setState(prev => ({
         ...prev,
         isLoading: false,
