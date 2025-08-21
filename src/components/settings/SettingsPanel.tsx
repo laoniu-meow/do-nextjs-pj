@@ -352,8 +352,8 @@ export function SettingsPanel({
                   : "calc(100vh - 94px)",
                 cursor: isDragging ? "grabbing" : "default",
                 zIndex: 1000,
-                borderRadius: isMobile ? "16px" : "18px",
-                overflow: "visible",
+                borderRadius: isMobile ? "10px" : "12px",
+                overflow: "hidden",
                 background: "linear-gradient(180deg, #ffffff 0%, #e7efff 100%)",
                 border: "1.5px solid #d9e5ff",
                 boxShadow: `
@@ -388,6 +388,8 @@ export function SettingsPanel({
                   background:
                     "linear-gradient(135deg, #93c5fd 0%, #818cf8 45%, #60a5fa 100%)",
                   borderBottom: "1px solid #7aa2f8",
+                  borderTopLeftRadius: isMobile ? "10px" : "12px",
+                  borderTopRightRadius: isMobile ? "10px" : "12px",
                   padding: "0",
                   position: "relative",
                   zIndex: 1001,
@@ -570,6 +572,8 @@ export function SettingsPanel({
                   background:
                     "linear-gradient(180deg, #ffffff 0%, #eef2ff 100%)",
                   borderTop: "1px solid #d9e5ff",
+                  borderBottomLeftRadius: isMobile ? "10px" : "12px",
+                  borderBottomRightRadius: isMobile ? "10px" : "12px",
                 }}
               >
                 {children}
