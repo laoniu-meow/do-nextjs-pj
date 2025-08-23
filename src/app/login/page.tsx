@@ -112,9 +112,13 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <Typography variant="body2" color="text.secondary" align="center">
-              Demo credentials: admin@company.com / admin123
-            </Typography>
+            {process.env.NODE_ENV === "development" && (
+              <Typography variant="body2" color="text.secondary" align="center">
+                Demo credentials:{" "}
+                {process.env.NEXT_PUBLIC_DEMO_EMAIL || "admin@company.com"} /{" "}
+                {process.env.NEXT_PUBLIC_DEMO_PASSWORD || "admin123"}
+              </Typography>
+            )}
           </CardContent>
         </Card>
       </Box>

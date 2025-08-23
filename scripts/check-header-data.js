@@ -14,10 +14,16 @@ const config = {
   port: process.env.POSTGRES_PORT || 5432,
   database: process.env.POSTGRES_DB || 'db_de4864',
   user: process.env.POSTGRES_USER || 'postgres',
-  password: process.env.POSTGRES_PASSWORD || 'sXaZa7q97784',
+  password: process.env.POSTGRES_PASSWORD,
 };
 
 async function connectToDatabase() {
+  // Validate required environment variables
+  if (!process.env.POSTGRES_PASSWORD) {
+    console.error('❌ POSTGRES_PASSWORD environment variable is required');
+    process.exit(1);
+  }
+
   const client = new Client(config);
   try {
     await client.connect();
