@@ -1,5 +1,6 @@
 import React from "react";
-import { CircularProgress, Typography, Paper } from "@mui/material";
+import { CircularProgress, Paper } from "@mui/material";
+import { Typography } from "@/components/ui";
 
 export const CompanyProfileLoading: React.FC = () => {
   return (

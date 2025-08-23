@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Box, Alert, Typography } from "@mui/material";
+import { Box, Alert } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { PageLayout, MainContainerBox } from "@/components/ui";
 import { GenericSettingsPanel } from "@/components/settings";
 import {

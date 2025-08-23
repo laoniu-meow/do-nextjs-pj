@@ -55,7 +55,7 @@ return (
     breadcrumbs={[...]}
     maxWidth="xl"
   >
-    <MainContainerBox title="Header & Main Configuration" {...props}>
+    <MainContainerBox title="Configuration" {...props}>
       {/* content */}
     </MainContainerBox>
   </PageLayout>

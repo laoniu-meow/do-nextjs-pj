@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AdminMenuButton from "@/components/ui/navigation/AdminMenuButton";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* Admin Menu Button - Available on ALL pages */}
-        <AdminMenuButton />
-        {children}
+        <AuthProvider>
+          {/* Admin Menu Button - Available on ALL pages */}
+          <AdminMenuButton />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

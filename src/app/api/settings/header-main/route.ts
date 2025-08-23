@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DEFAULT_HEADER_SETTINGS } from '@/features/header-main';
+import { DEFAULT_HEADER_SETTINGS } from '@/features/header-main/types/headerMain';
 
 // In-memory storage for demo purposes
 // In production, this should be replaced with database storage

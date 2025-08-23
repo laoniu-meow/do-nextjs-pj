@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Link, Typography } from "@mui/material";
+import { Link } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { designSystem } from "@/styles/design-system";
 
 interface BreadcrumbItemProps {

@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { Container } from "../core/Container";
 
 interface PageSectionProps {

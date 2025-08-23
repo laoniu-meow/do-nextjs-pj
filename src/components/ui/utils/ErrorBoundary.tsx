@@ -1,7 +1,8 @@
 "use client";
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { logger } from "@/lib/logger";
 
 interface Props {
@@ -54,10 +55,14 @@ export default class ErrorBoundary extends Component<Props, State> {
             textAlign: "center",
           }}
         >
-          <Typography variant="h6" color="error" gutterBottom>
+          <Typography variant="h6" color="error" sx={{ marginBottom: 8 }}>
             Something went wrong
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ marginBottom: 24 }}
+          >
             An unexpected error occurred. Please try refreshing the page.
           </Typography>
           <Button variant="contained" onClick={this.handleReset} sx={{ mr: 2 }}>

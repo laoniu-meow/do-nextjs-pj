@@ -8,6 +8,7 @@ import { useMenuState } from "../hooks/useMenuState";
 import { ADMIN_MENU_THEME, SPACING } from "../constants/theme";
 import { MenuConfig, MenuItem } from "../config/menuConfig";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdminMenuButtonProps {
   className?: string;
@@ -32,6 +33,7 @@ export default function AdminMenuButton({
     close: closeDrawer,
   } = useMenuState({ autoClose: false }); // Disable auto-close to prevent interference
 
+  const { logout } = useAuth();
   const pathname = usePathname();
 
   const toggleDrawer = () => {
@@ -40,6 +42,12 @@ export default function AdminMenuButton({
     } else {
       openDrawer();
     }
+  };
+
+  // Handle logout from menu
+  const handleLogout = () => {
+    logout();
+    closeDrawer();
   };
 
   // Handle backdrop clicks - prevent closing
@@ -136,6 +144,7 @@ export default function AdminMenuButton({
               config={config}
               onClose={() => closeDrawer()}
               onItemClick={onItemClick}
+              onLogout={handleLogout}
             />
           </Box>
         </Box>

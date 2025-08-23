@@ -1,4 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import ComputerIcon from "@mui/icons-material/Computer";
+import { designSystem } from "@/styles/design-system";
 import { Header } from "@/components/layout/Header";
 import { HeaderSettingsData } from "../types/headerMain";
 
@@ -7,6 +11,26 @@ interface HeaderPreviewProps {
 }
 
 export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [containerHeight, setContainerHeight] = useState<number>(800);
+
+  // Calculate a viewport-fitted height for the preview container
+  useEffect(() => {
+    const calculateHeight = () => {
+      const top = containerRef.current?.getBoundingClientRect().top ?? 0;
+      const paddingBottom = 24; // breathing room within the viewport
+      const availableHeight = Math.max(
+        320,
+        Math.floor(window.innerHeight - top - paddingBottom)
+      );
+      setContainerHeight(availableHeight);
+    };
+
+    calculateHeight();
+    window.addEventListener("resize", calculateHeight);
+    return () => window.removeEventListener("resize", calculateHeight);
+  }, []);
+
   const getPreviewContainerStyle = (): React.CSSProperties => ({
     border: "2px solid #e5e7eb",
     backgroundColor: headerSettings.pageBackgroundColor || "#f9fafb",
@@ -15,29 +39,36 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
     position: "relative",
     width: "100%",
     maxWidth: "100%",
-    height: "800px",
+    height: `${containerHeight}px`,
     padding: 0,
     boxSizing: "border-box",
     outline: "none",
   });
 
-  const getDeviceLabel = (): string => {
-    return "💻 Header Preview";
-  };
+  const DeviceLabel = () => (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      <ComputerIcon sx={{ color: designSystem.colors.primary[600] }} />
+      <span>Header Preview</span>
+    </span>
+  );
 
   return (
     <div className="w-full no-margin no-padding no-border header-preview-container">
       {/* Device Label */}
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
-          {getDeviceLabel()}
+          <DeviceLabel />
         </h3>
         <p className="text-sm text-gray-600">Live preview of your header</p>
       </div>
 
       {/* Preview Container - Full width to match main card */}
       <div className="w-full no-margin no-padding no-border">
-        <div style={getPreviewContainerStyle()} className="shadow-lg">
+        <div
+          ref={containerRef}
+          style={getPreviewContainerStyle()}
+          className="shadow-lg"
+        >
           {/* Header Preview - Full width within container */}
           <div className="w-full no-margin no-padding no-border">
             <Header
@@ -65,17 +96,14 @@ export function HeaderPreview({ headerSettings }: HeaderPreviewProps) {
             />
           </div>
 
-          {/* Content Area (placeholder) */}
+          {/* Content Area */}
           <div
             className="flex-1 p-8"
             style={{
               backgroundColor: headerSettings.pageBackgroundColor || "#f9fafb",
             }}
           >
-            <div className="text-center text-gray-500">
-              <p className="text-lg">Content area preview</p>
-              <p className="text-sm">Your main content will appear here</p>
-            </div>
+            {/* Intentionally left empty for a clean preview area */}
           </div>
         </div>
       </div>

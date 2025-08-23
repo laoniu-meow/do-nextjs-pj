@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Typography, Alert, Box } from "@mui/material";
+import { Alert, Box } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { ColorPickerDialog } from "@/components/ui/ColorPickerDialog";
 import { HeaderSettingsData } from "../types/headerMain";
 

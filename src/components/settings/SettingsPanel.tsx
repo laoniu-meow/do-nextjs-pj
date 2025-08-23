@@ -75,7 +75,8 @@ export function SettingsPanel({
           ? isMobile
             ? Math.min(window.innerWidth - 32, 480)
             : Math.min(560, window.innerWidth - 64)
-          : Math.min(previewToPx[preferredWidth], window.innerWidth - 64);
+          : // eslint-disable-next-line security/detect-object-injection
+            Math.min(previewToPx[preferredWidth], window.innerWidth - 64);
       setPanelWidth(baseWidth);
 
       // Position: center on desktop, slightly below the top toggle on mobile
@@ -119,6 +120,16 @@ export function SettingsPanel({
     };
   }, [isOpen, isMobile, preferredWidth]);
 
+  // Prevent background scroll while panel is open (reduces jumpiness during drag)
+  useEffect(() => {
+    if (!isOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [isOpen]);
+
   // Recompute width on window resize to keep preview sizing responsive
   useEffect(() => {
     if (!isOpen) return;
@@ -133,7 +144,8 @@ export function SettingsPanel({
           ? isMobile
             ? Math.min(window.innerWidth - 32, 480)
             : Math.min(560, window.innerWidth - 64)
-          : Math.min(previewToPx[preferredWidth], window.innerWidth - 64);
+          : // eslint-disable-next-line security/detect-object-injection
+            Math.min(previewToPx[preferredWidth], window.innerWidth - 64);
       setPanelWidth(baseWidth);
       // recentre horizontally with new width
       const centerX = (window.innerWidth - baseWidth) / 2;
@@ -320,11 +332,11 @@ export function SettingsPanel({
           justifyContent: "center",
           p: 2,
           zIndex: 999,
-          pointerEvents: "none",
+          pointerEvents: "auto",
           isolation: "isolate",
         }}
       >
-        <Box sx={{ pointerEvents: "auto" }}>
+        <Box>
           <Slide
             direction="up"
             in={isVisible}

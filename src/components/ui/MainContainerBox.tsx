@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Stack, Paper } from "@mui/material";
+import { Box, Stack, Paper, Typography as MuiTypography } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
 import SaveIcon from "@mui/icons-material/Save";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -101,7 +101,7 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
         }}
       >
         <Box sx={{ position: "relative" }}>
-          <Typography
+          <MuiTypography
             variant="h3"
             component="h2"
             sx={{
@@ -126,7 +126,7 @@ const MainContainerBox: React.FC<MainContainerBoxProps> = ({
             }}
           >
             {title}
-          </Typography>
+          </MuiTypography>
         </Box>
 
         <Stack

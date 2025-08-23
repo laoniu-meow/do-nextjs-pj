@@ -9,6 +9,8 @@ import PagesIcon from "@mui/icons-material/Pages";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MenuIcon from "@mui/icons-material/Menu";
 import SwitchAccessShortcutIcon from "@mui/icons-material/SwitchAccessShortcut";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 
 export interface MenuItem {
   id: string;
@@ -38,6 +40,12 @@ export const defaultMenuConfig: MenuConfig = {
       text: 'Users',
       icon: PeopleIcon,
       href: '/admin/users',
+    },
+    {
+      id: 'shop',
+      text: 'Shop',
+      icon: StorefrontIcon,
+      href: '/admin/shop',
     },
     {
       id: 'settings',
@@ -74,6 +82,12 @@ export const defaultMenuConfig: MenuConfig = {
           text: 'Pages',
           icon: PagesIcon,
           href: '/admin/settings/pages',
+        },
+        {
+          id: 'tax-settings',
+          text: 'Tax',
+          icon: ReceiptLongIcon,
+          href: '/admin/settings/tax',
         },
       ],
     },

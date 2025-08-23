@@ -121,11 +121,15 @@ export function Main({
 
     // Add gradient overlay based on setting
     if (backgroundGradient !== "none") {
-      const gradientOpacity = {
+      const gradientOpacityMap = {
         subtle: "0.05",
         moderate: "0.1",
         strong: "0.2",
-      }[backgroundGradient];
+      } as const;
+      const gradientOpacity =
+        gradientOpacityMap[
+          backgroundGradient as keyof typeof gradientOpacityMap
+        ];
 
       baseStyles.position = "relative";
 

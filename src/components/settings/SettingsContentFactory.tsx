@@ -6,8 +6,10 @@ import {
   HeaderSettingsForm,
   DEFAULT_HEADER_SETTINGS,
 } from "@/features/header-main";
+import { HeroSettingsForm } from "@/features/hero-page/components/HeroSettingsForm";
 import { CompanyFormData } from "@/types";
 import type { HeaderSettingsData } from "@/features/header-main";
+import type { Section } from "@/features/hero-page/services/heroPageApi";
 
 type CompanyProfileContentProps = {
   pageType: "company-profile";
@@ -21,9 +23,20 @@ type HeaderMainContentProps = {
   onSettingsChange: (data: HeaderSettingsData) => void;
 };
 
+type HeroPageContentProps = {
+  pageType: "hero-page";
+  sections: Section[];
+  canAddMore: boolean;
+  onAddSection: () => void;
+  onRemoveSection: (order: number) => void;
+  onUpdateSection: (section: Section) => void;
+  onReorderSections: (sections: Section[]) => void;
+};
+
 type SettingsContentFactoryProps =
   | CompanyProfileContentProps
   | HeaderMainContentProps
+  | HeroPageContentProps
   | { pageType: string };
 
 export const SettingsContentFactory: React.FC<SettingsContentFactoryProps> = (
@@ -66,6 +79,17 @@ export const SettingsContentFactory: React.FC<SettingsContentFactoryProps> = (
           onSettingsChange={
             "onSettingsChange" in props ? props.onSettingsChange : () => {}
           }
+        />
+      );
+    case "hero-page":
+      return (
+        <HeroSettingsForm
+          sections={(props as HeroPageContentProps).sections}
+          canAddMore={(props as HeroPageContentProps).canAddMore}
+          onAddSection={(props as HeroPageContentProps).onAddSection}
+          onRemoveSection={(props as HeroPageContentProps).onRemoveSection}
+          onUpdateSection={(props as HeroPageContentProps).onUpdateSection}
+          onReorderSections={(props as HeroPageContentProps).onReorderSections}
         />
       );
     default:

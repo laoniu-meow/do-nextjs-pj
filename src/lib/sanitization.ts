@@ -21,8 +21,11 @@ export const sanitizeContent = (content: Content) => {
 export const sanitizeUsers = (users: User[]) => {
   const sanitized = new Array(users.length)
   for (let i = 0; i < users.length; i++) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line security/detect-object-injection
     const { password, ...sanitizedUser } = users[i]
+    // Remove password from the user object
+    void password
+    // eslint-disable-next-line security/detect-object-injection
     sanitized[i] = sanitizedUser
   }
   return sanitized
@@ -31,6 +34,7 @@ export const sanitizeUsers = (users: User[]) => {
 export const sanitizeCompanies = (companies: Company[]) => {
   const sanitized = new Array(companies.length)
   for (let i = 0; i < companies.length; i++) {
+    // eslint-disable-next-line security/detect-object-injection
     sanitized[i] = companies[i]
   }
   return sanitized
@@ -39,6 +43,7 @@ export const sanitizeCompanies = (companies: Company[]) => {
 export const sanitizeContents = (contents: Content[]) => {
   const sanitized = new Array(contents.length)
   for (let i = 0; i < contents.length; i++) {
+    // eslint-disable-next-line security/detect-object-injection
     sanitized[i] = contents[i]
   }
   return sanitized

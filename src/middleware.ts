@@ -51,15 +51,26 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Dev convenience: allow bypassing auth while login flow is not ready
+  const BYPASS_AUTH = process.env.AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production'
+  if (BYPASS_AUTH) {
+    return NextResponse.next()
+  }
+
   // Protect API routes that require authentication
   if (request.nextUrl.pathname.startsWith('/api/admin') || 
       request.nextUrl.pathname.startsWith('/api/users') ||
       request.nextUrl.pathname.startsWith('/api/companies') ||
-      request.nextUrl.pathname.startsWith('/api/contents')) {
+      request.nextUrl.pathname.startsWith('/api/company-profile') ||
+      request.nextUrl.pathname.startsWith('/api/contents') ||
+      request.nextUrl.pathname.startsWith('/api/settings') ||
+      request.nextUrl.pathname.startsWith('/api/upload') ||
+      request.nextUrl.pathname.startsWith('/api/assets')) {
     
     // Skip authentication for public endpoints
     if (request.nextUrl.pathname === '/api/users/login' ||
-        request.nextUrl.pathname === '/api/users/register') {
+        request.nextUrl.pathname === '/api/users/register' ||
+        request.nextUrl.pathname === '/api/auth/verify') {
       return NextResponse.next()
     }
     

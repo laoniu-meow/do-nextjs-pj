@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { RESPONSIVE_TYPOGRAPHY } from "../constants/theme";
 import { useResponsive } from "@/hooks/useResponsive";
 
-interface ResponsiveTypographyProps {
+interface ResponsiveTypographyProps extends React.HTMLAttributes<HTMLElement> {
   variant:
     | "h1"
     | "h2"
@@ -15,7 +15,13 @@ interface ResponsiveTypographyProps {
     | "h6"
     | "body"
     | "small"
-    | "caption";
+    | "caption"
+    // MUI-compatible aliases
+    | "body1"
+    | "body2"
+    | "subtitle1"
+    | "subtitle2"
+    | "overline";
   children: React.ReactNode;
   className?: string;
   color?:
@@ -25,11 +31,17 @@ interface ResponsiveTypographyProps {
     | "error"
     | "success"
     | "warning"
-    | "inherit";
+    | "inherit"
+    // Allow MUI tokens or CSS color strings
+    | string;
   align?: "left" | "center" | "right" | "justify";
   weight?: "light" | "normal" | "medium" | "semibold" | "bold" | "extrabold";
   truncate?: boolean;
   as?: keyof React.JSX.IntrinsicElements;
+  // MUI-like props support
+  component?: keyof React.JSX.IntrinsicElements;
+  sx?: React.CSSProperties;
+  fontWeight?: number | string;
 }
 
 export function Typography({
@@ -41,16 +53,60 @@ export function Typography({
   weight = "normal",
   truncate = false,
   as,
+  component,
+  sx,
+  fontWeight,
 }: ResponsiveTypographyProps) {
   const { deviceType } = useResponsive();
 
-  // Use consolidated theme values
-  const fontSize =
-    RESPONSIVE_TYPOGRAPHY[variant][
-      deviceType === "largeDesktop" ? "desktop" : deviceType
-    ];
+  // Use consolidated theme values with runtime guards
+  type DeviceKey = "mobile" | "tablet" | "desktop";
+  const isVariantKey = (
+    value: unknown
+  ): value is keyof typeof RESPONSIVE_TYPOGRAPHY =>
+    Object.prototype.hasOwnProperty.call(
+      RESPONSIVE_TYPOGRAPHY,
+      value as PropertyKey
+    );
+
+  // Normalize variant to supported keys
+  const variantMap: Record<
+    ResponsiveTypographyProps["variant"],
+    keyof typeof RESPONSIVE_TYPOGRAPHY
+  > = {
+    h1: "h1",
+    h2: "h2",
+    h3: "h3",
+    h4: "h4",
+    h5: "h5",
+    h6: "h6",
+    body: "body",
+    small: "small",
+    caption: "caption",
+    body1: "body",
+    body2: "small",
+    subtitle1: "body",
+    subtitle2: "small",
+    overline: "caption",
+  };
+
+  // eslint-disable-next-line security/detect-object-injection
+  const normalizedVariant = variantMap[variant];
+  const safeVariant: keyof typeof RESPONSIVE_TYPOGRAPHY = isVariantKey(
+    normalizedVariant
+  )
+    ? normalizedVariant
+    : "body";
+  const deviceKey = deviceType === "largeDesktop" ? "desktop" : deviceType;
+  const safeDevice: DeviceKey = deviceKey as DeviceKey;
+
+  // eslint-disable-next-line security/detect-object-injection
+  const fontSize = RESPONSIVE_TYPOGRAPHY[safeVariant][safeDevice];
 
   const getColorClasses = () => {
+    // Handle common MUI color tokens
+    if (color === "text.secondary") return "text-gray-600";
+    if (color === "text.primary") return "text-gray-900";
     switch (color) {
       case "primary":
         return "text-blue-600";
@@ -117,10 +173,15 @@ export function Typography({
       case "h6":
         return "font-medium";
       case "body":
+      case "body1":
+      case "subtitle1":
         return "leading-relaxed";
       case "small":
+      case "body2":
+      case "subtitle2":
         return "leading-relaxed";
       case "caption":
+      case "overline":
         return "leading-relaxed";
       default:
         return "";
@@ -136,13 +197,37 @@ export function Typography({
     className
   );
 
-  const defaultElement = variant.startsWith("h") ? variant : "p";
-  const Component = as || defaultElement;
+  // Note: variant mapping handled via variantMap above
 
-  const style = {
+  const defaultElement = variant.startsWith("h") ? (variant as string) : "p";
+  const Component = (as ||
+    component ||
+    defaultElement) as keyof React.JSX.IntrinsicElements;
+
+  const style: React.CSSProperties = {
     fontSize,
     lineHeight: variant.startsWith("h") ? "1.2" : "1.6",
+    ...(typeof fontWeight !== "undefined" ? { fontWeight } : {}),
+    ...(sx || {}),
   };
+
+  // If color is a custom CSS color string (not handled above), apply inline style
+  if (
+    typeof color === "string" &&
+    ![
+      "primary",
+      "secondary",
+      "muted",
+      "error",
+      "success",
+      "warning",
+      "inherit",
+      "text.secondary",
+      "text.primary",
+    ].includes(color)
+  ) {
+    style.color = color as string;
+  }
 
   return (
     <Component className={typographyStyles} style={style}>

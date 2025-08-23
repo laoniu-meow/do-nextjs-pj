@@ -82,6 +82,9 @@ export default function Home() {
             <a href="/admin" className="home-button secondary">
               Admin Panel
             </a>
+            <a href="/login" className="home-button secondary">
+              Login
+            </a>
           </div>
 
           <div className="home-features">

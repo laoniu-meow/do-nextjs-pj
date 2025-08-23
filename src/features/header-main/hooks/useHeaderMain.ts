@@ -5,6 +5,7 @@ import { headerMainReducer, initialState } from '../reducers/headerMainReducer';
 import { notifySuccess } from '@/lib/notifications';
 import { HeaderMainApi } from '../services/headerMainApi';
 import { HeaderSettingsData, DEFAULT_HEADER_SETTINGS } from '../types/headerMain';
+import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
 export const useHeaderMain = () => {
   const [state, dispatch] = useReducer(headerMainReducer, initialState);
@@ -16,7 +17,7 @@ export const useHeaderMain = () => {
       dispatch({ type: 'SET_ERROR', payload: null });
 
       // First try to load from staging
-      const stagingResponse = await fetch("/api/settings/header-main/staging");
+      const stagingResponse = await fetchWithAuth("/api/settings/header-main/staging");
       if (stagingResponse.ok) {
         const stagingData = await stagingResponse.json();
         if (stagingData.success && stagingData.data && stagingData.data.length > 0) {
@@ -74,7 +75,7 @@ export const useHeaderMain = () => {
       }
 
       // If no staging data, load from production
-      const productionResponse = await fetch("/api/settings/header-main/production");
+      const productionResponse = await fetchWithAuth("/api/settings/header-main/production");
       if (productionResponse.ok) {
         const productionData = await productionResponse.json();
         if (productionData.success && productionData.data && productionData.data.length > 0) {

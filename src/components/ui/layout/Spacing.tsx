@@ -24,6 +24,7 @@ export function Spacing({
 
   // Use consolidated theme values
   const spacingValue =
+    // eslint-disable-next-line security/detect-object-injection
     RESPONSIVE_SPACING[size][
       deviceType === "largeDesktop" ? "desktop" : deviceType
     ];
@@ -78,6 +79,7 @@ export function Margin({
 
   // Use consolidated theme values
   const spacingValue =
+    // eslint-disable-next-line security/detect-object-injection
     RESPONSIVE_SPACING[size][
       deviceType === "largeDesktop" ? "desktop" : deviceType
     ];

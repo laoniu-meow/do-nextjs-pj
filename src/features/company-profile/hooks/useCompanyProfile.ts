@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { useCallback, useEffect, useState } from 'react';
 import { CompanyFormData } from '@/types';
 import { notifySuccess } from '@/lib/notifications';

@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable security/detect-object-injection */
 import React, {
   createContext,
   useContext,

@@ -1,5 +1,6 @@
 import React from "react";
-import { Typography, Button, Paper } from "@mui/material";
+import { Button, Paper } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { Business, Add } from "@mui/icons-material";
 import { CompanyProfileEmptyStateProps } from "../types/companyProfile";
 

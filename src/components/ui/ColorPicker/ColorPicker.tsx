@@ -2,7 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { ChromePicker, ColorResult } from "react-color";
-import { Box, TextField, IconButton, Popover, Typography } from "@mui/material";
+import { Box, TextField, IconButton, Popover } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { Close as CloseIcon } from "@mui/icons-material";
 
 interface ColorPickerProps {

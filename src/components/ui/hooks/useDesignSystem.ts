@@ -45,13 +45,17 @@ export const useDesignSystem = () => {
     sizes: SIZES,
     
     // Utility functions
-    getSpacing: (size: keyof typeof SPACING) => SPACING[size],
+    getSpacing: (size: keyof typeof SPACING) => {
+      // eslint-disable-next-line security/detect-object-injection
+      return SPACING[size]
+    },
     getColor: (colorPath: string) => {
       const path = colorPath.split('.');
       let value: unknown = COLORS;
       
       for (const key of path) {
         if (typeof value === 'object' && value !== null && key in value) {
+          // eslint-disable-next-line security/detect-object-injection
           value = (value as Record<string, unknown>)[key];
         } else {
           break;
@@ -60,10 +64,22 @@ export const useDesignSystem = () => {
       
       return typeof value === 'string' ? value : COLORS.NEUTRAL[500];
     },
-    getShadow: (size: keyof typeof SHADOWS) => SHADOWS[size],
-    getBorderRadius: (size: keyof typeof BORDER_RADIUS) => BORDER_RADIUS[size],
-    getTransition: (speed: keyof typeof TRANSITIONS) => TRANSITIONS[speed],
-    getTypography: (variant: keyof typeof TYPOGRAPHY.FONT_SIZE) => TYPOGRAPHY.FONT_SIZE[variant],
+    getShadow: (size: keyof typeof SHADOWS) => {
+      // eslint-disable-next-line security/detect-object-injection
+      return SHADOWS[size]
+    },
+    getBorderRadius: (size: keyof typeof BORDER_RADIUS) => {
+      // eslint-disable-next-line security/detect-object-injection
+      return BORDER_RADIUS[size]
+    },
+    getTransition: (speed: keyof typeof TRANSITIONS) => {
+      // eslint-disable-next-line security/detect-object-injection
+      return TRANSITIONS[speed]
+    },
+    getTypography: (variant: keyof typeof TYPOGRAPHY.FONT_SIZE) => {
+      // eslint-disable-next-line security/detect-object-injection
+      return TYPOGRAPHY.FONT_SIZE[variant]
+    },
     
     // CSS Custom Properties (for use in styled-components or inline styles)
     cssVars: {

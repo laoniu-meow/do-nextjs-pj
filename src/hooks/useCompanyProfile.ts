@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { useState, useEffect, useCallback } from "react";
 import { logger } from "@/lib/logger";
 

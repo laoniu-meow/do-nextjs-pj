@@ -1,5 +1,6 @@
 import React from "react";
-import { Alert, Typography } from "@mui/material";
+import { Alert } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { PageLayout, MainContainerBox } from "@/components/ui";
 import { DynamicSettingsPanel } from "@/components/settings";
 import { useHeaderMain } from "../hooks/useHeaderMain";
@@ -73,7 +74,7 @@ export const HeaderMainPage: React.FC = () => {
       maxWidth="xl"
     >
       <MainContainerBox
-        title="Header & Main Configuration"
+        title="Configuration"
         showBuild={true}
         showSave={true}
         showUpload={true}

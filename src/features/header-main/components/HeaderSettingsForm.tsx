@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect } from "react";
 import { ColorPickerDialog, IconPicker } from "@/components/ui";
 import { HeaderSettingsData } from "../types/headerMain";
