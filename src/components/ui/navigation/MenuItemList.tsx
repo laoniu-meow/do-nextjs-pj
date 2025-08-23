@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { MenuItem, MenuConfig, defaultMenuConfig } from "../config/menuConfig";
 import { ADMIN_MENU_THEME } from "../constants/theme";
 
@@ -20,6 +21,7 @@ interface MenuItemListProps {
   config?: MenuConfig;
   onClose?: () => void;
   onItemClick?: (item: MenuItem) => void;
+  onLogout?: () => void;
   className?: string;
 }
 
@@ -27,6 +29,7 @@ export default function MenuItemList({
   config,
   onClose,
   onItemClick,
+  onLogout,
   className,
 }: MenuItemListProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -141,7 +144,30 @@ export default function MenuItemList({
         </React.Fragment>
       ))}
       {menuConfig.mainItems.length > 0 && <Divider sx={{ my: 2 }} />}
-      {renderMenuItem(menuConfig.logoutItem, 0)}
+      {onLogout && (
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={onLogout}
+            sx={{
+              pl: 2,
+              cursor: "pointer",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: ADMIN_MENU_THEME.colors.error }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{
+                color: "error",
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
+      )}
     </List>
   );
 }

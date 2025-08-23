@@ -69,11 +69,11 @@ model CompanyProfile {
   postalCode       String
   email            String
   contact          String
-  logo             String?
-  logoUrl          String?
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  logo             String?
+  logoUrl          String?
 
   @@index([type])
   @@index([isActive])
@@ -94,8 +94,8 @@ model CompanyProfileStaging {
   updatedAt        DateTime @updatedAt
   isMainCompany    Boolean  @default(false)
   logo             String?
-  logoUrl          String?
   name             String
+  logoUrl          String?
 
   @@map("company_profile_staging")
 }
@@ -110,12 +110,159 @@ model CompanyProfileProduction {
   postalCode       String?
   contact          String?
   logo             String?
-  logoUrl          String?
   isMainCompany    Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  logoUrl          String?
 
   @@map("company_profile_production")
+}
+
+model HeaderSettings {
+  id                        String      @id @default(cuid())
+  name                      String      @default("Default Header Settings")
+  isActive                  Boolean     @default(true)
+  desktopHeight             Int         @default(64)
+  desktopPaddingHorizontal  Int         @default(16)
+  desktopLogoWidth          Int         @default(40)
+  desktopLogoHeight         Int         @default(40)
+  desktopQuickButtonSize    Int         @default(40)
+  desktopMenuButtonSize     Int         @default(40)
+  tabletHeight              Int         @default(64)
+  tabletPaddingHorizontal   Int         @default(16)
+  tabletLogoWidth           Int         @default(40)
+  tabletLogoHeight          Int         @default(40)
+  tabletQuickButtonSize     Int         @default(40)
+  tabletMenuButtonSize      Int         @default(40)
+  mobileHeight              Int         @default(64)
+  mobilePaddingHorizontal   Int         @default(16)
+  mobileLogoWidth           Int         @default(40)
+  mobileLogoHeight          Int         @default(40)
+  mobileQuickButtonSize     Int         @default(40)
+  mobileMenuButtonSize      Int         @default(40)
+  backgroundColor           String      @default("#ffffff")
+  pageBackgroundColor       String      @default("#ffffff")
+  dropShadow                DropShadow  @default(MEDIUM)
+  quickButtonBgColor        String      @default("#f3f4f6")
+  quickButtonIconColor      String      @default("#6b7280")
+  quickButtonHoverBgColor   String      @default("#e5e7eb")
+  quickButtonHoverIconColor String      @default("#374151")
+  quickButtonShape          ButtonShape @default(ROUNDED)
+  quickButtonShadow         DropShadow  @default(LIGHT)
+  quickButtonGap            String      @default("8px")
+  menuButtonBgColor         String      @default("var(--color-neutral-200)")
+  menuButtonIconColor       String      @default("var(--color-neutral-700)")
+  menuButtonHoverBgColor    String      @default("var(--color-neutral-300)")
+  menuButtonHoverIconColor  String      @default("var(--color-neutral-800)")
+  menuButtonIconId          String      @default("menu")
+  menuButtonShape           ButtonShape @default(ROUNDED)
+  menuButtonShadow          DropShadow  @default(LIGHT)
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("header_settings")
+}
+
+model HeaderSettingsStaging {
+  id                        String      @id @default(cuid())
+  name                      String      @default("Staging Header Settings")
+  isActive                  Boolean     @default(true)
+  desktopHeight             Int         @default(64)
+  desktopPaddingHorizontal  Int         @default(16)
+  desktopLogoWidth          Int         @default(40)
+  desktopLogoHeight         Int         @default(40)
+  desktopQuickButtonSize    Int         @default(40)
+  desktopMenuButtonSize     Int         @default(40)
+  tabletHeight              Int         @default(64)
+  tabletPaddingHorizontal   Int         @default(16)
+  tabletLogoWidth           Int         @default(40)
+  tabletLogoHeight          Int         @default(40)
+  tabletQuickButtonSize     Int         @default(40)
+  tabletMenuButtonSize      Int         @default(40)
+  mobileHeight              Int         @default(64)
+  mobilePaddingHorizontal   Int         @default(16)
+  mobileLogoWidth           Int         @default(40)
+  mobileLogoHeight          Int         @default(40)
+  mobileQuickButtonSize     Int         @default(40)
+  mobileMenuButtonSize      Int         @default(40)
+  backgroundColor           String      @default("#ffffff")
+  pageBackgroundColor       String      @default("#ffffff")
+  dropShadow                DropShadow  @default(MEDIUM)
+  quickButtonBgColor        String      @default("#f3f4f6")
+  quickButtonIconColor      String      @default("#6b7280")
+  quickButtonHoverBgColor   String      @default("#e5e7eb")
+  quickButtonHoverIconColor String      @default("#374151")
+  quickButtonShape          ButtonShape @default(ROUNDED)
+  quickButtonShadow         DropShadow  @default(LIGHT)
+  quickButtonGap            String      @default("8px")
+  menuButtonBgColor         String      @default("var(--color-neutral-200)")
+  menuButtonIconColor       String      @default("var(--color-neutral-700)")
+  menuButtonHoverBgColor    String      @default("var(--color-neutral-300)")
+  menuButtonHoverIconColor  String      @default("var(--color-neutral-800)")
+  menuButtonIconId          String      @default("menu")
+  menuButtonShape           ButtonShape @default(ROUNDED)
+  menuButtonShadow          DropShadow  @default(LIGHT)
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("header_settings_staging")
+}
+
+model HeaderSettingsProduction {
+  id                        String      @id @default(cuid())
+  name                      String      @default("Production Header Settings")
+  isActive                  Boolean     @default(true)
+  desktopHeight             Int         @default(64)
+  desktopPaddingHorizontal  Int         @default(16)
+  desktopLogoWidth          Int         @default(40)
+  desktopLogoHeight         Int         @default(40)
+  desktopQuickButtonSize    Int         @default(40)
+  desktopMenuButtonSize     Int         @default(40)
+  tabletHeight              Int         @default(64)
+  tabletPaddingHorizontal   Int         @default(16)
+  tabletLogoWidth           Int         @default(40)
+  tabletLogoHeight          Int         @default(40)
+  tabletQuickButtonSize     Int         @default(40)
+  tabletMenuButtonSize      Int         @default(40)
+  mobileHeight              Int         @default(64)
+  mobilePaddingHorizontal   Int         @default(16)
+  mobileLogoWidth           Int         @default(40)
+  mobileLogoHeight          Int         @default(40)
+  mobileQuickButtonSize     Int         @default(40)
+  mobileMenuButtonSize      Int         @default(40)
+  backgroundColor           String      @default("#ffffff")
+  pageBackgroundColor       String      @default("#ffffff")
+  dropShadow                DropShadow  @default(MEDIUM)
+  quickButtonBgColor        String      @default("#f3f4f6")
+  quickButtonIconColor      String      @default("#6b7280")
+  quickButtonHoverBgColor   String      @default("#e5e7eb")
+  quickButtonHoverIconColor String      @default("#374151")
+  quickButtonShape          ButtonShape @default(ROUNDED)
+  quickButtonShadow         DropShadow  @default(LIGHT)
+  quickButtonGap            String      @default("8px")
+  menuButtonBgColor         String      @default("var(--color-neutral-200)")
+  menuButtonIconColor       String      @default("var(--color-neutral-700)")
+  menuButtonHoverBgColor    String      @default("var(--color-neutral-300)")
+  menuButtonHoverIconColor  String      @default("var(--color-neutral-800)")
+  menuButtonIconId          String      @default("menu")
+  menuButtonShape           ButtonShape @default(ROUNDED)
+  menuButtonShadow          DropShadow  @default(LIGHT)
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("header_settings_production")
 }
 
 enum Role {
@@ -139,5 +286,476 @@ enum Status {
 
 enum CompanyProfileType {
   MAIN
-  BRANCH
+  REMOTE
+}
+
+enum DropShadow {
+  NONE
+  LIGHT
+  MEDIUM
+  STRONG
+}
+
+enum ButtonShape {
+  ROUNDED
+  CIRCLE
+  SQUARE
+}
+
+// Hero Page Templates
+enum PageTemplateType {
+  HERO
+  INFOGRAPH
+  CARD_INFO
+}
+
+// Staging sections for Index (Hero) page
+model HeroSectionStaging {
+  id           String           @id @default(cuid())
+  order        Int
+  templateType PageTemplateType
+  templateData Json
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@unique([order])
+  @@map("hero_sections_staging")
+}
+
+// Production sections for Index (Hero) page
+model HeroSectionProduction {
+  id           String           @id @default(cuid())
+  order        Int
+  templateType PageTemplateType
+  templateData Json
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@unique([order])
+  @@map("hero_sections_production")
+}
+
+// ================== E-COMMERCE: ENUMS ==================
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum BackorderPolicy {
+  NONE
+  ALLOW
+  PREORDER
+}
+
+enum PromotionType {
+  PERCENT
+  FIXED
+  FREE_SHIPPING
+}
+
+enum PromotionScope {
+  PRODUCT
+  CATEGORY
+  CART_MIN_SUBTOTAL
+}
+
+// Per-line tax price mode (Singapore GST: inclusive/exclusive at line level)
+enum TaxPriceMode {
+  INCLUSIVE
+  EXCLUSIVE
+}
+
+// Keep for completeness (defaults to LINE)
+enum TaxRoundingStrategy {
+  LINE
+  TOTAL
+}
+
+// Variant kind: SIMPLE (single item) or BUNDLE (kit/pack composed of components)
+enum VariantKind {
+  SIMPLE
+  BUNDLE
+}
+
+// ================== E-COMMERCE: CORE MODELS ==================
+
+// Optional brand catalog
+model Brand {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products  Product[]
+
+  @@index([name])
+  @@map("brands")
+}
+
+// Supplier (trimmed; no address fields)
+model Supplier {
+  id               String   @id @default(cuid())
+  name             String
+  code             String   @unique
+  isActive         Boolean  @default(true)
+
+  email            String?
+  phone            String?
+  notes            String?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  variantSuppliers VariantSupplier[]
+
+  @@index([name])
+  @@index([isActive])
+  @@map("suppliers")
+}
+
+// Category tree
+model Category {
+  id         String     @id @default(cuid())
+  name       String
+  slug       String     @unique
+  isActive   Boolean    @default(true)
+  sortOrder  Int        @default(0)
+  parentId   String?
+  parent     Category?  @relation("CategoryToSelf", fields: [parentId], references: [id])
+  children   Category[] @relation("CategoryToSelf")
+
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  products   ProductCategory[]
+
+  @@index([parentId])
+  @@index([isActive])
+  @@map("categories")
+}
+
+// Product core
+model Product {
+  id                String            @id @default(cuid())
+  title             String
+  slug              String            @unique
+  description       String?
+  status            ProductStatus     @default(DRAFT)
+  brandId           String?
+  brand             Brand?            @relation(fields: [brandId], references: [id])
+
+  // Optional default variant for UX
+  defaultVariantId  String? @unique
+  defaultVariant    ProductVariant?   @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
+
+  images            ProductImage[]
+  variants          ProductVariant[]
+  categories        ProductCategory[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Basic SEO fields
+  metaTitle         String?
+  metaDescription   String?
+  ogImage           String?
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([title])
+  @@map("products")
+}
+
+// Product images (ordered)
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+  isPrimary Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId, sortOrder])
+  @@map("product_images")
+}
+
+// SKU/variant with attributes and pricing
+model ProductVariant {
+  id               String        @id @default(cuid())
+  productId        String
+  product          Product       @relation(fields: [productId], references: [id])
+
+  sku              String        @unique
+  barcode          String?
+  // Flexible attributes (e.g., {"size":"M","color":"Red"})
+  attributes       Json
+
+  price            Decimal       @db.Decimal(10, 2)
+  compareAtPrice   Decimal?      @db.Decimal(10, 2)
+  isActive         Boolean       @default(true)
+
+  // Variant type
+  kind             VariantKind   @default(SIMPLE)
+
+  // Tax
+  taxClassId       String?
+  taxClass         TaxClass?     @relation(fields: [taxClassId], references: [id])
+  priceMode        TaxPriceMode  @default(EXCLUSIVE)
+
+  // Back-reference for Product.defaultVariant relation
+  productDefaultFor Product?     @relation("DefaultVariant")
+
+  inventory        InventoryItem?
+  variantSuppliers VariantSupplier[]
+  // Bundle relations
+  bundleComponents ProductBundleComponent[]   @relation("BundleComponentsForBundle")
+  partOfBundles    ProductBundleComponent[]   @relation("BundleComponentsForComponent")
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([productId])
+  @@index([isActive])
+  @@index([taxClassId])
+  @@map("product_variants")
+}
+
+// Bundle components mapping (bundle variant -> component variant with quantity)
+model ProductBundleComponent {
+  bundleVariantId    String
+  componentVariantId String
+  quantity           Int      @default(1)
+  createdAt          DateTime @default(now())
+
+  bundle    ProductVariant @relation("BundleComponentsForBundle", fields: [bundleVariantId], references: [id])
+  component ProductVariant @relation("BundleComponentsForComponent", fields: [componentVariantId], references: [id])
+
+  @@id([bundleVariantId, componentVariantId])
+  @@map("product_bundle_components")
+}
+
+// One-to-one inventory per variant
+model InventoryItem {
+  id                 String          @id @default(cuid())
+  variantId          String          @unique
+  variant            ProductVariant  @relation(fields: [variantId], references: [id])
+
+  stockOnHand        Int             @default(0)
+  reserved           Int             @default(0)
+  lowStockThreshold  Int             @default(0)
+  backorderPolicy    BackorderPolicy @default(NONE)
+
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@map("inventory_items")
+}
+
+// Variant-to-supplier mapping (cost/ops data)
+model VariantSupplier {
+  variantId        String
+  supplierId       String
+
+  supplierSku      String?
+  costPrice        Decimal  @db.Decimal(10, 2)
+  leadTimeDays     Int?
+  moq              Int?
+  reorderPoint     Int?
+  reorderQuantity  Int?
+  isPrimary        Boolean  @default(false)
+  isActive         Boolean  @default(true)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  variant          ProductVariant @relation(fields: [variantId], references: [id])
+  supplier         Supplier       @relation(fields: [supplierId], references: [id])
+
+  @@id([variantId, supplierId])
+  @@index([supplierId])
+  @@index([isPrimary])
+  @@map("variant_suppliers")
+}
+
+// Many-to-many join for products <-> categories
+model ProductCategory {
+  productId  String
+  categoryId String
+  assignedAt DateTime @default(now())
+
+  product    Product  @relation(fields: [productId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([productId, categoryId])
+  @@index([categoryId])
+  @@map("product_categories")
+}
+
+// Promotions
+model Promotion {
+  id               String         @id @default(cuid())
+  name             String
+  code             String?        @unique
+  type             PromotionType
+  // For PERCENT: 0-100; for FIXED: amount units; FREE_SHIPPING: ignore
+  value            Decimal        @db.Decimal(10, 2)
+  isActive         Boolean        @default(true)
+  startsAt         DateTime?
+  endsAt           DateTime?
+
+  // Stacking behavior
+  allowStacking    Boolean        @default(true)
+  stackingPriority Int            @default(0)
+
+  maxUses          Int?
+  maxUsesPerUser   Int?
+
+  conditions       PromotionCondition[]
+  usage            PromotionUsage[]
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([isActive])
+  @@index([startsAt])
+  @@index([endsAt])
+  @@map("promotions")
+}
+
+// Rule conditions for a promotion
+model PromotionCondition {
+  id            String          @id @default(cuid())
+  promotionId   String
+  promotion     Promotion       @relation(fields: [promotionId], references: [id])
+  scope         PromotionScope
+
+  // Match by product/category; Postgres arrays
+  productIds    String[]
+  categoryIds   String[]
+  // Cart-level minimum subtotal (amount units, no currency)
+  minSubtotal   Decimal?        @db.Decimal(10, 2)
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([promotionId])
+  @@map("promotion_conditions")
+}
+
+// Track usage for global/user caps
+model PromotionUsage {
+  id           String     @id @default(cuid())
+  promotionId  String
+  promotion    Promotion  @relation(fields: [promotionId], references: [id])
+
+  userId       String?
+  // If you want a FK, uncomment next line and ensure your User model table name is mapped accordingly
+  // user         User?      @relation(fields: [userId], references: [id])
+
+  usedAt       DateTime   @default(now())
+
+  @@index([promotionId])
+  @@index([promotionId, userId])
+  @@map("promotion_usage")
+}
+
+/* -------------------- Tax models -------------------- */
+
+// Tax class (assign to variants)
+model TaxClass {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?
+  isDefault   Boolean  @default(false)
+
+  rules       TaxRule[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  variants    ProductVariant[]
+
+  // Back-references for TaxSettings relations
+  defaultForSettings  TaxSettings[] @relation("DefaultClass")
+  shippingForSettings TaxSettings[] @relation("ShippingClass")
+
+  @@index([name])
+  @@map("tax_classes")
+}
+
+// Rule binding tax class + zone and a percentage
+model TaxRule {
+  id          String   @id @default(cuid())
+  name        String?
+  classId     String
+
+  // 0.0000 .. 1.0000 (e.g., 0.0900 for 9%)
+  percentage  Decimal  @db.Decimal(5, 4)
+
+  priority    Int      @default(0)
+  isCompound  Boolean  @default(false)
+  // Whether this rule is meant to be applied as price-inclusive
+  isInclusive Boolean  @default(false)
+
+  taxClass    TaxClass  @relation(fields: [classId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([classId])
+  @@index([priority])
+  @@map("tax_rules")
+}
+
+// Global tax settings
+model TaxSettings {
+  id                   String              @id @default(cuid())
+  priceIncludesTax     Boolean             @default(false)
+  roundingStrategy     TaxRoundingStrategy @default(LINE)
+  defaultPriceMode     TaxPriceMode        @default(EXCLUSIVE)
+
+  defaultTaxClassId    String?
+  shippingTaxClassId   String?
+
+  defaultTaxClass      TaxClass? @relation("DefaultClass", fields: [defaultTaxClassId], references: [id])
+  shippingTaxClass     TaxClass? @relation("ShippingClass", fields: [shippingTaxClassId], references: [id])
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("tax_settings")
+}
+
+// Lightweight staging/production storage for quick Tax tab rules
+model TaxQuickRuleStaging {
+  id           String   @id @default(cuid())
+  description  String?
+  ratePercent  Decimal  @db.Decimal(5, 2) // e.g., 9.00 means 9%
+  isInclusive  Boolean  @default(false)
+  isGST        Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("tax_quick_rules_staging")
+}
+
+model TaxQuickRuleProduction {
+  id           String   @id @default(cuid())
+  description  String?
+  ratePercent  Decimal  @db.Decimal(5, 2)
+  isInclusive  Boolean  @default(false)
+  isGST        Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("tax_quick_rules_production")
 }

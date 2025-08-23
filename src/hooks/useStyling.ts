@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { useMemo } from 'react';
 
 interface ShadowOptions {

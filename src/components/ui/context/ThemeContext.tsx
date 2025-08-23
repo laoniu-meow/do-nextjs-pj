@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, ReactNode } from "react";
-import { designSystem } from "../../../styles/design-system";
+import { designSystem } from "@/styles/design-system";
 
 // Theme interface
 interface Theme {

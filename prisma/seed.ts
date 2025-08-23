@@ -7,14 +7,16 @@ async function main() {
   console.log('🌱 Starting database seed...')
 
   // Create default admin user
-  const adminPassword = await hashPassword('admin123')
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@company.com'
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
+  const adminPasswordHash = await hashPassword(adminPassword)
   
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@company.com' },
+    where: { email: adminEmail },
     update: {},
     create: {
-      email: 'admin@company.com',
-      password: adminPassword,
+      email: adminEmail,
+      password: adminPasswordHash,
       name: 'Admin User',
       role: 'ADMIN'
     }
@@ -30,10 +32,10 @@ async function main() {
       id: 'sample-company-id',
       name: 'Sample Company',
       description: 'A sample company for demonstration purposes',
-      website: 'https://example.com',
-      email: 'info@example.com',
-      phone: '+1-555-0123',
-      address: '123 Sample Street, Sample City, SC 12345'
+      website: process.env.SAMPLE_COMPANY_WEBSITE || 'https://example.com',
+      email: process.env.SAMPLE_COMPANY_EMAIL || 'info@example.com',
+      phone: process.env.SAMPLE_COMPANY_PHONE || '+1-555-0123',
+      address: process.env.SAMPLE_COMPANY_ADDRESS || '123 Sample Street, Sample City, SC 12345'
     }
   })
 

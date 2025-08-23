@@ -4,24 +4,52 @@ import React from "react";
 import { SettingsPanel } from "./SettingsPanel";
 import { SettingsContentFactory } from "./SettingsContentFactory";
 import { CompanyFormData } from "@/types";
+import type { HeaderSettingsData } from "@/features/header-main";
+import type { Section } from "@/features/hero-page/services/heroPageApi";
 
-interface DynamicSettingsPanelProps {
+type CompanyProfilePanelProps = {
+  pageType: "company-profile";
   isOpen: boolean;
   onClose: () => void;
   onApply: () => void;
-  onFormDataChange: (data: CompanyFormData) => void;
   title?: string;
+  onFormDataChange: (data: CompanyFormData) => void;
   initialData?: CompanyFormData | null;
-}
+};
 
-export const DynamicSettingsPanel: React.FC<DynamicSettingsPanelProps> = ({
-  isOpen,
-  onClose,
-  onApply,
-  onFormDataChange,
-  title,
-  initialData,
-}) => {
+type HeaderMainPanelProps = {
+  pageType: "header-main" | "header-settings";
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: () => void;
+  title?: string;
+  initialSettings: HeaderSettingsData;
+  onSettingsChange: (data: HeaderSettingsData) => void;
+};
+
+type HeroPagePanelProps = {
+  pageType: "hero-page";
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: () => void;
+  title?: string;
+  sections: Section[];
+  canAddMore: boolean;
+  onAddSection: () => void;
+  onRemoveSection: (order: number) => void;
+  onUpdateSection: (section: Section) => void;
+  onReorderSections: (sections: Section[]) => void;
+};
+
+type DynamicSettingsPanelProps =
+  | CompanyProfilePanelProps
+  | HeaderMainPanelProps
+  | HeroPagePanelProps;
+
+export const DynamicSettingsPanel: React.FC<DynamicSettingsPanelProps> = (
+  props
+) => {
+  const { isOpen, onClose, onApply, title } = props;
   if (!isOpen) return null;
 
   const panelTitle = title || "Settings";
@@ -33,11 +61,29 @@ export const DynamicSettingsPanel: React.FC<DynamicSettingsPanelProps> = ({
       onApply={onApply}
       title={panelTitle}
     >
-      <SettingsContentFactory
-        pageType="company-profile"
-        onFormDataChange={onFormDataChange}
-        initialData={initialData}
-      />
+      {props.pageType === "company-profile" ? (
+        <SettingsContentFactory
+          pageType="company-profile"
+          onFormDataChange={props.onFormDataChange}
+          initialData={props.initialData}
+        />
+      ) : props.pageType === "hero-page" ? (
+        <SettingsContentFactory
+          pageType="hero-page"
+          sections={props.sections}
+          canAddMore={props.canAddMore}
+          onAddSection={props.onAddSection}
+          onRemoveSection={props.onRemoveSection}
+          onUpdateSection={props.onUpdateSection}
+          onReorderSections={props.onReorderSections}
+        />
+      ) : (
+        <SettingsContentFactory
+          pageType={props.pageType}
+          initialSettings={props.initialSettings}
+          onSettingsChange={props.onSettingsChange}
+        />
+      )}
     </SettingsPanel>
   );
 };

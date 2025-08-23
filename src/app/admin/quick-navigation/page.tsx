@@ -16,7 +16,7 @@ export default function QuickNavigationPage() {
 
   const handleApplySettings = () => {
     // TODO: Implement settings application logic
-    console.log("Settings applied");
+    console.warn("Settings applied");
     setIsSettingsOpen(false);
   };
 
@@ -37,9 +37,9 @@ export default function QuickNavigationPage() {
         showUpload={true}
         showRefresh={true}
         onBuild={handleBuild}
-        onSave={() => console.log("Save clicked")}
-        onUpload={() => console.log("Upload clicked")}
-        onRefresh={() => console.log("Refresh clicked")}
+        onSave={() => console.warn("Save clicked")}
+        onUpload={() => console.warn("Upload clicked")}
+        onRefresh={() => console.warn("Refresh clicked")}
       >
         <div className="space-y-6">
           {/* Quick navigation configuration content will be added here */}

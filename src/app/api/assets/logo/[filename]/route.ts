@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFile } from 'fs/promises';
+import { readFile, stat } from 'fs/promises';
 import { join } from 'path';
 import { uploadConfig } from '@/lib/env';
 
@@ -12,22 +12,32 @@ export async function GET(
   try {
     const { filename } = await params;
     
-    if (!filename) {
+    if (!filename || /\.\./.test(filename)) {
       return NextResponse.json(
-        { success: false, message: 'No filename provided' },
+        { success: false, message: 'Invalid filename' },
         { status: 400 }
       );
     }
 
-    // Construct the file path
-    const filePath = join(process.cwd(), 'src', uploadConfig.logosDir, filename);
+    // Construct the file path, supporting both src/* and public/* based on env setting
+    const resolveLogosDir = (subPath: string): string => {
+      // If configured under public/, do not prefix with src
+      if (subPath.startsWith('public/')) {
+        return join(process.cwd(), subPath);
+      }
+      // Default to src/* structure
+      return join(process.cwd(), 'src', subPath);
+    };
+
+    const filePath = join(resolveLogosDir(uploadConfig.logosDir), filename);
+    await stat(filePath) // ensure exists
     
     // Read the file
     const fileBuffer = await readFile(filePath);
     
     // Determine content type based on file extension
     const ext = filename.split('.').pop()?.toLowerCase();
-    let contentType = 'image/png'; // default
+    let contentType = 'image/png';
     
     switch (ext) {
       case 'jpg':
@@ -52,8 +62,9 @@ export async function GET(
     return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+        'Cache-Control': 'public, max-age=31536000, immutable',
         'Access-Control-Allow-Origin': '*',
+        'X-Content-Type-Options': 'nosniff',
       },
     });
 

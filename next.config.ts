@@ -1,12 +1,25 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Force Node.js runtime for all API routes
+  reactStrictMode: false,
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals = config.externals || [];
       config.externals.push('bcryptjs', 'jsonwebtoken');
+    } else {
+      // Client fallbacks for Node core modules
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      }
     }
+    // Handle SVG imports
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    })
     return config;
   },
   async headers() {
@@ -49,7 +62,16 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   compress: true,
-  generateEtags: true
+  generateEtags: true,
+  experimental: {},
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
 };
 
 export default nextConfig;

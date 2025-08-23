@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Tabs, Tab } from "@mui/material";
+import { Typography } from "@/components/ui";
 import ComputerIcon from "@mui/icons-material/Computer";
 import TabletIcon from "@mui/icons-material/Tablet";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
@@ -19,7 +20,10 @@ const ResponsiveTabs: React.FC<ResponsiveTabsProps> = ({
   showIcons = true,
   className,
 }) => {
-  const handleChange = (event: React.SyntheticEvent, newValue: ResponsiveView) => {
+  const handleChange = (
+    event: React.SyntheticEvent,
+    newValue: ResponsiveView
+  ) => {
     onViewChange(newValue);
   };
 

@@ -14,7 +14,7 @@ const config = {
   port: process.env.POSTGRES_PORT || 5432,
   database: process.env.POSTGRES_DB || 'company-webapp',
   user: process.env.POSTGRES_USER || 'postgres',
-  password: process.env.POSTGRES_PASSWORD || 'postgres',
+  password: process.env.POSTGRES_PASSWORD,
 };
 
 // Tables to check for Header settings
@@ -48,6 +48,12 @@ const responsiveFields = [
 ];
 
 async function connectToDatabase() {
+  // Validate required environment variables
+  if (!process.env.POSTGRES_PASSWORD) {
+    console.error('❌ POSTGRES_PASSWORD environment variable is required');
+    process.exit(1);
+  }
+
   const client = new Client(config);
   try {
     await client.connect();

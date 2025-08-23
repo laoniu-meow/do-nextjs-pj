@@ -1,12 +1,11 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { jwtConfig } from './env'
 import { NextRequest } from 'next/server'
+import { extractTokenFromRequest } from './auth-shared'
+import type { JWTPayload } from '@/types'
 
-export interface JWTPayload {
-  userId: string
-  email: string
-  role: string
-}
+// JWTPayload type is defined centrally in src/types
 
 export async function hashPassword(password: string): Promise<string> {
   const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || '12')
@@ -18,31 +17,15 @@ export async function comparePassword(password: string, hashedPassword: string):
 }
 
 export function generateToken(payload: JWTPayload): string {
-  const secret = process.env.JWT_SECRET
-  if (!secret) {
-    throw new Error('JWT_SECRET is not defined')
-  }
-  
+  const secret = jwtConfig.secret
   return jwt.sign(payload, secret, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+    expiresIn: jwtConfig.expiresIn
   } as jwt.SignOptions)
 }
 
 export function verifyToken(token: string): JWTPayload {
-  const secret = process.env.JWT_SECRET
-  if (!secret) {
-    throw new Error('JWT_SECRET is not defined')
-  }
-  
+  const secret = jwtConfig.secret
   return jwt.verify(token, secret) as JWTPayload
-}
-
-export function extractTokenFromRequest(request: NextRequest): string | null {
-  const authHeader = request.headers.get('authorization')
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null
-  }
-  return authHeader.substring(7)
 }
 
 export function authenticateRequest(request: NextRequest): JWTPayload | null {

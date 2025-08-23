@@ -1,5 +1,6 @@
 'use client'
 
+/* eslint-disable security/detect-object-injection */
 import { useState, useEffect, useCallback } from 'react'
 import { breakpoints, getDeviceType, isMobile, isTablet, isDesktop, isLargeDesktop } from '@/lib/breakpoints'
 

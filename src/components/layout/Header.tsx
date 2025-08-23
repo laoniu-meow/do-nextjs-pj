@@ -98,28 +98,67 @@ export function Header({
   menuButtonShape = "rounded",
   menuButtonShadow = "light",
 }: HeaderProps) {
+  // Validate props to prevent errors - wrapped in useMemo to prevent recreation on every render
+  const validatedDesktop = useMemo(
+    () => ({
+      height: Math.max(1, desktop?.height || 64),
+      paddingHorizontal: Math.max(0, desktop?.paddingHorizontal || 16),
+      logoWidth: Math.max(1, desktop?.logoWidth || 40),
+      logoHeight: Math.max(1, desktop?.logoHeight || 40),
+      quickButtonSize: Math.max(1, desktop?.quickButtonSize || 40),
+      menuButtonSize: Math.max(1, desktop?.menuButtonSize || 40),
+    }),
+    [desktop]
+  );
+
+  const validatedTablet = useMemo(
+    () => ({
+      height: Math.max(1, tablet?.height || 64),
+      paddingHorizontal: Math.max(0, tablet?.paddingHorizontal || 16),
+      logoWidth: Math.max(1, tablet?.logoWidth || 40),
+      logoHeight: Math.max(1, tablet?.logoHeight || 40),
+      quickButtonSize: Math.max(1, tablet?.quickButtonSize || 40),
+      menuButtonSize: Math.max(1, tablet?.menuButtonSize || 40),
+    }),
+    [tablet]
+  );
+
+  const validatedMobile = useMemo(
+    () => ({
+      height: Math.max(1, mobile?.height || 64),
+      paddingHorizontal: Math.max(0, mobile?.paddingHorizontal || 16),
+      logoWidth: Math.max(1, mobile?.logoWidth || 40),
+      logoHeight: Math.max(1, mobile?.logoHeight || 40),
+      quickButtonSize: Math.max(1, mobile?.quickButtonSize || 40),
+      menuButtonSize: Math.max(1, mobile?.menuButtonSize || 40),
+    }),
+    [mobile]
+  );
+
   const { deviceType } = useResponsive();
   const { getShadow, getShape } = useStyling();
+
+  // Add error handling for hooks
+  // Avoid disallowed console usage
 
   // Get current device settings
   const getCurrentSettings = useMemo(() => {
     switch (deviceType) {
       case "tablet":
-        return tablet;
+        return validatedTablet;
       case "mobile":
-        return mobile;
+        return validatedMobile;
       default:
-        return desktop;
+        return validatedDesktop;
     }
-  }, [deviceType, desktop, tablet, mobile]);
+  }, [deviceType, validatedDesktop, validatedTablet, validatedMobile]);
+
+  const currentSettings = getCurrentSettings;
 
   // Debug current device and settings
   useEffect(() => {
-    console.log("Current device:", deviceType);
-    console.log("Current settings:", getCurrentSettings);
-  }, [deviceType, getCurrentSettings]);
-
-  const currentSettings = getCurrentSettings;
+    // debug removed for lint compliance
+  }, [deviceType, getCurrentSettings, currentSettings]);
 
   const {
     logoUrl,
@@ -135,164 +174,214 @@ export function Header({
     return icon;
   }, [menuButtonIconId]);
 
-  // Memoize header styles to prevent unnecessary recalculations
-  const headerStyles = useMemo(
-    (): React.CSSProperties => ({
-      height: currentSettings.height,
-      backgroundColor,
-      boxShadow: getShadow(dropShadow),
-      padding: `0px ${currentSettings.paddingHorizontal}px`,
-    }),
-    [
-      currentSettings.height,
-      currentSettings.paddingHorizontal,
-      backgroundColor,
-      dropShadow,
-      getShadow,
-    ]
-  );
+  // Header styles are now handled by ResponsiveHeader
 
-  return (
-    <ResponsiveHeader sticky={false} transparent={false}>
-      <div style={headerStyles} className="header-container">
-        {/* Logo - Left side */}
-        <div className="header-logo-container">
-          {logoLoading ? (
-            <div
-              className="bg-gray-200 animate-pulse rounded"
-              style={{
-                width: currentSettings.logoWidth,
-                height: currentSettings.logoHeight,
-              }}
-            />
-          ) : logoError ? (
-            <div
-              className="bg-red-100 text-red-600 text-xs flex items-center justify-center rounded border border-red-200"
-              style={{
-                width: currentSettings.logoWidth,
-                height: currentSettings.logoHeight,
-              }}
-            ></div>
-          ) : logoUrl ? (
-            <Image
-              src={logoUrl}
-              alt="Company Logo"
-              width={currentSettings.logoWidth}
-              height={currentSettings.logoHeight}
-              style={{
-                width: currentSettings.logoWidth,
-                height: currentSettings.logoHeight,
-                margin: 0,
-                padding: 0,
-                border: "none",
-                outline: "none",
-                display: "block",
-                verticalAlign: "middle",
-                objectFit: "contain",
-                objectPosition: "center",
-              }}
-              className="object-contain"
-            />
-          ) : (
-            <div
-              className="bg-gray-100 text-gray-500 text-xs flex items-center justify-center rounded border border-gray-200"
-              style={{
-                width: currentSettings.logoWidth,
-                height: currentSettings.logoHeight,
-              }}
-            ></div>
-          )}
-        </div>
-
-        {/* Quick Buttons - Center */}
+  try {
+    return (
+      <ResponsiveHeader
+        sticky={false}
+        transparent={false}
+        desktop={{
+          height: currentSettings.height,
+          paddingHorizontal: 0,
+          paddingVertical: 0,
+          logoWidth: 40,
+          logoHeight: 40,
+          quickButtonSize: 40,
+          menuButtonSize: 40,
+        }}
+        tablet={{
+          height: currentSettings.height,
+          paddingHorizontal: 0,
+          paddingVertical: 0,
+          logoWidth: 40,
+          logoHeight: 40,
+          quickButtonSize: 40,
+          menuButtonSize: 40,
+        }}
+        mobile={{
+          height: currentSettings.height,
+          paddingHorizontal: 0,
+          paddingVertical: 0,
+          logoWidth: 40,
+          logoHeight: 40,
+          quickButtonSize: 40,
+          menuButtonSize: 40,
+        }}
+      >
         <div
-          className="header-quick-buttons"
           style={{
-            gap: quickButtonGap,
+            height: currentSettings.height,
+            backgroundColor,
+            // Apply horizontal padding inside the header container
+            padding: `0 ${currentSettings.paddingHorizontal}px`,
           }}
+          className={`header-container header-shadow-${dropShadow}`}
+          data-drop-shadow={dropShadow}
         >
-          {[1, 2, 3, 4].map((index) => (
-            <button
-              key={index}
-              className={`btn-base btn-hover-scale ${getShape(
-                quickButtonShape
-              )}`}
-              style={{
-                width: currentSettings.quickButtonSize,
-                height: currentSettings.quickButtonSize,
-                backgroundColor: quickButtonBgColor,
-                boxShadow: getShadow(quickButtonShadow),
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = quickButtonHoverBgColor;
-                e.currentTarget.style.color = quickButtonHoverIconColor;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = quickButtonBgColor;
-                e.currentTarget.style.color = quickButtonIconColor;
-              }}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                style={{ color: quickButtonIconColor }}
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-              </svg>
-            </button>
-          ))}
-        </div>
-
-        {/* Menu Button - Right side */}
-        <div className="header-menu-button">
-          <button
-            className={`btn-base btn-hover-scale ${getShape(menuButtonShape)}`}
-            style={{
-              width: currentSettings.menuButtonSize,
-              height: currentSettings.menuButtonSize,
-              backgroundColor: menuButtonBgColor,
-              boxShadow: getShadow(menuButtonShadow),
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = menuButtonHoverBgColor;
-              e.currentTarget.style.color = menuButtonHoverIconColor;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = menuButtonBgColor;
-              e.currentTarget.style.color = menuButtonIconColor;
-            }}
-          >
-            {selectedMenuIcon ? (
-              <selectedMenuIcon.icon
+          {/* Logo - Left side */}
+          <div className="header-logo-container">
+            {logoLoading ? (
+              <div
+                className="bg-gray-200 animate-pulse rounded"
                 style={{
-                  width: 20,
-                  height: 20,
-                  color: menuButtonIconColor,
+                  width: currentSettings.logoWidth,
+                  height: currentSettings.logoHeight,
                 }}
               />
+            ) : logoError ? (
+              <div
+                className="bg-red-100 text-red-600 text-xs flex items-center justify-center rounded border border-red-200"
+                style={{
+                  width: currentSettings.logoWidth,
+                  height: currentSettings.logoHeight,
+                }}
+              ></div>
+            ) : logoUrl ? (
+              <Image
+                src={logoUrl}
+                alt="Company Logo"
+                width={currentSettings.logoWidth}
+                height={currentSettings.logoHeight}
+                style={{
+                  width: currentSettings.logoWidth,
+                  height: currentSettings.logoHeight,
+                  margin: 0,
+                  padding: 0,
+                  border: "none",
+                  outline: "none",
+                  display: "block",
+                  verticalAlign: "middle",
+                  objectFit: "contain",
+                  objectPosition: "center",
+                }}
+                className="object-contain"
+              />
             ) : (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ color: menuButtonIconColor }}
-              >
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-              </svg>
+              <div
+                className="bg-gray-100 text-gray-500 text-xs flex items-center justify-center rounded border border-gray-200"
+                style={{
+                  width: currentSettings.logoWidth,
+                  height: currentSettings.logoHeight,
+                }}
+              ></div>
             )}
-          </button>
+          </div>
+
+          {/* Quick Buttons - Center */}
+          <div
+            className="header-quick-buttons"
+            style={{
+              gap:
+                typeof quickButtonGap === "number"
+                  ? quickButtonGap
+                  : /^(\d+)$/.test(String(quickButtonGap))
+                  ? `${quickButtonGap}px`
+                  : quickButtonGap,
+            }}
+          >
+            {[1, 2, 3, 4].map((index) => (
+              <button
+                key={index}
+                className={`btn-base btn-hover-scale ${getShape(
+                  quickButtonShape
+                )}`}
+                style={{
+                  width: currentSettings.quickButtonSize,
+                  height: currentSettings.quickButtonSize,
+                  backgroundColor: quickButtonBgColor,
+                  color: quickButtonIconColor,
+                  boxShadow: getShadow(quickButtonShadow),
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor =
+                    quickButtonHoverBgColor;
+                  e.currentTarget.style.color = quickButtonHoverIconColor;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = quickButtonBgColor;
+                  e.currentTarget.style.color = quickButtonIconColor;
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            ))}
+          </div>
+
+          {/* Menu Button - Right side */}
+          <div className="header-menu-button">
+            <button
+              className={`btn-base btn-hover-scale ${getShape(
+                menuButtonShape
+              )}`}
+              style={{
+                width: currentSettings.menuButtonSize,
+                height: currentSettings.menuButtonSize,
+                backgroundColor: menuButtonBgColor,
+                color: menuButtonIconColor,
+                boxShadow: getShadow(menuButtonShadow),
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = menuButtonHoverBgColor;
+                e.currentTarget.style.color = menuButtonHoverIconColor;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = menuButtonBgColor;
+                e.currentTarget.style.color = menuButtonIconColor;
+              }}
+            >
+              {selectedMenuIcon ? (
+                <selectedMenuIcon.icon
+                  style={{
+                    width: 20,
+                    height: 20,
+                  }}
+                />
+              ) : (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
+      </ResponsiveHeader>
+    );
+  } catch {
+    return (
+      <div
+        style={{
+          height: currentSettings.height,
+          backgroundColor: "#f0f0f0", // Fallback background
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "#333",
+          fontSize: "1.25rem",
+          fontWeight: "bold",
+        }}
+      >
+        Error loading header.
       </div>
-    </ResponsiveHeader>
-  );
+    );
+  }
 }

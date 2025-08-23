@@ -52,12 +52,7 @@ export enum ContentStatus {
 }
 
 // API Response types
-export interface ApiResponse<T = unknown> {
-  success: boolean
-  data?: T
-  message?: string
-  errors?: string[]
-}
+// ApiResponse is defined centrally under lib/api-response for runtime helpers.
 
 export interface PaginationMeta {
   page: number
@@ -103,6 +98,7 @@ export interface CompanyFormData {
   postalCode?: string
   email?: string
   contact?: string
+  phone?: string
 }
 
 // Filter and search types

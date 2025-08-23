@@ -8,6 +8,7 @@ import {
   Paper,
   Fade,
   Slide,
+  Tooltip,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
@@ -24,6 +25,9 @@ interface SettingsPanelProps {
   onApply: () => void;
   children: React.ReactNode;
   title?: string;
+  description?: string;
+  // Optional: force panel width to match a preview size
+  preferredWidth?: "auto" | "mobile" | "tablet" | "desktop";
 }
 
 export function SettingsPanel({
@@ -32,6 +36,8 @@ export function SettingsPanel({
   onApply,
   children,
   title = "Settings",
+  description,
+  preferredWidth = "auto",
 }: SettingsPanelProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -41,11 +47,16 @@ export function SettingsPanel({
     height: 0,
   });
   const [isVisible, setIsVisible] = useState(false);
+  const [panelWidth, setPanelWidth] = useState<number | undefined>(undefined);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const dragHandleRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const pendingPositionRef = useRef<{ x: number; y: number } | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isPhone = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
@@ -54,17 +65,29 @@ export function SettingsPanel({
       setIsVisible(true);
 
       // Responsive panel sizing
-      const panelWidth = isMobile
-        ? Math.min(window.innerWidth - 32, 520)
-        : Math.min(800, window.innerWidth - 64);
+      const previewToPx: Record<string, number> = {
+        mobile: 360,
+        tablet: 768,
+        desktop: 1024,
+      };
+      const baseWidth =
+        preferredWidth === "auto"
+          ? isMobile
+            ? Math.min(window.innerWidth - 32, 480)
+            : Math.min(560, window.innerWidth - 64)
+          : // eslint-disable-next-line security/detect-object-injection
+            Math.min(previewToPx[preferredWidth], window.innerWidth - 64);
+      setPanelWidth(baseWidth);
 
-      // Center the panel
-      const centerX = (window.innerWidth - panelWidth) / 2;
-      const centerY = Math.max(32, (window.innerHeight - 600) / 2);
+      // Position: center on desktop, slightly below the top toggle on mobile
+      const centerX = (window.innerWidth - baseWidth) / 2;
+      const initialY = isMobile
+        ? 104
+        : Math.max(32, (window.innerHeight - 600) / 2);
 
       setPosition({
         x: Math.max(16, centerX),
-        y: centerY,
+        y: initialY,
       });
 
       // Re-center after content renders
@@ -75,10 +98,9 @@ export function SettingsPanel({
           const actualWidth = rect.width;
 
           const newCenterX = (window.innerWidth - actualWidth) / 2;
-          const newCenterY = Math.max(
-            32,
-            (window.innerHeight - actualHeight) / 2
-          );
+          const newCenterY = isMobile
+            ? 104
+            : Math.max(32, (window.innerHeight - actualHeight) / 2);
 
           setPosition({
             x: Math.max(16, newCenterX),
@@ -96,20 +118,61 @@ export function SettingsPanel({
         clearTimeout(timer);
       }
     };
-  }, [isOpen, isMobile]);
+  }, [isOpen, isMobile, preferredWidth]);
+
+  // Prevent background scroll while panel is open (reduces jumpiness during drag)
+  useEffect(() => {
+    if (!isOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [isOpen]);
+
+  // Recompute width on window resize to keep preview sizing responsive
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleResize = () => {
+      const previewToPx: Record<string, number> = {
+        mobile: 360,
+        tablet: 768,
+        desktop: 1024,
+      };
+      const baseWidth =
+        preferredWidth === "auto"
+          ? isMobile
+            ? Math.min(window.innerWidth - 32, 480)
+            : Math.min(560, window.innerWidth - 64)
+          : // eslint-disable-next-line security/detect-object-injection
+            Math.min(previewToPx[preferredWidth], window.innerWidth - 64);
+      setPanelWidth(baseWidth);
+      // recentre horizontally with new width
+      const centerX = (window.innerWidth - baseWidth) / 2;
+      setPosition((prev) => ({ ...prev, x: Math.max(16, centerX) }));
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen, isMobile, preferredWidth]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    // Only handle if we're clicking on the draggable area
+    // Start dragging only when clicking the drag handle
     if (
-      headerRef.current &&
-      headerRef.current.contains(e.target as HTMLElement)
+      dragHandleRef.current &&
+      dragHandleRef.current.contains(e.target as HTMLElement)
     ) {
+      e.preventDefault();
       setIsDragging(true);
-      const rect = headerRef.current.getBoundingClientRect();
-      if (rect) {
+      const panelRect = panelRef.current?.getBoundingClientRect();
+      if (panelRect) {
+        // Ensure we have up-to-date dimensions for clamping
+        setPanelDimensions({
+          width: panelRect.width,
+          height: panelRect.height,
+        });
         setDragOffset({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
+          x: e.clientX - panelRect.left,
+          y: e.clientY - panelRect.top,
         });
       }
     }
@@ -121,7 +184,7 @@ export function SettingsPanel({
 
       const newX = e.clientX - dragOffset.x;
       const newY = e.clientY - dragOffset.y;
-      setPosition({
+      const clamped = {
         x: Math.max(
           16,
           Math.min(window.innerWidth - panelDimensions.width - 16, newX)
@@ -130,23 +193,39 @@ export function SettingsPanel({
           16,
           Math.min(window.innerHeight - panelDimensions.height - 16, newY)
         ),
-      });
+      };
+
+      pendingPositionRef.current = clamped;
+      if (rafRef.current == null) {
+        rafRef.current = requestAnimationFrame(() => {
+          if (pendingPositionRef.current) {
+            setPosition(pendingPositionRef.current);
+          }
+          rafRef.current = null;
+        });
+      }
     },
     [isDragging, dragOffset, panelDimensions]
   );
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    // Only handle if we're touching the draggable area
+    // Start dragging only when touching the drag handle
     if (
-      headerRef.current &&
-      headerRef.current.contains(e.target as HTMLElement)
+      dragHandleRef.current &&
+      dragHandleRef.current.contains(e.target as HTMLElement)
     ) {
+      e.preventDefault();
       setIsDragging(true);
-      const rect = headerRef.current.getBoundingClientRect();
-      if (rect) {
+      const panelRect = panelRef.current?.getBoundingClientRect();
+      if (panelRect) {
+        // Ensure we have up-to-date dimensions for clamping
+        setPanelDimensions({
+          width: panelRect.width,
+          height: panelRect.height,
+        });
         setDragOffset({
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top,
+          x: e.touches[0].clientX - panelRect.left,
+          y: e.touches[0].clientY - panelRect.top,
         });
       }
     }
@@ -159,7 +238,7 @@ export function SettingsPanel({
       e.preventDefault();
       const newX = e.touches[0].clientX - dragOffset.x;
       const newY = e.touches[0].clientY - dragOffset.y;
-      setPosition({
+      const clamped = {
         x: Math.max(
           16,
           Math.min(window.innerWidth - panelDimensions.width - 16, newX)
@@ -168,17 +247,48 @@ export function SettingsPanel({
           16,
           Math.min(window.innerHeight - panelDimensions.height - 16, newY)
         ),
-      });
+      };
+
+      pendingPositionRef.current = clamped;
+      if (rafRef.current == null) {
+        rafRef.current = requestAnimationFrame(() => {
+          if (pendingPositionRef.current) {
+            setPosition(pendingPositionRef.current);
+          }
+          rafRef.current = null;
+        });
+      }
     },
     [isDragging, dragOffset, panelDimensions]
   );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
+    if (rafRef.current != null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    pendingPositionRef.current = null;
   }, []);
 
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false);
+    if (rafRef.current != null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    pendingPositionRef.current = null;
+  }, []);
+
+  // Cancel any pending RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      pendingPositionRef.current = null;
+    };
   }, []);
 
   // Only add event listeners when actually dragging
@@ -222,11 +332,11 @@ export function SettingsPanel({
           justifyContent: "center",
           p: 2,
           zIndex: 999,
-          pointerEvents: "none",
+          pointerEvents: "auto",
           isolation: "isolate",
         }}
       >
-        <Box sx={{ pointerEvents: "auto" }}>
+        <Box>
           <Slide
             direction="up"
             in={isVisible}
@@ -242,33 +352,45 @@ export function SettingsPanel({
                 position: "fixed",
                 left: position.x,
                 top: position.y,
-                width: isMobile ? "calc(100% - 32px)" : "auto",
-                minWidth: isMobile ? "auto" : 520,
-                maxWidth: isMobile ? "calc(100% - 32px)" : 800,
+                width: isMobile
+                  ? "calc(100% - 32px)"
+                  : panelWidth || "clamp(320px, 90vw, 560px)",
+                minWidth: "auto",
+                maxWidth: isMobile
+                  ? "calc(100% - 32px)"
+                  : panelWidth || "560px",
                 maxHeight: isMobile
-                  ? "calc(100vh - 80px)"
-                  : "calc(100vh - 64px)",
+                  ? "calc(100dvh - 140px)"
+                  : "calc(100vh - 94px)",
                 cursor: isDragging ? "grabbing" : "default",
                 zIndex: 1000,
-                borderRadius: isMobile ? "16px" : "20px",
+                borderRadius: isMobile ? "10px" : "12px",
                 overflow: "hidden",
-                background: "#ffffff",
-                border: "1px solid #e5e7eb",
+                background: "linear-gradient(180deg, #ffffff 0%, #e7efff 100%)",
+                border: "1.5px solid #d9e5ff",
                 boxShadow: `
+                  0 25px 50px -12px rgba(0, 0, 0, 0.15),
                   0 20px 25px -5px rgba(0, 0, 0, 0.1),
                   0 10px 10px -5px rgba(0, 0, 0, 0.04),
                   0 0 0 1px rgba(255, 255, 255, 0.8) inset
                 `,
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                transition: isDragging
+                  ? "none"
+                  : "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                 pointerEvents: "auto",
                 isolation: "isolate",
                 transform: "translateZ(0)",
+                willChange: "left, top",
+                userSelect: isDragging ? "none" : "auto",
+                backdropFilter: "blur(20px)",
                 "&:hover": {
                   boxShadow: `
-                    0 25px 50px -12px rgba(0, 0, 0, 0.15),
-                    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                    0 32px 64px -12px rgba(0, 0, 0, 0.2),
+                    0 25px 32px -5px rgba(0, 0, 0, 0.15),
+                    0 12px 16px -5px rgba(0, 0, 0, 0.08),
                     0 0 0 1px rgba(255, 255, 255, 0.9) inset
                   `,
+                  transform: "translateY(-2px) scale(1.005)",
                 },
               }}
             >
@@ -276,89 +398,51 @@ export function SettingsPanel({
               <Box
                 sx={{
                   background:
-                    "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)",
-                  borderBottom: "none",
+                    "linear-gradient(135deg, #93c5fd 0%, #818cf8 45%, #60a5fa 100%)",
+                  borderBottom: "1px solid #7aa2f8",
+                  borderTopLeftRadius: isMobile ? "10px" : "12px",
+                  borderTopRightRadius: isMobile ? "10px" : "12px",
                   padding: "0",
                   position: "relative",
                   zIndex: 1001,
                   display: "flex",
                   flexDirection: "column",
-                  overflow: "hidden",
+                  overflow: "visible",
                   boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.8)",
                   isolation: "isolate",
                 }}
               >
-                {/* Top Bar - Draggable Area with Icon + Title */}
+                {/* Top Bar: [Icon] [Title + Description] [Apply, Close, Drag] */}
                 <Box
                   ref={headerRef}
                   sx={{
-                    cursor: "grab",
-                    userSelect: "none",
                     position: "relative",
                     zIndex: 1002,
-                    padding: isMobile ? "16px 20px 12px" : "24px 32px 16px",
-                    background: "transparent",
-                    borderBottom: "none",
-                    isolation: "isolate",
-                    "&:active": {
-                      cursor: "grabbing",
-                    },
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: "3px",
-                      background:
-                        "linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)",
-                      borderRadius: "0 0 2px 2px",
-                    },
+                    padding: isMobile ? "12px 16px 10px" : "16px 20px 12px",
                   }}
-                  onMouseDown={handleMouseDown}
-                  onTouchStart={handleTouchStart}
                 >
-                  {/* Drag Handle Indicator */}
                   <Box
+                    className="settings-panel-header"
                     sx={{
-                      position: "absolute",
-                      top: isMobile ? "4px" : "8px",
-                      right: isMobile ? "12px" : "16px",
-                      display: "flex",
+                      display: "grid",
+                      gridTemplateColumns: "auto 1fr auto",
                       alignItems: "center",
-                      gap: "4px",
-                      color: "#64748b",
-                      fontSize: isMobile ? "11px" : "12px",
-                      fontWeight: 500,
-                      background: "rgba(255, 255, 255, 0.8)",
-                      padding: isMobile ? "4px 8px" : "6px 10px",
-                      borderRadius: "20px",
-                      border: "1px solid #e2e8f0",
-                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
-                      zIndex: 1003,
+                      columnGap: isMobile ? "12px" : "16px",
+                      rowGap: isMobile ? "6px" : "8px",
+                      background: "transparent",
+                      border: "none",
+                      borderRadius: 0,
+                      p: 0,
+                      mb: 0,
+                      boxShadow: "none",
                     }}
                   >
-                    <DragIcon sx={{ fontSize: isMobile ? 12 : 14 }} />
-                    <span>Drag to move</span>
-                  </Box>
-
-                  {/* Content Area */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: isMobile ? "16px" : "20px",
-                      maxWidth: "100%",
-                      position: "relative",
-                      zIndex: 1004,
-                    }}
-                  >
-                    {/* Settings Icon Container */}
+                    {/* Icon */}
                     <Box
                       sx={{
-                        width: isMobile ? 40 : 48,
-                        height: isMobile ? 40 : 48,
-                        borderRadius: isMobile ? "12px" : "14px",
+                        width: isMobile ? 36 : 40,
+                        height: isMobile ? 36 : 40,
+                        borderRadius: isMobile ? "10px" : "12px",
                         background:
                           "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                         display: "flex",
@@ -366,47 +450,34 @@ export function SettingsPanel({
                         justifyContent: "center",
                         border: "1px solid #e2e8f0",
                         boxShadow:
-                          "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
-                        position: "relative",
-                        zIndex: 1005,
-                        "&::before": {
-                          content: '""',
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          borderRadius: isMobile ? "12px" : "14px",
-                          background:
-                            "linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)",
-                          opacity: 0,
-                          transition: "opacity 0.2s ease",
-                        },
-                        "&:hover::before": {
-                          opacity: 1,
-                        },
+                          "0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
                       }}
                     >
                       <SettingsIcon
-                        sx={{
-                          color: "#475569",
-                          fontSize: isMobile ? 18 : 22,
-                          transition: "color 0.2s ease",
-                        }}
+                        sx={{ color: "#475569", fontSize: isMobile ? 18 : 20 }}
                       />
                     </Box>
 
-                    {/* Title Section */}
-                    <Box sx={{ flex: 1, minWidth: 0, zIndex: 1006 }}>
+                    {/* Title + Description */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        minWidth: 0,
+                        gap: isMobile ? 0.25 : 0.5,
+                      }}
+                    >
                       <Typography
                         variant="h5"
                         sx={{
-                          color: "#1e293b",
+                          color: "#0f172a",
                           fontWeight: 700,
                           letterSpacing: "-0.02em",
-                          lineHeight: 1.2,
-                          marginBottom: isMobile ? "4px" : "6px",
-                          fontSize: isMobile ? "1.125rem" : "1.25rem",
+                          lineHeight: 1.25,
+                          fontSize: isMobile ? "1.0625rem" : "1.1875rem",
+                          whiteSpace: "normal",
+                          overflowWrap: "anywhere",
+                          wordBreak: "break-word",
                         }}
                       >
                         {title}
@@ -416,128 +487,105 @@ export function SettingsPanel({
                         sx={{
                           color: "#64748b",
                           fontSize: isMobile ? "0.8125rem" : "0.875rem",
-                          fontWeight: 500,
                           lineHeight: 1.4,
+                          whiteSpace: "normal",
+                          overflowWrap: "anywhere",
+                          wordBreak: "break-word",
                         }}
                       >
-                        Configure your preferences and settings
+                        {description ||
+                          "Configure your preferences and settings"}
                       </Typography>
+                    </Box>
+
+                    {/* Actions - Apply, Close, Drag & Move */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                        gap: isMobile ? "6px" : "8px",
+                        flexWrap: isMobile ? "wrap" : "nowrap",
+                      }}
+                    >
+                      <Tooltip title="Apply" arrow>
+                        <IconButton
+                          aria-label="apply settings"
+                          onClick={onApply}
+                          sx={{
+                            border: "1.5px solid #c7d2fe",
+                            color: "#1d4ed8",
+                            background:
+                              "linear-gradient(180deg,#ffffff 0%,#f0f5ff 100%)",
+                            boxShadow: "0 2px 10px rgba(29,78,216,0.12)",
+                            "&:hover": { background: "#eef2ff" },
+                          }}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Close" arrow>
+                        <IconButton
+                          aria-label="close settings"
+                          onClick={onClose}
+                          sx={{
+                            border: "1.5px solid #e2e8f0",
+                            color: "#334155",
+                            background:
+                              "linear-gradient(180deg,#ffffff 0%,#f8fafc 100%)",
+                            boxShadow: "0 2px 8px rgba(15,23,42,0.08)",
+                            "&:hover": { background: "#f1f5f9" },
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </Tooltip>
+                      {!isPhone && (
+                        <Tooltip title="Drag & Move" arrow>
+                          <Box
+                            ref={dragHandleRef}
+                            onMouseDown={handleMouseDown}
+                            onTouchStart={handleTouchStart}
+                            sx={{ display: "flex", touchAction: "none" }}
+                          >
+                            <IconButton
+                              size={isMobile ? "small" : "medium"}
+                              aria-label="drag and move"
+                              sx={{
+                                border: "1px solid #e2e8f0",
+                                background: "#fff",
+                                cursor: isDragging ? "grabbing" : "grab",
+                                "&:hover": { background: "#f8fafc" },
+                              }}
+                            >
+                              <DragIcon
+                                fontSize={isMobile ? "small" : "medium"}
+                              />
+                            </IconButton>
+                          </Box>
+                        </Tooltip>
+                      )}
                     </Box>
                   </Box>
                 </Box>
-
-                {/* Bottom Bar - Action Buttons */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    gap: isMobile ? "8px" : "12px",
-                    padding: isMobile ? "0 20px 16px" : "0 32px 20px",
-                    background: "transparent",
-                    borderTop: "none",
-                    boxShadow: "none",
-                    zIndex: 1007,
-                    isolation: "isolate",
-                  }}
-                >
-                  {/* Apply Button */}
-                  <IconButton
-                    onClick={onApply}
-                    data-testid="apply-button"
-                    sx={{
-                      width: isMobile ? 40 : 44,
-                      height: isMobile ? 40 : 44,
-                      background:
-                        "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                      color: "white",
-                      borderRadius: isMobile ? "10px" : "12px",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
-                      boxShadow:
-                        "0 2px 8px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                      position: "relative",
-                      zIndex: 1008,
-                      "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #059669 0%, #047857 100%)",
-                        transform: "translateY(-1px)",
-                        boxShadow:
-                          "0 4px 16px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
-                      },
-                      "&:active": {
-                        transform: "translateY(0)",
-                      },
-                    }}
-                  >
-                    <CheckIcon sx={{ fontSize: isMobile ? 18 : 20 }} />
-                  </IconButton>
-
-                  {/* Close Button */}
-                  <IconButton
-                    onClick={onClose}
-                    data-testid="close-button"
-                    sx={{
-                      width: isMobile ? 40 : 44,
-                      height: isMobile ? 40 : 44,
-                      background:
-                        "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-                      color: "#64748b",
-                      borderRadius: isMobile ? "10px" : "10px",
-                      border: "1px solid #e2e8f0",
-                      boxShadow:
-                        "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
-                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                      position: "relative",
-                      zIndex: 1009,
-                      "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
-                        color: "#475569",
-                        transform: "translateY(-1px)",
-                        boxShadow:
-                          "0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                      },
-                      "&:active": {
-                        transform: "translateY(0)",
-                      },
-                    }}
-                  >
-                    <CloseIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                </Box>
               </Box>
-
-              {/* Content Area */}
+              {/* Content */}
               <Box
                 sx={{
-                  height: "auto",
+                  padding: isMobile
+                    ? "12px 16px calc(env(safe-area-inset-bottom, 0px) + 24px)"
+                    : "16px 24px 24px",
                   maxHeight: isMobile
-                    ? "calc(90vh - 120px)"
-                    : "calc(90vh - 200px)",
-                  minHeight: isMobile ? 300 : 400,
-                  background: "#fafafa",
-                  padding: isMobile ? "20px" : "32px",
+                    ? "calc(100dvh - 220px)"
+                    : "calc(100vh - 200px)",
                   overflowY: "auto",
-                  overflowX: "hidden",
-                  scrollbarWidth: "thin",
-                  scrollbarColor: "#cbd5e1 #f1f5f9",
-                  "&::-webkit-scrollbar": {
-                    width: "8px",
-                  },
-                  "&::-webkit-scrollbar-track": {
-                    background: "#f1f5f9",
-                    borderRadius: "4px",
-                  },
-                  "&::-webkit-scrollbar-thumb": {
-                    background: "#cbd5e1",
-                    borderRadius: "4px",
-                    border: "1px solid #f1f5f9",
-                    "&:hover": {
-                      background: "#94a3b8",
-                    },
-                  },
-                  position: "relative",
+                  WebkitOverflowScrolling: "touch",
+                  overscrollBehavior: "contain",
+                  background:
+                    "linear-gradient(180deg, #ffffff 0%, #eef2ff 100%)",
+                  borderTop: "1px solid #d9e5ff",
+                  borderBottomLeftRadius: isMobile ? "10px" : "12px",
+                  borderBottomRightRadius: isMobile ? "10px" : "12px",
                 }}
               >
                 {children}

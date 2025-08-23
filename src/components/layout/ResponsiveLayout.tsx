@@ -168,11 +168,11 @@ export function ResponsiveHeader({
 
   const headerStyles: React.CSSProperties = {
     height: currentSettings.height,
-    padding: `${currentSettings.paddingVertical}px ${currentSettings.paddingHorizontal}px`,
+    // Remove padding from ResponsiveHeader since it's now handled by inner container
     position: "relative",
     width: "100%",
     maxWidth: "100%",
-    overflow: "hidden",
+    overflow: "visible",
     boxSizing: "border-box",
     margin: 0,
     outline: "none",
@@ -198,7 +198,7 @@ export function ResponsiveHeader({
         position: sticky ? "sticky" : "relative",
         top: sticky ? 0 : "auto",
         zIndex: sticky ? 100 : "auto",
-        backgroundColor: transparent ? "transparent" : "#ffffff",
+        backgroundColor: transparent ? "transparent" : "inherit",
         backdropFilter: transparent ? "blur(8px)" : "none",
         WebkitBackdropFilter: transparent ? "blur(8px)" : "none",
       }}

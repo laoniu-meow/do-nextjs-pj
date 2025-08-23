@@ -9,10 +9,14 @@ export { default as Button, ButtonGroup } from "./core/Button";
 
 // Color Components
 export { ColorPicker } from "./ColorPicker";
+export { ColorPickerDialog } from "./ColorPickerDialog";
 
 // Icon Library Component
 export { IconLibrary } from "./IconLibrary";
 export { IconSelector } from "./IconSelector";
+
+// New IconPicker Component
+export { IconPicker } from "./IconPicker";
 
 // Responsive Tabs - Device view switcher (Desktop, Tablet, Mobile)
 export { default as ResponsiveTabs } from "./ResponsiveTabs";
@@ -50,7 +54,7 @@ export * from "../settings";
 // Utility Components - Error boundaries and utility components
 export * from "./utils";
 
-// Context - Theme and state management
+// Context - Theme and state management (only export what we need)
 export { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 // Hooks - Custom React hooks

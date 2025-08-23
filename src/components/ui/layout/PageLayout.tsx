@@ -39,9 +39,15 @@ export default function PageLayout({
     <Box
       className="mb-4 mt-8"
       sx={{
+        position: "relative",
+        zIndex: 0,
         "& .MuiBreadcrumbs-root": {
+          position: "relative",
+          zIndex: 0,
           "& .MuiBreadcrumbs-ol": {
             gap: designSystem.spacing.SM,
+            position: "relative",
+            zIndex: 0,
           },
         },
       }}
@@ -58,6 +64,8 @@ export default function PageLayout({
               background: `linear-gradient(135deg, ${designSystem.colors.neutral[400]} 0%, ${designSystem.colors.neutral[500]} 100%)`,
               display: "inline-block",
               margin: "0 8px",
+              position: "relative",
+              zIndex: 0,
             }}
           />
         }
@@ -86,6 +94,7 @@ export default function PageLayout({
         margin: "0 auto",
         width: "100%",
         boxSizing: "border-box",
+        zIndex: 0,
       }}
       className={cn(
         "page-layout-container typography-enhanced page-components",
@@ -102,7 +111,7 @@ export default function PageLayout({
           position: "relative",
           padding: `${designSystem.spacing.MD} 0`,
           "&::before": {
-            zIndex: 20,
+            zIndex: 0,
             content: '""',
             position: "absolute",
             top: 0,

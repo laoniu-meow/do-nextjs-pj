@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper } from "@mui/material";
+import { Typography } from "@/components/ui";
 import { designSystem } from "@/styles/design-system";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ interface CardProps {
   headerAction?: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
+  compactHeader?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -25,6 +27,7 @@ const Card: React.FC<CardProps> = ({
   headerAction,
   footer,
   className,
+  compactHeader = false,
 }) => {
   const getVariantStyles = () => {
     switch (variant) {
@@ -145,8 +148,18 @@ const Card: React.FC<CardProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: title || subtitle ? designSystem.spacing.lg : 0,
-            paddingBottom: title || subtitle ? designSystem.spacing.md : 0,
+            marginBottom:
+              title || subtitle
+                ? compactHeader
+                  ? designSystem.spacing.sm
+                  : designSystem.spacing.lg
+                : 0,
+            paddingBottom:
+              title || subtitle
+                ? compactHeader
+                  ? designSystem.spacing.xs
+                  : designSystem.spacing.md
+                : 0,
             borderBottom:
               title || subtitle
                 ? `1px solid ${designSystem.colors.neutral[200]}`

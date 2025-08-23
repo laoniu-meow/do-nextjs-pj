@@ -55,7 +55,8 @@ export function useAuth() {
           isLoading: false
         })
       }
-    } catch {
+    } catch (error) {
+      console.error('useAuth: checkAuthStatus error:', error);
       setAuthState({
         user: null,
         token: null,
@@ -77,9 +78,12 @@ export function useAuth() {
 
       if (response.ok) {
         const data = await response.json()
+        
         const { user, token } = data.data
         
         localStorage.setItem('auth_token', token)
+        
+        // Update state immediately
         setAuthState({
           user,
           token,
@@ -92,7 +96,8 @@ export function useAuth() {
         const errorData = await response.json()
         return { success: false, error: errorData.message }
       }
-    } catch {
+    } catch (error) {
+      console.error('useAuth: Login exception:', error);
       return { success: false, error: 'Login failed' }
     }
   }, [])

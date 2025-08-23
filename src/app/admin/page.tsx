@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { PageLayout, MainContainerBox } from "@/components/ui";
-import { Box, Typography, Button, Paper } from "@mui/material";
+import { PageLayout, MainContainerBox, Typography } from "@/components/ui";
+import { Box, Button, Paper } from "@mui/material";
 import Link from "next/link";
 
 export default function AdminPage() {
@@ -41,10 +41,14 @@ export default function AdminPage() {
                 justifyContent: "center",
               }}
             >
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" sx={{ marginBottom: 8 }}>
                 Company Profile
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ marginBottom: 16 }}
+              >
                 Manage company settings and branding
               </Typography>
               <Link href="/admin/settings/company-profile" passHref>
@@ -64,10 +68,14 @@ export default function AdminPage() {
                 justifyContent: "center",
               }}
             >
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" sx={{ marginBottom: 8 }}>
                 Settings
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ marginBottom: 16 }}
+              >
                 Access all admin settings
               </Typography>
               <Link href="/admin/settings" passHref>
