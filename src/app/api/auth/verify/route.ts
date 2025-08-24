@@ -48,13 +48,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       successResponse({
-        user,
-        token
+        user
       }, 'Token verified successfully')
     )
 
   } catch (error) {
-    console.error('Token verification error:', error)
+    // Only log non-sensitive error information
+    console.error('Token verification error:', error instanceof Error ? error.message : 'Unknown error')
     return NextResponse.json(
       errorResponse('Token verification failed'),
       { status: 401 }

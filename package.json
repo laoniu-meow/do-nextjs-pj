@@ -16,7 +16,9 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:ensure-users": "node scripts/ensure-users.js",
+    "dev:with-users": "npm run db:ensure-users && npm run dev"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

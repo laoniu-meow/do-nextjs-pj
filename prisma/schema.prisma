@@ -361,17 +361,13 @@ enum PromotionScope {
   CART_MIN_SUBTOTAL
 }
 
-// Per-line tax price mode (Singapore GST: inclusive/exclusive at line level)
+// Simple tax rate (no zones)
 enum TaxPriceMode {
   INCLUSIVE
   EXCLUSIVE
 }
 
-// Keep for completeness (defaults to LINE)
-enum TaxRoundingStrategy {
-  LINE
-  TOTAL
-}
+
 
 // Variant kind: SIMPLE (single item) or BUNDLE (kit/pack composed of components)
 enum VariantKind {
@@ -415,6 +411,25 @@ model Supplier {
   @@index([name])
   @@index([isActive])
   @@map("suppliers")
+}
+
+// Supplier staging model for draft/preview changes
+model SupplierStaging {
+  id               String   @id @default(cuid())
+  name             String
+  code             String   @unique
+  isActive         Boolean  @default(true)
+
+  email            String?
+  phone            String?
+  notes            String?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+  @@map("supplier_staging")
 }
 
 // Category tree
@@ -505,9 +520,8 @@ model ProductVariant {
   // Variant type
   kind             VariantKind   @default(SIMPLE)
 
-  // Tax
-  taxClassId       String?
-  taxClass         TaxClass?     @relation(fields: [taxClassId], references: [id])
+  // Simple tax (no zones)
+  taxRate          Decimal?      @db.Decimal(5, 4) // 0.0000 to 1.0000 (e.g., 0.0900 for 9%)
   priceMode        TaxPriceMode  @default(EXCLUSIVE)
 
   // Back-reference for Product.defaultVariant relation
@@ -524,7 +538,7 @@ model ProductVariant {
 
   @@index([productId])
   @@index([isActive])
-  @@index([taxClassId])
+  @@index([taxRate])
   @@map("product_variants")
 }
 
@@ -630,6 +644,34 @@ model Promotion {
   @@map("promotions")
 }
 
+// Promotion staging model for draft/preview changes
+model PromotionStaging {
+  id               String         @id @default(cuid())
+  name             String
+  code             String?        @unique
+  type             PromotionType
+  // For PERCENT: 0-100; for FIXED: amount units; FREE_SHIPPING: ignore
+  value            Decimal        @db.Decimal(10, 2)
+  isActive         Boolean        @default(true)
+  startsAt         DateTime?
+  endsAt           DateTime?
+
+  // Stacking behavior
+  allowStacking    Boolean        @default(true)
+  stackingPriority Int            @default(0)
+
+  maxUses          Int?
+  maxUsesPerUser   Int?
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([isActive])
+  @@index([startsAt])
+  @@index([endsAt])
+  @@map("promotion_staging")
+}
+
 // Rule conditions for a promotion
 model PromotionCondition {
   id            String          @id @default(cuid())
@@ -667,95 +709,50 @@ model PromotionUsage {
   @@map("promotion_usage")
 }
 
-/* -------------------- Tax models -------------------- */
 
-// Tax class (assign to variants)
-model TaxClass {
-  id          String   @id @default(cuid())
-  name        String
-  code        String   @unique
-  description String?
-  isDefault   Boolean  @default(false)
 
-  rules       TaxRule[]
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  variants    ProductVariant[]
-
-  // Back-references for TaxSettings relations
-  defaultForSettings  TaxSettings[] @relation("DefaultClass")
-  shippingForSettings TaxSettings[] @relation("ShippingClass")
+// Simple tax rules for quick reference
+model TaxQuickRule {
+  id           String   @id @default(cuid())
+  name         String   // e.g., "Standard Rate", "Reduced Rate"
+  description  String?
+  ratePercent  Decimal  @db.Decimal(5, 2) // e.g., 9.00 means 9%
+  isInclusive  Boolean  @default(false) // Whether tax is included in price
+  isGST        Boolean  @default(false) // Whether this is a GST tax
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([name])
-  @@map("tax_classes")
+  @@map("tax_quick_rules")
 }
 
-// Rule binding tax class + zone and a percentage
-model TaxRule {
-  id          String   @id @default(cuid())
-  name        String?
-  classId     String
+// Tax settings for shop configuration
+model TaxSetting {
+  id           String   @id @default(cuid())
+  description  String   // e.g., "Standard Rate", "Reduced Rate"
+  ratePercent  String   // e.g., "9" means 9%
+  isInclusive  Boolean  @default(false) // Whether tax is included in price
+  isGST        Boolean  @default(false) // Whether this is a GST tax
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  // 0.0000 .. 1.0000 (e.g., 0.0900 for 9%)
-  percentage  Decimal  @db.Decimal(5, 4)
-
-  priority    Int      @default(0)
-  isCompound  Boolean  @default(false)
-  // Whether this rule is meant to be applied as price-inclusive
-  isInclusive Boolean  @default(false)
-
-  taxClass    TaxClass  @relation(fields: [classId], references: [id])
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([classId])
-  @@index([priority])
-  @@map("tax_rules")
-}
-
-// Global tax settings
-model TaxSettings {
-  id                   String              @id @default(cuid())
-  priceIncludesTax     Boolean             @default(false)
-  roundingStrategy     TaxRoundingStrategy @default(LINE)
-  defaultPriceMode     TaxPriceMode        @default(EXCLUSIVE)
-
-  defaultTaxClassId    String?
-  shippingTaxClassId   String?
-
-  defaultTaxClass      TaxClass? @relation("DefaultClass", fields: [defaultTaxClassId], references: [id])
-  shippingTaxClass     TaxClass? @relation("ShippingClass", fields: [shippingTaxClassId], references: [id])
-
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
+  @@index([description])
   @@map("tax_settings")
 }
 
-// Lightweight staging/production storage for quick Tax tab rules
-model TaxQuickRuleStaging {
+// Staging table for tax settings
+model TaxSettingStaging {
   id           String   @id @default(cuid())
-  description  String?
-  ratePercent  Decimal  @db.Decimal(5, 2) // e.g., 9.00 means 9%
-  isInclusive  Boolean  @default(false)
-  isGST        Boolean  @default(false)
+  description  String   // e.g., "Standard Rate", "Reduced Rate"
+  ratePercent  String   // e.g., "9" means 9%
+  isInclusive  Boolean  @default(false) // Whether tax is included in price
+  isGST        Boolean  @default(false) // Whether this is a GST tax
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  @@map("tax_quick_rules_staging")
+  @@index([description])
+  @@map("tax_settings_staging")
 }
 
-model TaxQuickRuleProduction {
-  id           String   @id @default(cuid())
-  description  String?
-  ratePercent  Decimal  @db.Decimal(5, 2)
-  isInclusive  Boolean  @default(false)
-  isGST        Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 
-  @@map("tax_quick_rules_production")
-}

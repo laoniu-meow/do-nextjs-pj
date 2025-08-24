@@ -3,7 +3,7 @@
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { Typography, AppBar, Toolbar } from "@mui/material";
+import { Typography } from "@mui/material";
 
 export default function AdminLayout({
   children,
@@ -33,13 +33,6 @@ export default function AdminLayout({
   if (isLoading) {
     return (
       <div className="admin-layout">
-        <AppBar position="static" color="default" elevation={1}>
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Admin Panel
-            </Typography>
-          </Toolbar>
-        </AppBar>
         <main className="admin-content">
           <div style={{ padding: "2rem", textAlign: "center" }}>
             <Typography variant="h6">Loading...</Typography>
@@ -56,14 +49,6 @@ export default function AdminLayout({
 
   return (
     <div className="admin-layout">
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Admin Panel
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
       {/* Page Content */}
       <main className="admin-content">{children}</main>
     </div>
