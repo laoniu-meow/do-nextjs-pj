@@ -102,15 +102,65 @@ export function useCategoryStaging(): UseCategoryStagingReturn {
 
   // Edit existing category in staging
   const editCategory = useCallback((id: string, categoryData: CreateCategoryData) => {
-    setStagingCategories(prev => 
-      prev.map(cat => 
-        cat.id === id 
-          ? { ...cat, ...categoryData, updatedAt: new Date() }
-          : cat
-      )
-    );
-    setIsDirty(true);
-  }, []);
+    // Check if this is a production item that needs to be converted to staging
+    const productionItem = productionCategories.find(p => p.id === id);
+    const stagingItem = stagingCategories.find(s => s.id === id);
+    
+    if (productionItem && !stagingItem) {
+      // Check if there are actual changes before creating staging entry
+      const hasChanges = 
+        categoryData.name !== productionItem.name ||
+        categoryData.description !== productionItem.description ||
+        categoryData.parentId !== productionItem.parentId ||
+        categoryData.isActive !== productionItem.isActive ||
+        categoryData.sortOrder !== productionItem.sortOrder;
+
+      if (hasChanges) {
+        // Create a new staging entry from the production item
+        const newStagingItem: CategoryStaging = {
+          ...productionItem,
+          isDeleted: false,
+          updatedAt: new Date(),
+          ...categoryData,
+          slug: categoryData.slug || productionItem.slug,
+        };
+        
+        setStagingCategories(prev => [...prev, newStagingItem]);
+        setSuccess('Category updated successfully');
+      } else {
+        // No changes, just show a message
+        setSuccess('No changes detected');
+      }
+    } else if (stagingItem) {
+      // Check if there are actual changes before updating
+      const hasChanges = 
+        categoryData.name !== stagingItem.name ||
+        categoryData.description !== stagingItem.description ||
+        categoryData.parentId !== stagingItem.parentId ||
+        categoryData.isActive !== stagingItem.isActive ||
+        categoryData.sortOrder !== stagingItem.sortOrder;
+
+      if (hasChanges) {
+        // Update existing staging item
+        setStagingCategories(prev => prev.map(item => 
+          item.id === id 
+            ? { 
+                ...item, 
+                ...categoryData, 
+                slug: categoryData.slug || item.slug,
+                updatedAt: new Date() 
+              }
+            : item
+        ));
+        setSuccess('Category updated successfully');
+      } else {
+        // No changes, just show a message
+        setSuccess('No changes detected');
+      }
+    }
+    
+    setTimeout(() => setSuccess(null), 3000);
+  }, [stagingCategories, productionCategories]);
 
   // Delete category (mark for deletion)
   const deleteCategory = useCallback((id: string) => {

@@ -371,23 +371,24 @@ model CategoryStaging {
 }
 
 model Product {
-  id               String                    @id @default(cuid())
-  title            String
-  slug             String                    @unique
-  description      String?
-  status           ProductStatus             @default(DRAFT)
-  brandId          String?
-  defaultVariantId String?                   @unique
-  createdAt        DateTime                  @default(now())
-  updatedAt        DateTime                  @updatedAt
-  metaTitle        String?
-  metaDescription  String?
-  ogImage          String?
-  categories       ProductCategoryJunction[]
-  images           ProductImage[]
-  variants         ProductVariant[]
-  brand            Brand?                    @relation(fields: [brandId], references: [id])
-  defaultVariant   ProductVariant?           @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
+  id                     String                    @id @default(cuid())
+  title                  String
+  slug                   String                    @unique
+  description            String?
+  status                 ProductStatus             @default(DRAFT)
+  brandId                String?
+  defaultVariantId       String?                   @unique
+  createdAt              DateTime                  @default(now())
+  updatedAt              DateTime                  @updatedAt
+  metaTitle              String?
+  metaDescription        String?
+  ogImage                String?
+  categories             ProductCategoryJunction[]
+  images                 ProductImage[]
+  product_type_junctions product_type_junctions[]
+  variants               ProductVariant[]
+  brand                  Brand?                    @relation(fields: [brandId], references: [id])
+  defaultVariant         ProductVariant?           @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
 
   @@index([status])
   @@index([createdAt])
@@ -486,17 +487,19 @@ model VariantSupplier {
 }
 
 model ProductCategory {
-  id          String                    @id @default(cuid())
-  name        String
-  slug        String                    @unique
-  description String?
-  isActive    Boolean                   @default(true)
-  sortOrder   Int                       @default(0)
-  createdAt   DateTime                  @default(now())
-  updatedAt   DateTime                  @updatedAt
-  categoryId  String?
-  products    ProductCategoryJunction[]
-  category    Category?                 @relation("CategoryProductCategories", fields: [categoryId], references: [id])
+  id                   String                    @id @default(cuid())
+  name                 String
+  slug                 String                    @unique
+  description          String?
+  isActive             Boolean                   @default(true)
+  sortOrder            Int                       @default(0)
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  categoryId           String?
+  products             ProductCategoryJunction[]
+  category             Category?                 @relation("CategoryProductCategories", fields: [categoryId], references: [id])
+  product_type_staging ProductTypeStaging[]
+  product_types        ProductType[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -646,6 +649,55 @@ model TaxSettingStaging {
 
   @@index([description])
   @@map("tax_settings_staging")
+}
+
+model ProductTypeStaging {
+  id                           String          @id @default(cuid())
+  name                         String
+  slug                         String
+  description                  String?
+  isActive                     Boolean         @default(true)
+  sortOrder                    Int             @default(0)
+  isDeleted                    Boolean         @default(false)
+  createdAt                    DateTime        @default(now())
+  updatedAt                    DateTime        @updatedAt
+  productCategoryId            String
+  product_categories_hierarchy ProductCategory @relation(fields: [productCategoryId], references: [id])
+
+  @@index([productCategoryId])
+  @@index([isActive])
+  @@index([isDeleted])
+  @@map("product_type_staging")
+}
+
+model ProductType {
+  id                           String                   @id @default(cuid())
+  name                         String
+  slug                         String                   @unique
+  description                  String?
+  isActive                     Boolean                  @default(true)
+  sortOrder                    Int                      @default(0)
+  createdAt                    DateTime                 @default(now())
+  updatedAt                    DateTime                 @updatedAt
+  productCategoryId            String
+  product_type_junctions       product_type_junctions[]
+  product_categories_hierarchy ProductCategory          @relation(fields: [productCategoryId], references: [id])
+
+  @@index([productCategoryId])
+  @@index([isActive])
+  @@index([sortOrder])
+  @@map("product_types")
+}
+
+model product_type_junctions {
+  productId     String
+  productTypeId String
+  assignedAt    DateTime    @default(now())
+  products      Product     @relation(fields: [productId], references: [id])
+  product_types ProductType @relation(fields: [productTypeId], references: [id])
+
+  @@id([productId, productTypeId])
+  @@index([productTypeId])
 }
 
 enum Role {

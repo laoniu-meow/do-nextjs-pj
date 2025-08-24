@@ -146,7 +146,21 @@ export function ProductCategoryStaging({
       };
 
       if (mode === "edit" && editingProductCategory && onEdit) {
-        await onEdit(editingProductCategory.id, productCategoryData);
+        // Check if there are actual changes before calling onEdit
+        const hasChanges =
+          productCategoryData.name !== editingProductCategory.name ||
+          productCategoryData.description !==
+            editingProductCategory.description ||
+          productCategoryData.categoryId !==
+            editingProductCategory.categoryId ||
+          productCategoryData.isActive !== editingProductCategory.isActive ||
+          productCategoryData.sortOrder !== editingProductCategory.sortOrder;
+
+        if (hasChanges) {
+          await onEdit(editingProductCategory.id, productCategoryData);
+        } else {
+          // No changes detected, closing modal without calling onEdit
+        }
       } else if (mode === "add") {
         await onSave(productCategoryData);
       }
@@ -416,10 +430,10 @@ export function ProductCategoryStaging({
         >
           {isSubmitting
             ? mode === "edit"
-              ? "Updating..."
+              ? "Saving..."
               : "Creating..."
             : mode === "edit"
-            ? "Update"
+            ? "Save Changes"
             : "Create"}
         </Button>
       </DialogActions>

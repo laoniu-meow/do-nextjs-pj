@@ -14,7 +14,6 @@ import {
   CardContent,
   IconButton,
   Chip,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -36,6 +35,7 @@ import type {
   Category,
   CategoryStaging as CategoryStagingType,
 } from "@/services/categoryService";
+import { alpha } from "@mui/material/styles";
 
 // Type alias for category data
 type CategoryData = CreateCategoryData | Category | CategoryStagingType;
@@ -114,22 +114,7 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
 
     // Handle add category
     const handleAddCategory = (categoryData: CreateCategoryData) => {
-      // If we have production categories but no staging, we need to create staging entries
-      if (stagingCategories.length === 0 && productionCategories.length > 0) {
-        // First, add all production categories to staging as active
-        productionCategories.forEach((cat) => {
-          addCategory({
-            name: cat.name,
-            slug: cat.slug,
-            description: cat.description,
-            parentId: cat.parentId,
-            isActive: cat.isActive,
-            sortOrder: cat.sortOrder,
-          });
-        });
-      }
-
-      // Add the new category
+      // Add the new category directly to staging
       addCategory(categoryData);
       setIsAddModalOpen(false);
     };
@@ -139,46 +124,18 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
       id: string,
       categoryData: CreateCategoryData
     ) => {
-      // If we have production categories but no staging, we need to create staging entries
-      if (stagingCategories.length === 0 && productionCategories.length > 0) {
-        // First, add all production categories to staging as active
-        productionCategories.forEach((cat) => {
-          addCategory({
-            name: cat.name,
-            slug: cat.slug,
-            description: cat.description,
-            parentId: cat.parentId,
-            isActive: cat.isActive,
-            sortOrder: cat.sortOrder,
-          });
-        });
-
-        // Now find the category we're editing and update it
-        const categoryToEdit = productionCategories.find(
-          (cat) => cat.id === id
-        );
-        if (categoryToEdit) {
-          // Find the newly created staging entry and update it
-          const newStagingId = `temp-${Date.now()}-${Math.random()}`;
-          // We'll use the editCategory function after the staging entries are created
-          setTimeout(() => {
-            editCategory(newStagingId, categoryData);
-          }, 0);
-        }
-      } else {
-        // Normal staging edit
-        editCategory(id, categoryData);
-      }
-
+      // The hook now handles all the logic for production vs staging and change detection
+      editCategory(id, categoryData);
       setIsEditModalOpen(false);
       setEditingCategory(null);
     };
 
     // Handle restore category
-    const handleRestoreCategory = (id: string) => {
+    const handleRestoreCategory = (category: CategoryData) => {
       // Find the category to restore
       const categoryToRestore = stagingCategories.find(
-        (cat) => "id" in cat && cat.id === id
+        (cat) =>
+          "id" in cat && cat.id === ("id" in category ? category.id : undefined)
       );
       if (categoryToRestore) {
         // Remove the isDeleted flag by creating a new staging entry
@@ -201,7 +158,7 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
           (cat) => cat.id === id
         );
         if (productionCategory) {
-          // Create a staging entry for deletion
+          // Create a staging entry for deletion for this specific category only
           addCategory(
             {
               name: productionCategory.name,
@@ -234,202 +191,20 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
       setIsDeleteModalOpen(true);
     };
 
-    // Get available parent categories (excluding current category and its descendants)
-    const getAvailableParentCategories = (excludeId?: string): Category[] => {
-      // Use staging categories if available, otherwise use production categories
-      const availableCategories =
-        stagingCategories.length > 0 ? stagingCategories : productionCategories;
-
-      if (!excludeId) {
-        return availableCategories
-          .filter((cat) => !("isDeleted" in cat) || !cat.isDeleted)
-          .map((cat) => ({
-            id: cat.id,
-            name: cat.name,
-            slug: cat.slug,
-            description: cat.description,
-            parentId: cat.parentId,
-            isActive: cat.isActive,
-            sortOrder: cat.sortOrder,
-            createdAt: cat.createdAt,
-            updatedAt: cat.updatedAt,
-          }));
-      }
-
-      const excludeIds = new Set<string>();
-      const addDescendants = (categoryId: string) => {
-        excludeIds.add(categoryId);
-        availableCategories
-          .filter((cat) => cat.parentId === categoryId)
-          .forEach((cat) => addDescendants(cat.id));
-      };
-
-      addDescendants(excludeId);
-      return availableCategories
-        .filter(
-          (cat) =>
-            (!("isDeleted" in cat) || !cat.isDeleted) && !excludeIds.has(cat.id)
-        )
-        .map((cat) => ({
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug,
-          description: cat.description,
-          parentId: cat.parentId,
-          isActive: cat.isActive,
-          sortOrder: cat.sortOrder,
-          createdAt: cat.createdAt,
-          updatedAt: cat.updatedAt,
-        }));
-    };
-
-    // Render categories table
-    const renderCategoriesTable = (
-      categories: CategoryData[],
-      isStaging = false
-    ) => {
-      return (
-        <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: isStaging ? "warning.50" : "grey.50" }}>
-                <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Slug</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Parent</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Sort Order</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {categories
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((category) => {
-                  const categoryId =
-                    "id" in category
-                      ? category.id
-                      : `temp-${Date.now()}-${Math.random()}`;
-                  const parentCategory = categories.find(
-                    (cat) => "id" in cat && cat.id === category.parentId
-                  );
-
-                  return (
-                    <TableRow key={categoryId} hover>
-                      <TableCell sx={{ fontWeight: 500 }}>
-                        {isStaging &&
-                        "isDeleted" in category &&
-                        category.isDeleted ? (
-                          <Typography sx={{ textDecoration: "line-through" }}>
-                            {category.name}
-                          </Typography>
-                        ) : (
-                          category.name
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {isStaging &&
-                        "isDeleted" in category &&
-                        category.isDeleted ? (
-                          <Typography sx={{ textDecoration: "line-through" }}>
-                            /{category.slug}
-                          </Typography>
-                        ) : (
-                          <Typography>/{category.slug}</Typography>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {isStaging &&
-                        "isDeleted" in category &&
-                        category.isDeleted ? (
-                          <Typography sx={{ textDecoration: "line-through" }}>
-                            {category.description || "-"}
-                          </Typography>
-                        ) : (
-                          category.description || "-"
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {isStaging &&
-                        "isDeleted" in category &&
-                        category.isDeleted ? (
-                          <Typography sx={{ textDecoration: "line-through" }}>
-                            {parentCategory ? parentCategory.name : "None"}
-                          </Typography>
-                        ) : parentCategory ? (
-                          parentCategory.name
-                        ) : (
-                          "None"
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={category.isActive ? "Active" : "Inactive"}
-                          color={category.isActive ? "success" : "default"}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {isStaging &&
-                        "isDeleted" in category &&
-                        category.isDeleted ? (
-                          <Typography sx={{ textDecoration: "line-through" }}>
-                            {category.sortOrder}
-                          </Typography>
-                        ) : (
-                          category.sortOrder
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {isStaging &&
-                        "isDeleted" in category &&
-                        category.isDeleted ? (
-                          <Button
-                            size="small"
-                            startIcon={<RestoreIcon />}
-                            onClick={() => handleRestoreCategory(categoryId)}
-                            variant="outlined"
-                            color="primary"
-                          >
-                            Restore
-                          </Button>
-                        ) : (
-                          <Box sx={{ display: "flex", gap: 1 }}>
-                            <IconButton
-                              size="small"
-                              onClick={() => openEditModal(category)}
-                              color="primary"
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => openDeleteModal(category)}
-                              color="error"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      );
-    };
-
     return (
       <Box>
         {/* Header */}
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            Category Management
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h5">Category Management</Typography>
 
-          <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
@@ -438,11 +213,11 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
             >
               Add Category
             </Button>
-          </Stack>
+          </Box>
         </Box>
 
-        {/* Categories Table */}
-        <Card>
+        {/* Main Categories Table */}
+        <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Categories
@@ -450,42 +225,265 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
 
             {stagingCategories.length === 0 &&
             productionCategories.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">
-                No categories added yet. Click &ldquo;Add Category&rdquo; to get
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ textAlign: "center", py: 4 }}
+              >
+                No categories added yet. Click &quot;Add Category&quot; to get
                 started.
               </Typography>
-            ) : stagingCategories.length > 0 ? (
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  sx={{ mb: 1 }}
-                >
-                  Staging Categories (Unsaved Changes)
-                </Typography>
-                {renderCategoriesTable(stagingCategories, true)}
-              </Box>
             ) : (
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  sx={{ mb: 1 }}
-                >
-                  Production Categories
-                </Typography>
-                {renderCategoriesTable(productionCategories, false)}
-              </Box>
+              <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: "grey.50" }}>
+                      <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Slug</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>
+                        Description
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Parent</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Sort Order</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {[...stagingCategories, ...productionCategories]
+                      .filter(
+                        (category) =>
+                          !("isDeleted" in category && category.isDeleted)
+                      )
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((category, index) => {
+                        const categoryId =
+                          "id" in category && category.id
+                            ? category.id
+                            : `temp-${index}-${category.name}-${Date.now()}`;
+                        const parentName =
+                          "parentId" in category && category.parentId
+                            ? [...stagingCategories, ...productionCategories]
+                                .filter((c) => c.id === category.parentId)
+                                .find((c) => c.id === category.parentId)
+                                ?.name || "Unknown Parent"
+                            : "No Parent";
+
+                        return (
+                          <TableRow key={categoryId} hover>
+                            <TableCell sx={{ fontWeight: 500 }}>
+                              {category.name}
+                            </TableCell>
+                            <TableCell>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                fontFamily="monospace"
+                              >
+                                /{category.slug}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              {category.description ? (
+                                <Typography
+                                  variant="body2"
+                                  noWrap
+                                  sx={{ maxWidth: 200 }}
+                                >
+                                  {category.description}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                >
+                                  No description
+                                </Typography>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <Chip
+                                label={parentName}
+                                size="small"
+                                variant="outlined"
+                                color="primary"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Chip
+                                label={
+                                  category.isActive ? "Active" : "Inactive"
+                                }
+                                size="small"
+                                color={
+                                  category.isActive ? "success" : "default"
+                                }
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {category.sortOrder}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Box sx={{ display: "flex", gap: 0.5 }}>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => openEditModal(category)}
+                                  sx={{
+                                    mr: 1,
+                                    "&:hover": {
+                                      bgcolor: (theme) =>
+                                        alpha(theme.palette.primary.main, 0.1),
+                                    },
+                                  }}
+                                >
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => openDeleteModal(category)}
+                                  sx={{
+                                    "&:hover": {
+                                      bgcolor: (theme) =>
+                                        alpha(theme.palette.error.main, 0.1),
+                                    },
+                                  }}
+                                >
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             )}
           </CardContent>
         </Card>
+
+        {/* Deleted Categories Section */}
+        {stagingCategories.filter((cat) => "isDeleted" in cat && cat.isDeleted)
+          .length > 0 && (
+          <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
+            <CardContent>
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  color: "warning.main",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              >
+                🗑️ Staging Changes - Deleted Categories (
+                {
+                  stagingCategories.filter(
+                    (cat) => "isDeleted" in cat && cat.isDeleted
+                  ).length
+                }
+                )
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                These categories are marked for deletion in staging. You can
+                restore them before uploading to production.
+              </Typography>
+              <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: "warning.50" }}>
+                      <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Slug</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>
+                        Description
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Parent</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {stagingCategories
+                      .filter(
+                        (category) =>
+                          "isDeleted" in category && category.isDeleted
+                      )
+                      .map((category, index) => {
+                        const categoryId =
+                          "id" in category && category.id
+                            ? category.id
+                            : `temp-deleted-${index}-${
+                                category.name
+                              }-${Date.now()}`;
+                        const parentName =
+                          "parentId" in category && category.parentId
+                            ? [...stagingCategories, ...productionCategories]
+                                .filter((c) => c.id === category.parentId)
+                                .find((c) => c.id === category.parentId)
+                                ?.name || "Unknown Parent"
+                            : "No Parent";
+
+                        return (
+                          <TableRow key={categoryId} hover>
+                            <TableCell
+                              sx={{
+                                fontWeight: 500,
+                                textDecoration: "line-through",
+                              }}
+                            >
+                              {category.name}
+                            </TableCell>
+                            <TableCell sx={{ textDecoration: "line-through" }}>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                fontFamily="monospace"
+                              >
+                                /{category.slug}
+                              </Typography>
+                            </TableCell>
+                            <TableCell sx={{ textDecoration: "line-through" }}>
+                              {category.description || "No description"}
+                            </TableCell>
+                            <TableCell sx={{ textDecoration: "line-through" }}>
+                              {parentName}
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="outlined"
+                                color="warning"
+                                size="small"
+                                startIcon={<RestoreIcon />}
+                                onClick={() => handleRestoreCategory(category)}
+                              >
+                                Restore
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Add Category Modal */}
         <CategoryStagingModal
           open={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
           onSave={handleAddCategory}
-          categories={getAvailableParentCategories()}
+          categories={
+            stagingCategories.length > 0
+              ? stagingCategories
+              : productionCategories
+          }
           mode="add"
         />
 
@@ -497,20 +495,23 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
               setIsEditModalOpen(false);
               setEditingCategory(null);
             }}
-            onSave={() => {}} // Add empty onSave function for edit mode
+            onSave={handleAddCategory} // Use the same handler for consistency
             onEdit={handleEditCategory}
-            categories={getAvailableParentCategories(
-              "id" in editingCategory ? editingCategory.id : undefined
-            )}
+            categories={
+              stagingCategories.length > 0
+                ? stagingCategories
+                : productionCategories
+            }
             editingCategory={{
               id:
                 "id" in editingCategory
                   ? editingCategory.id
-                  : `temp-${Date.now()}`,
+                  : `temp-${Date.now()}-${Math.random()}`,
               name: editingCategory.name,
               slug: editingCategory.slug,
               description: editingCategory.description,
-              parentId: editingCategory.parentId,
+              parentId:
+                "parentId" in editingCategory ? editingCategory.parentId : null,
               isActive: editingCategory.isActive,
               sortOrder: editingCategory.sortOrder,
               createdAt: new Date(),
@@ -520,38 +521,43 @@ const CategoryWorkflow = forwardRef<CategoryWorkflowRef, CategoryWorkflowProps>(
           />
         )}
 
-        {/* Delete Category Modal */}
-        {deletingCategory && (
-          <CategoryStagingModal
-            open={isDeleteModalOpen}
-            onClose={() => {
-              setIsDeleteModalOpen(false);
-              setDeletingCategory(null);
-            }}
-            onDelete={handleDeleteCategory}
-            categories={
-              stagingCategories.length > 0
-                ? stagingCategories
-                : productionCategories
-            }
-            editingCategory={{
-              id:
-                "id" in deletingCategory
-                  ? deletingCategory.id
-                  : `temp-${Date.now()}`,
-              name: deletingCategory.name,
-              slug: deletingCategory.slug,
-              description: deletingCategory.description,
-              parentId: deletingCategory.parentId,
-              isActive: deletingCategory.isActive,
-              sortOrder: deletingCategory.sortOrder,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            }}
-            mode="delete"
-            onSave={() => {}} // Add empty onSave function for delete mode
-          />
-        )}
+        {/* Delete Confirmation Modal */}
+        <CategoryStagingModal
+          open={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setDeletingCategory(null);
+          }}
+          onSave={() => {}} // Dummy function for delete mode
+          onDelete={handleDeleteCategory}
+          categories={
+            stagingCategories.length > 0
+              ? stagingCategories
+              : productionCategories
+          }
+          editingCategory={
+            deletingCategory
+              ? {
+                  id:
+                    "id" in deletingCategory
+                      ? deletingCategory.id
+                      : `temp-${Date.now()}-${Math.random()}`,
+                  name: deletingCategory.name,
+                  slug: deletingCategory.name,
+                  description: deletingCategory.description,
+                  parentId:
+                    "parentId" in deletingCategory
+                      ? deletingCategory.parentId
+                      : null,
+                  isActive: deletingCategory.isActive,
+                  sortOrder: deletingCategory.sortOrder,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                }
+              : null
+          }
+          mode="delete"
+        />
       </Box>
     );
   }

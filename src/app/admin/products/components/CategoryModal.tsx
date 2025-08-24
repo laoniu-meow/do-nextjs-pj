@@ -186,7 +186,20 @@ export function CategoryStaging({
       };
 
       if (mode === "edit" && editingCategory && onEdit) {
-        await onEdit(editingCategory.id, categoryData);
+        // Check if there are actual changes before calling onEdit
+        const hasChanges =
+          categoryData.name !== editingCategory.name ||
+          categoryData.slug !== editingCategory.slug ||
+          categoryData.description !== editingCategory.description ||
+          categoryData.parentId !== editingCategory.parentId ||
+          categoryData.isActive !== editingCategory.isActive ||
+          categoryData.sortOrder !== editingCategory.sortOrder;
+
+        if (hasChanges) {
+          await onEdit(editingCategory.id, categoryData);
+        } else {
+          // No changes detected, closing modal without calling onEdit
+        }
       } else if (mode === "add") {
         await onSave(categoryData);
       }

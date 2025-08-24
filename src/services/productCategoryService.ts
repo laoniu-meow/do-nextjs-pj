@@ -34,7 +34,9 @@ export interface CreateProductCategoryData {
   sortOrder: number;
 }
 
-export type UpdateProductCategoryData = CreateProductCategoryData;
+export type UpdateProductCategoryData = CreateProductCategoryData & {
+  isDeleted?: boolean;
+};
 
 // Production Product Categories API
 export const productCategoryService = {

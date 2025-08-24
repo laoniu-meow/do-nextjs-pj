@@ -35,7 +35,9 @@ export interface CreateCategoryData {
 }
 
 // UpdateCategoryData is the same as CreateCategoryData for now
-export type UpdateCategoryData = CreateCategoryData;
+export type UpdateCategoryData = CreateCategoryData & {
+  isDeleted?: boolean;
+};
 
 // Production Categories API
 export const categoryService = {

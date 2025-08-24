@@ -102,15 +102,65 @@ export function useProductCategoryStaging(): UseProductCategoryStagingReturn {
 
   // Edit existing product category in staging
   const editProductCategory = useCallback((id: string, productCategoryData: CreateProductCategoryData) => {
-    setStagingProductCategories(prev => 
-      prev.map(cat => 
-        cat.id === id 
-          ? { ...cat, ...productCategoryData, updatedAt: new Date() }
-          : cat
-      )
-    );
-    setIsDirty(true);
-  }, []);
+    // Check if this is a production item that needs to be converted to staging
+    const productionItem = productionProductCategories.find(p => p.id === id);
+    const stagingItem = stagingProductCategories.find(s => s.id === id);
+    
+    if (productionItem && !stagingItem) {
+      // Check if there are actual changes before creating staging entry
+      const hasChanges = 
+        productCategoryData.name !== productionItem.name ||
+        productCategoryData.description !== productionItem.description ||
+        productCategoryData.categoryId !== productionItem.categoryId ||
+        productCategoryData.isActive !== productionItem.isActive ||
+        productCategoryData.sortOrder !== productionItem.sortOrder;
+
+      if (hasChanges) {
+        // Create a new staging entry from the production item
+        const newStagingItem: ProductCategoryStaging = {
+          ...productionItem,
+          isDeleted: false,
+          updatedAt: new Date(),
+          ...productCategoryData,
+          slug: productCategoryData.slug || productionItem.slug,
+        };
+        
+        setStagingProductCategories(prev => [...prev, newStagingItem]);
+        setSuccess('Product category updated successfully');
+      } else {
+        // No changes, just show a message
+        setSuccess('No changes detected');
+      }
+    } else if (stagingItem) {
+      // Check if there are actual changes before updating
+      const hasChanges = 
+        productCategoryData.name !== stagingItem.name ||
+        productCategoryData.description !== stagingItem.description ||
+        productCategoryData.categoryId !== stagingItem.categoryId ||
+        productCategoryData.isActive !== stagingItem.isActive ||
+        productCategoryData.sortOrder !== stagingItem.sortOrder;
+
+      if (hasChanges) {
+        // Update existing staging item
+        setStagingProductCategories(prev => prev.map(item => 
+          item.id === id 
+            ? { 
+                ...item, 
+                ...productCategoryData, 
+                slug: productCategoryData.slug || item.slug,
+                updatedAt: new Date() 
+              }
+            : item
+        ));
+        setSuccess('Product category updated successfully');
+      } else {
+        // No changes, just show a message
+        setSuccess('No changes detected');
+      }
+    }
+    
+    setTimeout(() => setSuccess(null), 3000);
+  }, [stagingProductCategories, productionProductCategories]);
 
   // Delete product category (mark for deletion)
   const deleteProductCategory = useCallback((id: string) => {
