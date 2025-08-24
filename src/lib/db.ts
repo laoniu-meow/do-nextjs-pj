@@ -26,9 +26,5 @@ process.on('beforeExit', async () => {
   }
 })
 
-// Export a proxy that creates the Prisma client when accessed
-export const prisma = new Proxy({} as PrismaClient, {
-  get(target, prop) {
-    return getPrisma()[prop as keyof PrismaClient]
-  }
-})
+// Export the Prisma client directly
+export const prisma = getPrisma()

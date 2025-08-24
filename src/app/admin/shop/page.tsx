@@ -35,6 +35,9 @@ import SupplierWorkflow, {
 import PromotionWorkflow, {
   PromotionWorkflowRef,
 } from "./components/PromotionWorkflow";
+import CategoryWorkflow, {
+  CategoryWorkflowRef,
+} from "./components/CategoryWorkflow";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export default function AdminShopPage() {
@@ -87,6 +90,12 @@ export default function AdminShopPage() {
     text: string;
   } | null>(null);
 
+  // Category message state
+  const [categoryMessage, setCategoryMessage] = React.useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
   // Memoize the supplier message setter to prevent unnecessary re-renders
   const setSupplierMessageCallback = React.useCallback(
     (
@@ -113,6 +122,19 @@ export default function AdminShopPage() {
     []
   );
 
+  // Memoize the category message setter to prevent unnecessary re-renders
+  const setCategoryMessageCallback = React.useCallback(
+    (
+      message: {
+        type: "success" | "error";
+        text: string;
+      } | null
+    ) => {
+      setCategoryMessage(message);
+    },
+    []
+  );
+
   // Supplier button state management (controlled by SupplierWorkflow component)
   const [supplierSaveDisabled, setSupplierSaveDisabled] = React.useState(true);
   const [supplierUploadDisabled, setSupplierUploadDisabled] =
@@ -125,6 +147,12 @@ export default function AdminShopPage() {
   const [promotionUploadDisabled, setPromotionUploadDisabled] =
     React.useState(true);
   const promotionWorkflowRef = React.useRef<PromotionWorkflowRef>(null);
+
+  // Category button state management (controlled by CategoryWorkflow component)
+  const [categorySaveDisabled, setCategorySaveDisabled] = React.useState(true);
+  const [categoryUploadDisabled, setCategoryUploadDisabled] =
+    React.useState(true);
+  const categoryWorkflowRef = React.useRef<CategoryWorkflowRef>(null);
 
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(() => {
@@ -1136,6 +1164,14 @@ export default function AdminShopPage() {
 
   // Handle refresh
   const handleRefresh = React.useCallback(() => {
+    if (tab === 4) {
+      // Category tab - delegate to CategoryWorkflow
+      if (categoryWorkflowRef.current) {
+        categoryWorkflowRef.current.handleRefresh();
+      }
+      return;
+    }
+
     if (tab === 6) {
       // Supplier tab - delegate to SupplierWorkflow
       if (supplierWorkflowRef.current) {
@@ -1205,6 +1241,25 @@ export default function AdminShopPage() {
     }
   }, []);
 
+  // Category handlers (delegate to CategoryWorkflow component)
+  const handleCategorySave = React.useCallback(async () => {
+    if (categoryWorkflowRef.current) {
+      await categoryWorkflowRef.current.handleSave();
+    }
+  }, []);
+
+  const handleCategoryUpload = React.useCallback(async () => {
+    if (categoryWorkflowRef.current) {
+      await categoryWorkflowRef.current.handleUpload();
+    }
+  }, []);
+
+  const handleCategoryRefresh = React.useCallback(() => {
+    if (categoryWorkflowRef.current) {
+      categoryWorkflowRef.current.handleRefresh();
+    }
+  }, []);
+
   return (
     <Box
       sx={{
@@ -1249,11 +1304,13 @@ export default function AdminShopPage() {
       >
         <MainContainerBox
           title="Configuration"
-          showSave={tab === 5 || tab === 7 || tab === 6}
-          showUpload={tab === 5 || tab === 7 || tab === 6}
-          showRefresh={tab === 5 || tab === 7 || tab === 6}
+          showSave={tab === 4 || tab === 5 || tab === 7 || tab === 6}
+          showUpload={tab === 4 || tab === 5 || tab === 7 || tab === 6}
+          showRefresh={tab === 4 || tab === 5 || tab === 7 || tab === 6}
           saveDisabled={
-            tab === 5
+            tab === 4
+              ? categorySaveDisabled
+              : tab === 5
               ? promotionSaveDisabled
               : tab === 7
               ? !isDirty || isLoading
@@ -1262,7 +1319,9 @@ export default function AdminShopPage() {
               : true
           }
           uploadDisabled={
-            tab === 5
+            tab === 4
+              ? categoryUploadDisabled
+              : tab === 5
               ? promotionUploadDisabled
               : tab === 7
               ? !hasStagingData || isLoading
@@ -1271,21 +1330,27 @@ export default function AdminShopPage() {
               : true
           }
           onSave={
-            tab === 5
+            tab === 4
+              ? handleCategorySave
+              : tab === 5
               ? handlePromotionSave
               : tab === 6
               ? handleSupplierSave
               : handleSave
           }
           onUpload={
-            tab === 5
+            tab === 4
+              ? handleCategoryUpload
+              : tab === 5
               ? handlePromotionUpload
               : tab === 6
               ? handleSupplierUpload
               : handleUpload
           }
           onRefresh={
-            tab === 5
+            tab === 4
+              ? handleCategoryRefresh
+              : tab === 5
               ? handlePromotionRefresh
               : tab === 6
               ? handleSupplierRefresh
@@ -1446,7 +1511,17 @@ export default function AdminShopPage() {
             </Tabs>
 
             {/* Tab content based on selected tab */}
-            {tab === 5 ? (
+            {tab === 4 ? (
+              // Category tab
+              <Box sx={{ p: 1, pt: 0.5 }}>
+                <CategoryWorkflow
+                  ref={categoryWorkflowRef}
+                  onSaveDisabledChange={setCategorySaveDisabled}
+                  onUploadDisabledChange={setCategoryUploadDisabled}
+                  onMessageChange={setCategoryMessageCallback}
+                />
+              </Box>
+            ) : tab === 5 ? (
               // Promotions tab
               <Box sx={{ p: 1, pt: 0.5 }}>
                 <PromotionWorkflow
@@ -1742,12 +1817,18 @@ export default function AdminShopPage() {
 
         {/* Message Display */}
         <Snackbar
-          open={!!message || !!supplierMessage || !!promotionMessage}
+          open={
+            !!message ||
+            !!supplierMessage ||
+            !!promotionMessage ||
+            !!categoryMessage
+          }
           autoHideDuration={3000}
           onClose={() => {
             setMessage(null);
             setSupplierMessage(null);
             setPromotionMessage(null);
+            setCategoryMessage(null);
           }}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
@@ -1774,6 +1855,14 @@ export default function AdminShopPage() {
               sx={{ width: "100%" }}
             >
               {promotionMessage.text}
+            </Alert>
+          ) : categoryMessage ? (
+            <Alert
+              onClose={() => setCategoryMessage(null)}
+              severity={categoryMessage.type}
+              sx={{ width: "100%" }}
+            >
+              {categoryMessage.text}
             </Alert>
           ) : undefined}
         </Snackbar>
