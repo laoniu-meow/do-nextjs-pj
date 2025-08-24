@@ -194,3 +194,4 @@ For questions about security implementations or to report new security issues:
 - Review the security guidelines in `docs/SECURITY_GUIDELINES.md`
 - Create a private security issue in the repository
 - Follow the incident response procedures documented in the security guidelines
+

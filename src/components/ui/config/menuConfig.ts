@@ -89,6 +89,12 @@ export const defaultMenuConfig: MenuConfig = {
           icon: ReceiptLongIcon,
           href: '/admin/settings/tax',
         },
+        {
+          id: 'supplier-settings',
+          text: 'Suppliers',
+          icon: BusinessIcon,
+          href: '/admin/settings/suppliers',
+        },
       ],
     },
     {

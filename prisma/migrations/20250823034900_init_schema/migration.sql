@@ -17,9 +17,6 @@ CREATE TYPE "public"."PromotionScope" AS ENUM ('PRODUCT', 'CATEGORY', 'CART_MIN_
 CREATE TYPE "public"."TaxPriceMode" AS ENUM ('INCLUSIVE', 'EXCLUSIVE');
 
 -- CreateEnum
-CREATE TYPE "public"."TaxRoundingStrategy" AS ENUM ('LINE', 'TOTAL');
-
--- CreateEnum
 CREATE TYPE "public"."VariantKind" AS ENUM ('SIMPLE', 'BUNDLE');
 
 -- CreateTable
@@ -130,7 +127,7 @@ CREATE TABLE "public"."product_variants" (
     "compareAtPrice" DECIMAL(10,2),
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "kind" "public"."VariantKind" NOT NULL DEFAULT 'SIMPLE',
-    "taxClassId" TEXT,
+    "taxRate" DECIMAL(5,4),
     "priceMode" "public"."TaxPriceMode" NOT NULL DEFAULT 'EXCLUSIVE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -234,71 +231,18 @@ CREATE TABLE "public"."promotion_usage" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."tax_classes" (
+CREATE TABLE "public"."tax_quick_rules" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "code" TEXT NOT NULL,
-    "description" TEXT,
-    "isDefault" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "tax_classes_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."tax_rules" (
-    "id" TEXT NOT NULL,
-    "name" TEXT,
-    "classId" TEXT NOT NULL,
-    "percentage" DECIMAL(5,4) NOT NULL,
-    "priority" INTEGER NOT NULL DEFAULT 0,
-    "isCompound" BOOLEAN NOT NULL DEFAULT false,
-    "isInclusive" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "tax_rules_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."tax_settings" (
-    "id" TEXT NOT NULL,
-    "priceIncludesTax" BOOLEAN NOT NULL DEFAULT false,
-    "roundingStrategy" "public"."TaxRoundingStrategy" NOT NULL DEFAULT 'LINE',
-    "defaultPriceMode" "public"."TaxPriceMode" NOT NULL DEFAULT 'EXCLUSIVE',
-    "defaultTaxClassId" TEXT,
-    "shippingTaxClassId" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "tax_settings_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."tax_quick_rules_staging" (
-    "id" TEXT NOT NULL,
     "description" TEXT,
     "ratePercent" DECIMAL(5,2) NOT NULL,
     "isInclusive" BOOLEAN NOT NULL DEFAULT false,
     "isGST" BOOLEAN NOT NULL DEFAULT false,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tax_quick_rules_staging_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."tax_quick_rules_production" (
-    "id" TEXT NOT NULL,
-    "description" TEXT,
-    "ratePercent" DECIMAL(5,2) NOT NULL,
-    "isInclusive" BOOLEAN NOT NULL DEFAULT false,
-    "isGST" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "tax_quick_rules_production_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "tax_quick_rules_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -359,7 +303,7 @@ CREATE INDEX "product_variants_productId_idx" ON "public"."product_variants"("pr
 CREATE INDEX "product_variants_isActive_idx" ON "public"."product_variants"("isActive");
 
 -- CreateIndex
-CREATE INDEX "product_variants_taxClassId_idx" ON "public"."product_variants"("taxClassId");
+CREATE INDEX "product_variants_taxRate_idx" ON "public"."product_variants"("taxRate");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "inventory_items_variantId_key" ON "public"."inventory_items"("variantId");
@@ -395,16 +339,7 @@ CREATE INDEX "promotion_usage_promotionId_idx" ON "public"."promotion_usage"("pr
 CREATE INDEX "promotion_usage_promotionId_userId_idx" ON "public"."promotion_usage"("promotionId", "userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tax_classes_code_key" ON "public"."tax_classes"("code");
-
--- CreateIndex
-CREATE INDEX "tax_classes_name_idx" ON "public"."tax_classes"("name");
-
--- CreateIndex
-CREATE INDEX "tax_rules_classId_idx" ON "public"."tax_rules"("classId");
-
--- CreateIndex
-CREATE INDEX "tax_rules_priority_idx" ON "public"."tax_rules"("priority");
+CREATE INDEX "tax_quick_rules_name_idx" ON "public"."tax_quick_rules"("name");
 
 -- AddForeignKey
 ALTER TABLE "public"."categories" ADD CONSTRAINT "categories_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "public"."categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -420,9 +355,6 @@ ALTER TABLE "public"."product_images" ADD CONSTRAINT "product_images_productId_f
 
 -- AddForeignKey
 ALTER TABLE "public"."product_variants" ADD CONSTRAINT "product_variants_productId_fkey" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."product_variants" ADD CONSTRAINT "product_variants_taxClassId_fkey" FOREIGN KEY ("taxClassId") REFERENCES "public"."tax_classes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."product_bundle_components" ADD CONSTRAINT "product_bundle_components_bundleVariantId_fkey" FOREIGN KEY ("bundleVariantId") REFERENCES "public"."product_variants"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -450,12 +382,3 @@ ALTER TABLE "public"."promotion_conditions" ADD CONSTRAINT "promotion_conditions
 
 -- AddForeignKey
 ALTER TABLE "public"."promotion_usage" ADD CONSTRAINT "promotion_usage_promotionId_fkey" FOREIGN KEY ("promotionId") REFERENCES "public"."promotions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."tax_rules" ADD CONSTRAINT "tax_rules_classId_fkey" FOREIGN KEY ("classId") REFERENCES "public"."tax_classes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."tax_settings" ADD CONSTRAINT "tax_settings_defaultTaxClassId_fkey" FOREIGN KEY ("defaultTaxClassId") REFERENCES "public"."tax_classes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."tax_settings" ADD CONSTRAINT "tax_settings_shippingTaxClassId_fkey" FOREIGN KEY ("shippingTaxClassId") REFERENCES "public"."tax_classes"("id") ON DELETE SET NULL ON UPDATE CASCADE;

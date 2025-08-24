@@ -28,11 +28,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rules } = body;
+    const { settings } = body;
 
-    if (!Array.isArray(rules)) {
+    if (!Array.isArray(settings)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid rules data' },
+        { success: false, error: 'Invalid settings data' },
         { status: 400 }
       );
     }
@@ -41,13 +41,13 @@ export async function POST(request: NextRequest) {
     await prisma.taxSettingStaging.deleteMany({});
 
     const savedSettings = [];
-    for (const rule of rules) {
+    for (const setting of settings) {
       const savedSetting = await prisma.taxSettingStaging.create({
         data: {
-          description: rule.description || null,
-          ratePercent: rule.ratePercent,
-          isInclusive: rule.isInclusive,
-          isGST: rule.isGST,
+          description: setting.description,
+          ratePercent: setting.ratePercent,
+          isInclusive: setting.isInclusive,
+          isGST: setting.isGST,
         },
       });
       savedSettings.push(savedSetting);
@@ -67,62 +67,44 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT: Update staging tax settings (bulk replace)
-export async function PUT(request: NextRequest) {
+// DELETE: Remove a specific tax setting from staging
+export async function DELETE(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { rules } = body;
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
 
-    if (!Array.isArray(rules)) {
+    if (!id) {
       return NextResponse.json(
-        { success: false, error: 'Invalid rules data' },
+        { success: false, error: 'Tax setting ID is required' },
         { status: 400 }
       );
     }
 
-    // Clear existing staging settings and create new ones
-    await prisma.taxSettingStaging.deleteMany({});
+    // Check if the tax setting exists
+    const existingSetting = await prisma.taxSettingStaging.findUnique({
+      where: { id }
+    });
 
-    const savedSettings = [];
-    for (const rule of rules) {
-      const savedSetting = await prisma.taxSettingStaging.create({
-        data: {
-          description: rule.description || null,
-          ratePercent: rule.ratePercent,
-          isInclusive: rule.isInclusive,
-          isGST: rule.isGST,
-        },
-      });
-      savedSettings.push(savedSetting);
+    if (!existingSetting) {
+      return NextResponse.json(
+        { success: false, error: 'Tax setting not found' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: savedSettings,
-      message: 'Staging tax settings updated successfully',
+    // Delete the tax setting
+    await prisma.taxSettingStaging.delete({
+      where: { id }
     });
-  } catch (error) {
-    console.error('Error updating staging tax settings:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update staging tax settings' },
-      { status: 500 }
-    );
-  }
-}
 
-// DELETE: Clear all staging tax settings
-export async function DELETE() {
-  try {
-    const result = await prisma.taxSettingStaging.deleteMany({});
     return NextResponse.json({
       success: true,
-      count: result.count,
-      message: 'All staging tax settings cleared',
+      message: 'Tax setting removed from staging successfully',
     });
   } catch (error) {
-    console.error('Error clearing staging tax settings:', error);
+    console.error('Error removing tax setting from staging:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to clear staging tax settings' },
+      { success: false, error: 'Failed to remove tax setting from staging' },
       { status: 500 }
     );
   }
