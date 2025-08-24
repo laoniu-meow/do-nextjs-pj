@@ -6,13 +6,18 @@ export const runtime = 'nodejs';
 // GET: Retrieve all staging tax settings
 export async function GET() {
   try {
-    const taxSettings = await prisma.taxSettingStaging.findMany({
+    const allStagingSettings = await prisma.taxSettingStaging.findMany({
       orderBy: { description: 'asc' }
     });
     
+    // Separate active and deleted rules
+    const activeRules = allStagingSettings.filter(setting => !setting.isDeleted);
+    const deletedRules = allStagingSettings.filter(setting => setting.isDeleted);
+    
     return NextResponse.json({
       success: true,
-      data: taxSettings,
+      data: activeRules,
+      deletedRules: deletedRules,
       message: 'Staging tax settings retrieved successfully',
     });
   } catch (error) {
@@ -21,8 +26,8 @@ export async function GET() {
       { success: false, error: 'Failed to load staging tax settings' }, 
       { status: 500 }
     );
+    }
   }
-}
 
 // POST: Save tax settings to staging (create or update)
 export async function POST(request: NextRequest) {
@@ -44,10 +49,10 @@ export async function POST(request: NextRequest) {
     for (const rule of rules) {
       const savedSetting = await prisma.taxSettingStaging.create({
         data: {
-          description: rule.description || null,
-          ratePercent: rule.ratePercent,
-          isInclusive: rule.isInclusive,
-          isGST: rule.isGST,
+          description: typeof rule.description === 'string' ? rule.description : 'Untitled Tax Rule',
+          ratePercent: String(rule.ratePercent), // Convert number to string for database
+          isInclusive: Boolean(rule.isInclusive),
+          isGST: Boolean(rule.isGST),
         },
       });
       savedSettings.push(savedSetting);
@@ -71,11 +76,18 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rules } = body;
+    const { rules, deletedRules = [] } = body;
 
     if (!Array.isArray(rules)) {
       return NextResponse.json(
         { success: false, error: 'Invalid rules data' },
+        { status: 400 }
+      );
+    }
+
+    if (!Array.isArray(deletedRules)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid deleted rules data' },
         { status: 400 }
       );
     }
@@ -87,18 +99,42 @@ export async function PUT(request: NextRequest) {
     for (const rule of rules) {
       const savedSetting = await prisma.taxSettingStaging.create({
         data: {
-          description: rule.description || null,
-          ratePercent: rule.ratePercent,
-          isInclusive: rule.isInclusive,
-          isGST: rule.isGST,
+          description: typeof rule.description === 'string' ? rule.description : 'Untitled Tax Rule',
+          ratePercent: String(rule.ratePercent), // Convert number to string for database
+          isInclusive: Boolean(rule.isInclusive),
+          isGST: Boolean(rule.isGST),
+          isDeleted: false, // Mark as active
         },
       });
       savedSettings.push(savedSetting);
     }
 
+    // Store deleted rules metadata in staging (for restoration purposes)
+    const deletedRulesMetadata = deletedRules.map((rule: Record<string, unknown>) => ({
+      description: typeof rule.description === 'string' ? rule.description : 'Deleted Tax Rule',
+      ratePercent: String(rule.ratePercent),
+      isInclusive: Boolean(rule.isInclusive),
+      isGST: Boolean(rule.isGST),
+      isDeleted: true, // Mark as deleted
+    }));
+
+    // Store deleted rules in staging table with isDeleted flag
+    for (const deletedRule of deletedRulesMetadata) {
+      await prisma.taxSettingStaging.create({
+        data: {
+          description: deletedRule.description || 'Deleted Tax Rule',
+          ratePercent: deletedRule.ratePercent,
+          isInclusive: deletedRule.isInclusive,
+          isGST: deletedRule.isGST,
+          isDeleted: true,
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: savedSettings,
+      deletedRules: deletedRulesMetadata,
       message: 'Staging tax settings updated successfully',
     });
   } catch (error) {
