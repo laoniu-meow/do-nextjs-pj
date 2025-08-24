@@ -1425,23 +1425,23 @@ export default function AdminProductsPage() {
         >
           {/* Status Message Banners */}
           {/* Tab 3: Product Category */}
-          {tab === 3 && (
+          {tab === 3 && productCategoryMessage && (
             <Box
               sx={{
                 width: "100%",
                 py: 2,
-                px: 3,
+                px: 1,
                 mb: 2,
                 backgroundColor:
-                  productCategoryMessage?.type === "error"
+                  productCategoryMessage.type === "error"
                     ? "#ffebee"
-                    : productCategoryMessage?.type === "success"
+                    : productCategoryMessage.type === "success"
                     ? "#e8f5e8"
                     : "#f5f5f5",
                 color:
-                  productCategoryMessage?.type === "error"
+                  productCategoryMessage.type === "error"
                     ? "#c62828"
-                    : productCategoryMessage?.type === "success"
+                    : productCategoryMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666",
                 fontSize: "14px",
@@ -1449,43 +1449,43 @@ export default function AdminProductsPage() {
                 textAlign: "center",
                 borderRadius: 0,
                 borderLeft: `4px solid ${
-                  productCategoryMessage?.type === "error"
+                  productCategoryMessage.type === "error"
                     ? "#c62828"
-                    : productCategoryMessage?.type === "success"
+                    : productCategoryMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666"
                 }`,
               }}
             >
-              {productCategoryMessage?.type === "error"
+              {productCategoryMessage.type === "error"
                 ? productCategoryMessage.text
-                : productCategoryMessage?.type === "success"
+                : productCategoryMessage.type === "success"
                 ? productCategoryMessage.text.includes("staging")
                   ? "Record saved in staging"
                   : productCategoryMessage.text.includes("production")
                   ? "Record saved in production and go live"
                   : "Record saved in staging"
-                : "Please save to staging after adding or editing."}
+                : "Record saved in staging"}
             </Box>
           )}
           {/* Tab 4: Category */}
-          {tab === 4 && (
+          {tab === 4 && categoryMessage && (
             <Box
               sx={{
                 width: "100%",
                 py: 2,
-                px: 3,
+                px: 1,
                 mb: 2,
                 backgroundColor:
-                  categoryMessage?.type === "error"
+                  categoryMessage.type === "error"
                     ? "#ffebee"
-                    : categoryMessage?.type === "success"
+                    : categoryMessage.type === "success"
                     ? "#e8f5e8"
                     : "#f5f5f5",
                 color:
-                  categoryMessage?.type === "error"
+                  categoryMessage.type === "error"
                     ? "#c62828"
-                    : categoryMessage?.type === "success"
+                    : categoryMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666",
                 fontSize: "14px",
@@ -1493,43 +1493,43 @@ export default function AdminProductsPage() {
                 textAlign: "center",
                 borderRadius: 0,
                 borderLeft: `4px solid ${
-                  categoryMessage?.type === "error"
+                  categoryMessage.type === "error"
                     ? "#c62828"
-                    : categoryMessage?.type === "success"
+                    : categoryMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666"
                 }`,
               }}
             >
-              {categoryMessage?.type === "error"
+              {categoryMessage.type === "error"
                 ? categoryMessage.text
-                : categoryMessage?.type === "success"
+                : categoryMessage.type === "success"
                 ? categoryMessage.text.includes("staging")
                   ? "Record saved in staging"
                   : categoryMessage.text.includes("production")
                   ? "Record saved in production and go live"
                   : "Record saved in staging"
-                : "Please save to staging after adding or editing."}
+                : "Record saved in staging"}
             </Box>
           )}
           {/* Tab 5: Promotions */}
-          {tab === 5 && (
+          {tab === 5 && promotionMessage && (
             <Box
               sx={{
                 width: "100%",
                 py: 2,
-                px: 3,
+                px: 1,
                 mb: 2,
                 backgroundColor:
-                  promotionMessage?.type === "error"
+                  promotionMessage.type === "error"
                     ? "#ffebee"
-                    : promotionMessage?.type === "success"
+                    : promotionMessage.type === "success"
                     ? "#e8f5e8"
                     : "#f5f5f5",
                 color:
-                  promotionMessage?.type === "error"
+                  promotionMessage.type === "error"
                     ? "#c62828"
-                    : promotionMessage?.type === "success"
+                    : promotionMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666",
                 fontSize: "14px",
@@ -1537,43 +1537,43 @@ export default function AdminProductsPage() {
                 textAlign: "center",
                 borderRadius: 0,
                 borderLeft: `4px solid ${
-                  promotionMessage?.type === "error"
+                  promotionMessage.type === "error"
                     ? "#c62828"
-                    : promotionMessage?.type === "success"
+                    : promotionMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666"
                 }`,
               }}
             >
-              {promotionMessage?.type === "error"
+              {promotionMessage.type === "error"
                 ? promotionMessage.text
-                : promotionMessage?.type === "success"
+                : promotionMessage.type === "success"
                 ? promotionMessage.text.includes("staging")
                   ? "Record saved in staging"
                   : promotionMessage.text.includes("production")
                   ? "Record saved in production and go live"
                   : "Record saved in staging"
-                : "Please save to staging after adding or editing."}
+                : "Record saved in staging"}
             </Box>
           )}
           {/* Tab 6: Suppliers */}
-          {tab === 6 && (
+          {tab === 6 && supplierMessage && (
             <Box
               sx={{
                 width: "100%",
                 py: 2,
-                px: 3,
+                px: 1,
                 mb: 2,
                 backgroundColor:
-                  supplierMessage?.type === "error"
+                  supplierMessage.type === "error"
                     ? "#ffebee"
-                    : supplierMessage?.type === "success"
+                    : supplierMessage.type === "success"
                     ? "#e8f5e8"
                     : "#f5f5f5",
                 color:
-                  supplierMessage?.type === "error"
+                  supplierMessage.type === "error"
                     ? "#c62828"
-                    : supplierMessage?.type === "success"
+                    : supplierMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666",
                 fontSize: "14px",
@@ -1581,43 +1581,43 @@ export default function AdminProductsPage() {
                 textAlign: "center",
                 borderRadius: 0,
                 borderLeft: `4px solid ${
-                  supplierMessage?.type === "error"
+                  supplierMessage.type === "error"
                     ? "#c62828"
-                    : supplierMessage?.type === "success"
+                    : supplierMessage.type === "success"
                     ? "#2e7d32"
                     : "#666666"
                 }`,
               }}
             >
-              {supplierMessage?.type === "error"
+              {supplierMessage.type === "error"
                 ? supplierMessage.text
-                : supplierMessage?.type === "success"
+                : supplierMessage.type === "success"
                 ? supplierMessage.text.includes("staging")
                   ? "Record saved in staging"
                   : supplierMessage.text.includes("production")
                   ? "Record saved in production and go live"
                   : "Record saved in staging"
-                : "Please save to staging after adding or editing."}
+                : "Record saved in staging"}
             </Box>
           )}
           {/* Tab 7: Tax */}
-          {tab === 7 && (
+          {tab === 7 && message && (
             <Box
               sx={{
                 width: "100%",
                 py: 2,
-                px: 3,
+                px: 1,
                 mb: 2,
                 backgroundColor:
-                  message?.type === "error"
+                  message.type === "error"
                     ? "#ffebee"
-                    : message?.type === "success"
+                    : message.type === "success"
                     ? "#e8f5e8"
                     : "#f5f5f5",
                 color:
-                  message?.type === "error"
+                  message.type === "error"
                     ? "#c62828"
-                    : message?.type === "success"
+                    : message.type === "success"
                     ? "#2e7d32"
                     : "#666666",
                 fontSize: "14px",
@@ -1625,23 +1625,23 @@ export default function AdminProductsPage() {
                 textAlign: "center",
                 borderRadius: 0,
                 borderLeft: `4px solid ${
-                  message?.type === "error"
+                  message.type === "error"
                     ? "#c62828"
-                    : message?.type === "success"
+                    : message.type === "success"
                     ? "#2e7d32"
                     : "#666666"
                 }`,
               }}
             >
-              {message?.type === "error"
+              {message.type === "error"
                 ? message.text
-                : message?.type === "success"
+                : message.type === "success"
                 ? message.text.includes("staging")
                   ? "Record saved in staging"
                   : message.text.includes("production")
                   ? "Record saved in production and go live"
                   : "Record saved in staging"
-                : "Please save to staging after adding or editing."}
+                : "Record saved in staging"}
             </Box>
           )}
           <Card
