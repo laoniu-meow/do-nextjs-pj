@@ -419,6 +419,7 @@ model SupplierStaging {
   name             String
   code             String   @unique
   isActive         Boolean  @default(true)
+  isDeleted        Boolean  @default(false)
 
   email            String?
   phone            String?
