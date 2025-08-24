@@ -32,6 +32,9 @@ import TaxSettings, {
 import SupplierWorkflow, {
   SupplierWorkflowRef,
 } from "./components/SupplierWorkflow";
+import PromotionWorkflow, {
+  PromotionWorkflowRef,
+} from "./components/PromotionWorkflow";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export default function AdminShopPage() {
@@ -78,6 +81,12 @@ export default function AdminShopPage() {
     text: string;
   } | null>(null);
 
+  // Promotion message state
+  const [promotionMessage, setPromotionMessage] = React.useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
   // Memoize the supplier message setter to prevent unnecessary re-renders
   const setSupplierMessageCallback = React.useCallback(
     (
@@ -91,11 +100,31 @@ export default function AdminShopPage() {
     []
   );
 
+  // Memoize the promotion message setter to prevent unnecessary re-renders
+  const setPromotionMessageCallback = React.useCallback(
+    (
+      message: {
+        type: "success" | "error";
+        text: string;
+      } | null
+    ) => {
+      setPromotionMessage(message);
+    },
+    []
+  );
+
   // Supplier button state management (controlled by SupplierWorkflow component)
   const [supplierSaveDisabled, setSupplierSaveDisabled] = React.useState(true);
   const [supplierUploadDisabled, setSupplierUploadDisabled] =
     React.useState(true);
   const supplierWorkflowRef = React.useRef<SupplierWorkflowRef>(null);
+
+  // Promotion button state management (controlled by PromotionWorkflow component)
+  const [promotionSaveDisabled, setPromotionSaveDisabled] =
+    React.useState(true);
+  const [promotionUploadDisabled, setPromotionUploadDisabled] =
+    React.useState(true);
+  const promotionWorkflowRef = React.useRef<PromotionWorkflowRef>(null);
 
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(() => {
@@ -1138,6 +1167,44 @@ export default function AdminShopPage() {
     // TODO: Implement refresh for other tabs
   }, [tab, loadTaxData]);
 
+  // Supplier handlers (delegate to SupplierWorkflow component)
+  const handleSupplierSave = React.useCallback(async () => {
+    if (supplierWorkflowRef.current) {
+      await supplierWorkflowRef.current.handleSave();
+    }
+  }, []);
+
+  const handleSupplierUpload = React.useCallback(async () => {
+    if (supplierWorkflowRef.current) {
+      await supplierWorkflowRef.current.handleUpload();
+    }
+  }, []);
+
+  const handleSupplierRefresh = React.useCallback(() => {
+    if (supplierWorkflowRef.current) {
+      supplierWorkflowRef.current.handleRefresh();
+    }
+  }, []);
+
+  // Promotion handlers (delegate to PromotionWorkflow component)
+  const handlePromotionSave = React.useCallback(async () => {
+    if (promotionWorkflowRef.current) {
+      await promotionWorkflowRef.current.handleSave();
+    }
+  }, []);
+
+  const handlePromotionUpload = React.useCallback(async () => {
+    if (promotionWorkflowRef.current) {
+      await promotionWorkflowRef.current.handleUpload();
+    }
+  }, []);
+
+  const handlePromotionRefresh = React.useCallback(() => {
+    if (promotionWorkflowRef.current) {
+      promotionWorkflowRef.current.handleRefresh();
+    }
+  }, []);
+
   return (
     <Box
       sx={{
@@ -1182,26 +1249,48 @@ export default function AdminShopPage() {
       >
         <MainContainerBox
           title="Configuration"
-          showSave={tab === 7 || tab === 6}
-          showUpload={tab === 7 || tab === 6}
-          showRefresh={tab === 7 || tab === 6}
+          showSave={tab === 5 || tab === 7 || tab === 6}
+          showUpload={tab === 5 || tab === 7 || tab === 6}
+          showRefresh={tab === 5 || tab === 7 || tab === 6}
           saveDisabled={
-            tab === 7
+            tab === 5
+              ? promotionSaveDisabled
+              : tab === 7
               ? !isDirty || isLoading
               : tab === 6
               ? supplierSaveDisabled
               : true
           }
           uploadDisabled={
-            tab === 7
+            tab === 5
+              ? promotionUploadDisabled
+              : tab === 7
               ? !hasStagingData || isLoading
               : tab === 6
               ? supplierUploadDisabled
               : true
           }
-          onSave={handleSave}
-          onUpload={handleUpload}
-          onRefresh={handleRefresh}
+          onSave={
+            tab === 5
+              ? handlePromotionSave
+              : tab === 6
+              ? handleSupplierSave
+              : handleSave
+          }
+          onUpload={
+            tab === 5
+              ? handlePromotionUpload
+              : tab === 6
+              ? handleSupplierUpload
+              : handleUpload
+          }
+          onRefresh={
+            tab === 5
+              ? handlePromotionRefresh
+              : tab === 6
+              ? handleSupplierRefresh
+              : handleRefresh
+          }
         >
           <Card
             sx={{
@@ -1360,12 +1449,12 @@ export default function AdminShopPage() {
             {tab === 5 ? (
               // Promotions tab
               <Box sx={{ p: 1, pt: 0.5 }}>
-                <Typography variant="h6" sx={{ mb: 2, color: "text.primary" }}>
-                  Promotions Management
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Promotions functionality coming soon...
-                </Typography>
+                <PromotionWorkflow
+                  ref={promotionWorkflowRef}
+                  onSaveDisabledChange={setPromotionSaveDisabled}
+                  onUploadDisabledChange={setPromotionUploadDisabled}
+                  onMessageChange={setPromotionMessageCallback}
+                />
               </Box>
             ) : tab === 6 ? (
               // Suppliers tab
@@ -1653,11 +1742,12 @@ export default function AdminShopPage() {
 
         {/* Message Display */}
         <Snackbar
-          open={!!message || !!supplierMessage}
+          open={!!message || !!supplierMessage || !!promotionMessage}
           autoHideDuration={3000}
           onClose={() => {
             setMessage(null);
             setSupplierMessage(null);
+            setPromotionMessage(null);
           }}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
@@ -1676,6 +1766,14 @@ export default function AdminShopPage() {
               sx={{ width: "100%" }}
             >
               {supplierMessage.text}
+            </Alert>
+          ) : promotionMessage ? (
+            <Alert
+              onClose={() => setPromotionMessage(null)}
+              severity={promotionMessage.type}
+              sx={{ width: "100%" }}
+            >
+              {promotionMessage.text}
             </Alert>
           ) : undefined}
         </Snackbar>

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 
 export const runtime = 'nodejs';
 
-// POST: Move staging promotions to production (same pattern as tax and supplier)
+// POST: Publish promotions from staging to production (same pattern as supplier)
 export async function POST() {
   try {
     // Get staging data

@@ -20,10 +20,14 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Card,
+  CardContent,
+  Chip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RestoreIcon from "@mui/icons-material/Restore";
+import AddIcon from "@mui/icons-material/Add";
 import { alpha } from "@mui/material/styles";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
@@ -754,303 +758,218 @@ const SupplierWorkflow = React.forwardRef<
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 3,
+          mb: 2,
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{ color: "text.primary", fontWeight: 600 }}
-        >
+        <Typography variant="h6" sx={{ color: "text.primary" }}>
           Supplier Management
         </Typography>
         <Button
           variant="contained"
+          startIcon={<AddIcon />}
           onClick={() => setIsAddModalOpen(true)}
-          sx={{
-            borderRadius: 1.5,
-            textTransform: "none",
-            fontWeight: 600,
-            px: 3,
-          }}
+          sx={{ borderRadius: 2 }}
         >
           Add Supplier
         </Button>
       </Box>
 
-      {/* Suppliers Table */}
-      <TableContainer component={Paper} sx={{ mb: 3 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Code</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Notes</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {suppliers.map((supplier) => (
-              <TableRow
-                key={supplier.id}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: (theme) =>
-                      alpha(theme.palette.primary.main, 0.04),
-                  },
-                }}
-              >
-                <TableCell>
-                  <Typography variant="body2" fontWeight={500}>
-                    {supplier.name}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" color="text.secondary">
-                    {supplier.code}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  {supplier.email ? (
-                    <Typography variant="body2" color="text.secondary">
-                      {supplier.email}
-                    </Typography>
-                  ) : (
-                    <Typography
-                      variant="body2"
-                      color="text.disabled"
-                      fontStyle="italic"
-                    >
-                      -
-                    </Typography>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {supplier.phone ? (
-                    <Typography variant="body2" color="text.secondary">
-                      {supplier.phone}
-                    </Typography>
-                  ) : (
-                    <Typography
-                      variant="body2"
-                      color="text.disabled"
-                      fontStyle="italic"
-                    >
-                      -
-                    </Typography>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {supplier.notes ? (
-                    <Typography variant="body2" color="text.secondary">
-                      {supplier.notes}
-                    </Typography>
-                  ) : (
-                    <Typography
-                      variant="body2"
-                      color="text.disabled"
-                      fontStyle="italic"
-                    >
-                      -
-                    </Typography>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Typography
-                    variant="body2"
-                    color={supplier.isActive ? "success.main" : "error.main"}
-                    fontWeight={500}
-                  >
-                    {supplier.isActive ? "Active" : "Inactive"}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", gap: 1 }}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEditSupplier(supplier.id)}
-                      sx={(theme) => ({
-                        color: "primary.main",
-                        "&:hover": {
-                          bgcolor: alpha(theme.palette.primary.main, 0.1),
-                        },
-                      })}
-                    >
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleRemoveSupplier(supplier.id)}
-                      sx={(theme) => ({
-                        color: "error.main",
-                        "&:hover": {
-                          bgcolor: alpha(theme.palette.error.main, 0.1),
-                        },
-                      })}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Deleted Suppliers (Restore Stage) */}
-      {deletedSuppliers.length > 0 && (
-        <Box sx={{ mt: 4 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              mb: 2,
-              color: "error.main",
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <RestoreIcon />
-            Restore Stage - Deleted Suppliers ({deletedSuppliers.length})
+      {/* Active Suppliers Table */}
+      <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ mb: 2, color: "text.primary" }}>
+            Active Suppliers ({suppliers.length})
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            These suppliers are marked for deletion. Click Upload to permanently
-            remove them, or restore them below.
-          </Typography>
-          <TableContainer
-            component={Paper}
-            sx={{ border: "2px solid", borderColor: "error.main" }}
-          >
-            <Table>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: (theme) =>
-                      alpha(theme.palette.error.main, 0.08),
-                  }}
-                >
-                  <TableCell sx={{ fontWeight: 600, color: "error.main" }}>
-                    Name (Deleted)
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: "error.main" }}>
-                    Code
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: "error.main" }}>
-                    Email
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: "error.main" }}>
-                    Phone
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: "error.main" }}>
-                    Notes
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: "error.main" }}>
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {deletedSuppliers.map((supplier) => (
-                  <TableRow
-                    key={supplier.id}
-                    sx={{
-                      opacity: 0.8,
-                      "&:hover": {
-                        backgroundColor: (theme) =>
-                          alpha(theme.palette.error.main, 0.04),
-                      },
-                    }}
-                  >
-                    <TableCell>
-                      <Typography
-                        variant="body2"
-                        fontWeight={500}
-                        color="error.main"
-                      >
-                        {supplier.name} (Deleted)
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        {supplier.code}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      {supplier.email ? (
-                        <Typography variant="body2" color="text.secondary">
-                          {supplier.email}
-                        </Typography>
-                      ) : (
-                        <Typography
-                          variant="body2"
-                          color="text.disabled"
-                          fontStyle="italic"
-                        >
-                          -
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {supplier.phone ? (
-                        <Typography variant="body2" color="text.secondary">
-                          {supplier.phone}
-                        </Typography>
-                      ) : (
-                        <Typography
-                          variant="body2"
-                          color="text.disabled"
-                          fontStyle="italic"
-                        >
-                          -
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {supplier.notes ? (
-                        <Typography variant="body2" color="text.secondary">
-                          {supplier.notes}
-                        </Typography>
-                      ) : (
-                        <Typography
-                          variant="body2"
-                          color="text.disabled"
-                          fontStyle="italic"
-                        >
-                          -
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => handleRestoreSupplier(supplier)}
-                        sx={{
-                          borderRadius: 1.5,
-                          textTransform: "none",
-                          fontWeight: 600,
-                          borderColor: "success.main",
-                          color: "success.main",
-                          "&:hover": {
-                            borderColor: "success.dark",
-                            backgroundColor: (theme) =>
-                              alpha(theme.palette.success.main, 0.04),
-                          },
-                        }}
-                      >
-                        Restore
-                      </Button>
-                    </TableCell>
+          {suppliers.length === 0 ? (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: "center", py: 4 }}
+            >
+              No active suppliers. Click &quot;Add Supplier&quot; to create one.
+            </Typography>
+          ) : (
+            <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: "grey.50" }}>
+                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Code</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Notes</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                </TableHead>
+                <TableBody>
+                  {suppliers.map((supplier) => (
+                    <TableRow key={supplier.id} hover>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight={500}>
+                          {supplier.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.secondary">
+                          {supplier.code}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        {supplier.email ? (
+                          <Typography variant="body2" color="text.secondary">
+                            {supplier.email}
+                          </Typography>
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            color="text.disabled"
+                            fontStyle="italic"
+                          >
+                            -
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {supplier.phone ? (
+                          <Typography variant="body2" color="text.secondary">
+                            {supplier.phone}
+                          </Typography>
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            color="text.disabled"
+                            fontStyle="italic"
+                          >
+                            -
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {supplier.notes ? (
+                          <Typography variant="body2" color="text.secondary">
+                            {supplier.notes}
+                          </Typography>
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            color="text.disabled"
+                            fontStyle="italic"
+                          >
+                            -
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={supplier.isActive ? "Active" : "Inactive"}
+                          size="small"
+                          color={supplier.isActive ? "success" : "default"}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleEditSupplier(supplier.id)}
+                            sx={(theme) => ({
+                              color: "primary.main",
+                              "&:hover": {
+                                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                              },
+                            })}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleRemoveSupplier(supplier.id)}
+                            sx={(theme) => ({
+                              color: "error.main",
+                              "&:hover": {
+                                bgcolor: alpha(theme.palette.error.main, 0.1),
+                              },
+                            })}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Deleted Suppliers Section */}
+      {deletedSuppliers.length > 0 && (
+        <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
+          <CardContent>
+            <Typography
+              variant="h6"
+              sx={{
+                mb: 2,
+                color: "warning.main",
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              🗑️ Staging Changes - Deleted Suppliers ({deletedSuppliers.length})
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              These suppliers are marked for deletion in staging. You can
+              restore them before uploading to production.
+            </Typography>
+            <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: "warning.50" }}>
+                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Code</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {deletedSuppliers.map((supplier) => (
+                    <TableRow key={supplier.id} hover>
+                      <TableCell
+                        sx={{ fontWeight: 500, textDecoration: "line-through" }}
+                      >
+                        {supplier.name}
+                      </TableCell>
+                      <TableCell sx={{ textDecoration: "line-through" }}>
+                        {supplier.code || "No code"}
+                      </TableCell>
+                      <TableCell sx={{ textDecoration: "line-through" }}>
+                        {supplier.email || "Not specified"}
+                      </TableCell>
+                      <TableCell sx={{ textDecoration: "line-through" }}>
+                        {supplier.phone || "Not specified"}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outlined"
+                          color="warning"
+                          size="small"
+                          startIcon={<RestoreIcon />}
+                          onClick={() => handleRestoreSupplier(supplier)}
+                        >
+                          Restore
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
       )}
 
       {/* Add Supplier Modal */}
