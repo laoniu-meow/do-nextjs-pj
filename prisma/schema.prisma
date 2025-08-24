@@ -748,6 +748,7 @@ model TaxSettingStaging {
   ratePercent  String   // e.g., "9" means 9%
   isInclusive  Boolean  @default(false) // Whether tax is included in price
   isGST        Boolean  @default(false) // Whether this is a GST tax
+  isDeleted    Boolean  @default(false) // Whether this rule is marked for deletion
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

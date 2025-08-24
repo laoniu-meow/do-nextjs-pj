@@ -3,6 +3,27 @@ import { prisma } from '@/lib/db';
 
 export const runtime = 'nodejs';
 
+// GET: Retrieve all production tax settings
+export async function GET() {
+  try {
+    const taxSettings = await prisma.taxSetting.findMany({
+      orderBy: { description: 'asc' }
+    });
+    
+    return NextResponse.json({
+      success: true,
+      data: taxSettings,
+      message: 'Production tax settings retrieved successfully',
+    });
+  } catch (error) {
+    console.error('Error loading production tax settings:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to load production tax settings' }, 
+      { status: 500 }
+    );
+  }
+}
+
 // POST: Move staging tax settings to production
 export async function POST() {
   try {
