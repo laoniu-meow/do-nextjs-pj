@@ -43,9 +43,9 @@ export const defaultMenuConfig: MenuConfig = {
     },
     {
       id: 'shop',
-      text: 'Shop',
+      text: 'Products',
       icon: StorefrontIcon,
-      href: '/admin/shop',
+      href: '/admin/products',
     },
     {
       id: 'settings',
