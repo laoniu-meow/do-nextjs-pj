@@ -265,6 +265,354 @@ model HeaderSettingsProduction {
   @@map("header_settings_production")
 }
 
+model HeroSectionStaging {
+  id           String           @id @default(cuid())
+  order        Int              @unique
+  templateType PageTemplateType
+  templateData Json
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("hero_sections_staging")
+}
+
+model HeroSectionProduction {
+  id           String           @id @default(cuid())
+  order        Int              @unique
+  templateType PageTemplateType
+  templateData Json
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("hero_sections_production")
+}
+
+model Brand {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+
+  @@index([name])
+  @@map("brands")
+}
+
+model Supplier {
+  id               String            @id @default(cuid())
+  name             String
+  code             String            @unique
+  isActive         Boolean           @default(true)
+  email            String?
+  phone            String?
+  notes            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  variantSuppliers VariantSupplier[]
+
+  @@index([name])
+  @@index([isActive])
+  @@map("suppliers")
+}
+
+model SupplierStaging {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  isActive  Boolean  @default(true)
+  email     String?
+  phone     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  @@index([name])
+  @@index([isActive])
+  @@map("supplier_staging")
+}
+
+model Category {
+  id          String            @id @default(cuid())
+  name        String
+  slug        String            @unique
+  isActive    Boolean           @default(true)
+  sortOrder   Int               @default(0)
+  parentId    String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  description String?
+  parent      Category?         @relation("CategoryToSelf", fields: [parentId], references: [id])
+  children    Category[]        @relation("CategoryToSelf")
+  products    ProductCategory[]
+
+  @@index([parentId])
+  @@index([isActive])
+  @@map("categories")
+}
+
+model CategoryStaging {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  parentId    String?
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([isActive])
+  @@map("category_staging")
+}
+
+model Product {
+  id               String            @id @default(cuid())
+  title            String
+  slug             String            @unique
+  description      String?
+  status           ProductStatus     @default(DRAFT)
+  brandId          String?
+  defaultVariantId String?           @unique
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  metaTitle        String?
+  metaDescription  String?
+  ogImage          String?
+  categories       ProductCategory[]
+  images           ProductImage[]
+  variants         ProductVariant[]
+  brand            Brand?            @relation(fields: [brandId], references: [id])
+  defaultVariant   ProductVariant?   @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([title])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([productId, sortOrder])
+  @@map("product_images")
+}
+
+model ProductVariant {
+  id                String                   @id @default(cuid())
+  productId         String
+  sku               String                   @unique
+  barcode           String?
+  attributes        Json
+  price             Decimal                  @db.Decimal(10, 2)
+  compareAtPrice    Decimal?                 @db.Decimal(10, 2)
+  isActive          Boolean                  @default(true)
+  kind              VariantKind              @default(SIMPLE)
+  taxRate           Decimal?                 @db.Decimal(5, 4)
+  priceMode         TaxPriceMode             @default(EXCLUSIVE)
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  inventory         InventoryItem?
+  bundleComponents  ProductBundleComponent[] @relation("BundleComponentsForBundle")
+  partOfBundles     ProductBundleComponent[] @relation("BundleComponentsForComponent")
+  product           Product                  @relation(fields: [productId], references: [id])
+  productDefaultFor Product?                 @relation("DefaultVariant")
+  variantSuppliers  VariantSupplier[]
+
+  @@index([productId])
+  @@index([isActive])
+  @@index([taxRate])
+  @@map("product_variants")
+}
+
+model ProductBundleComponent {
+  bundleVariantId    String
+  componentVariantId String
+  quantity           Int            @default(1)
+  createdAt          DateTime       @default(now())
+  bundle             ProductVariant @relation("BundleComponentsForBundle", fields: [bundleVariantId], references: [id])
+  component          ProductVariant @relation("BundleComponentsForComponent", fields: [componentVariantId], references: [id])
+
+  @@id([bundleVariantId, componentVariantId])
+  @@map("product_bundle_components")
+}
+
+model InventoryItem {
+  id                String          @id @default(cuid())
+  variantId         String          @unique
+  stockOnHand       Int             @default(0)
+  reserved          Int             @default(0)
+  lowStockThreshold Int             @default(0)
+  backorderPolicy   BackorderPolicy @default(NONE)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  variant           ProductVariant  @relation(fields: [variantId], references: [id])
+
+  @@map("inventory_items")
+}
+
+model VariantSupplier {
+  variantId       String
+  supplierId      String
+  supplierSku     String?
+  costPrice       Decimal        @db.Decimal(10, 2)
+  leadTimeDays    Int?
+  moq             Int?
+  reorderPoint    Int?
+  reorderQuantity Int?
+  isPrimary       Boolean        @default(false)
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  supplier        Supplier       @relation(fields: [supplierId], references: [id])
+  variant         ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@id([variantId, supplierId])
+  @@index([supplierId])
+  @@index([isPrimary])
+  @@map("variant_suppliers")
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+  assignedAt DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@id([productId, categoryId])
+  @@index([categoryId])
+  @@map("product_categories")
+}
+
+model Promotion {
+  id               String               @id @default(cuid())
+  name             String
+  code             String?              @unique
+  type             PromotionType
+  value            Decimal              @db.Decimal(10, 2)
+  isActive         Boolean              @default(true)
+  startsAt         DateTime?
+  endsAt           DateTime?
+  allowStacking    Boolean              @default(true)
+  stackingPriority Int                  @default(0)
+  maxUses          Int?
+  maxUsesPerUser   Int?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  conditions       PromotionCondition[]
+  usage            PromotionUsage[]
+
+  @@index([isActive])
+  @@index([startsAt])
+  @@index([endsAt])
+  @@map("promotions")
+}
+
+model PromotionStaging {
+  id               String        @id @default(cuid())
+  name             String
+  code             String?       @unique
+  type             PromotionType
+  value            Decimal       @db.Decimal(10, 2)
+  isActive         Boolean       @default(true)
+  startsAt         DateTime?
+  endsAt           DateTime?
+  allowStacking    Boolean       @default(true)
+  stackingPriority Int           @default(0)
+  maxUses          Int?
+  maxUsesPerUser   Int?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  isDeleted        Boolean       @default(false)
+
+  @@index([isActive])
+  @@index([startsAt])
+  @@index([endsAt])
+  @@map("promotion_staging")
+}
+
+model PromotionCondition {
+  id          String         @id @default(cuid())
+  promotionId String
+  scope       PromotionScope
+  productIds  String[]
+  categoryIds String[]
+  minSubtotal Decimal?       @db.Decimal(10, 2)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  promotion   Promotion      @relation(fields: [promotionId], references: [id])
+
+  @@index([promotionId])
+  @@map("promotion_conditions")
+}
+
+model PromotionUsage {
+  id          String    @id @default(cuid())
+  promotionId String
+  userId      String?
+  usedAt      DateTime  @default(now())
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
+
+  @@index([promotionId])
+  @@index([promotionId, userId])
+  @@map("promotion_usage")
+}
+
+model TaxQuickRule {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  ratePercent Decimal  @db.Decimal(5, 2)
+  isInclusive Boolean  @default(false)
+  isGST       Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@map("tax_quick_rules")
+}
+
+model TaxSetting {
+  id          String   @id @default(cuid())
+  description String
+  ratePercent String
+  isInclusive Boolean  @default(false)
+  isGST       Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([description])
+  @@map("tax_settings")
+}
+
+model TaxSettingStaging {
+  id          String   @id @default(cuid())
+  description String
+  ratePercent String
+  isInclusive Boolean  @default(false)
+  isGST       Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isDeleted   Boolean  @default(false)
+
+  @@index([description])
+  @@map("tax_settings_staging")
+}
+
 enum Role {
   ADMIN
   USER
@@ -302,40 +650,11 @@ enum ButtonShape {
   SQUARE
 }
 
-// Hero Page Templates
 enum PageTemplateType {
   HERO
   INFOGRAPH
   CARD_INFO
 }
-
-// Staging sections for Index (Hero) page
-model HeroSectionStaging {
-  id           String           @id @default(cuid())
-  order        Int
-  templateType PageTemplateType
-  templateData Json
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-
-  @@unique([order])
-  @@map("hero_sections_staging")
-}
-
-// Production sections for Index (Hero) page
-model HeroSectionProduction {
-  id           String           @id @default(cuid())
-  order        Int
-  templateType PageTemplateType
-  templateData Json
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-
-  @@unique([order])
-  @@map("hero_sections_production")
-}
-
-// ================== E-COMMERCE: ENUMS ==================
 
 enum ProductStatus {
   DRAFT
@@ -361,403 +680,12 @@ enum PromotionScope {
   CART_MIN_SUBTOTAL
 }
 
-// Simple tax rate (no zones)
 enum TaxPriceMode {
   INCLUSIVE
   EXCLUSIVE
 }
 
-
-
-// Variant kind: SIMPLE (single item) or BUNDLE (kit/pack composed of components)
 enum VariantKind {
   SIMPLE
   BUNDLE
 }
-
-// ================== E-COMMERCE: CORE MODELS ==================
-
-// Optional brand catalog
-model Brand {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  products  Product[]
-
-  @@index([name])
-  @@map("brands")
-}
-
-// Supplier (trimmed; no address fields)
-model Supplier {
-  id               String   @id @default(cuid())
-  name             String
-  code             String   @unique
-  isActive         Boolean  @default(true)
-
-  email            String?
-  phone            String?
-  notes            String?
-
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  variantSuppliers VariantSupplier[]
-
-  @@index([name])
-  @@index([isActive])
-  @@map("suppliers")
-}
-
-// Supplier staging model for draft/preview changes
-model SupplierStaging {
-  id               String   @id @default(cuid())
-  name             String
-  code             String   @unique
-  isActive         Boolean  @default(true)
-  isDeleted        Boolean  @default(false)
-
-  email            String?
-  phone            String?
-  notes            String?
-
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  @@index([name])
-  @@index([isActive])
-  @@map("supplier_staging")
-}
-
-// Category tree
-model Category {
-  id         String     @id @default(cuid())
-  name       String
-  slug       String     @unique
-  isActive   Boolean    @default(true)
-  sortOrder  Int        @default(0)
-  parentId   String?
-  parent     Category?  @relation("CategoryToSelf", fields: [parentId], references: [id])
-  children   Category[] @relation("CategoryToSelf")
-
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  products   ProductCategory[]
-
-  @@index([parentId])
-  @@index([isActive])
-  @@map("categories")
-}
-
-// Product core
-model Product {
-  id                String            @id @default(cuid())
-  title             String
-  slug              String            @unique
-  description       String?
-  status            ProductStatus     @default(DRAFT)
-  brandId           String?
-  brand             Brand?            @relation(fields: [brandId], references: [id])
-
-  // Optional default variant for UX
-  defaultVariantId  String? @unique
-  defaultVariant    ProductVariant?   @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
-
-  images            ProductImage[]
-  variants          ProductVariant[]
-  categories        ProductCategory[]
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  // Basic SEO fields
-  metaTitle         String?
-  metaDescription   String?
-  ogImage           String?
-
-  @@index([status])
-  @@index([createdAt])
-  @@index([title])
-  @@map("products")
-}
-
-// Product images (ordered)
-model ProductImage {
-  id        String   @id @default(cuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
-
-  url       String
-  alt       String?
-  sortOrder Int      @default(0)
-  isPrimary Boolean  @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([productId, sortOrder])
-  @@map("product_images")
-}
-
-// SKU/variant with attributes and pricing
-model ProductVariant {
-  id               String        @id @default(cuid())
-  productId        String
-  product          Product       @relation(fields: [productId], references: [id])
-
-  sku              String        @unique
-  barcode          String?
-  // Flexible attributes (e.g., {"size":"M","color":"Red"})
-  attributes       Json
-
-  price            Decimal       @db.Decimal(10, 2)
-  compareAtPrice   Decimal?      @db.Decimal(10, 2)
-  isActive         Boolean       @default(true)
-
-  // Variant type
-  kind             VariantKind   @default(SIMPLE)
-
-  // Simple tax (no zones)
-  taxRate          Decimal?      @db.Decimal(5, 4) // 0.0000 to 1.0000 (e.g., 0.0900 for 9%)
-  priceMode        TaxPriceMode  @default(EXCLUSIVE)
-
-  // Back-reference for Product.defaultVariant relation
-  productDefaultFor Product?     @relation("DefaultVariant")
-
-  inventory        InventoryItem?
-  variantSuppliers VariantSupplier[]
-  // Bundle relations
-  bundleComponents ProductBundleComponent[]   @relation("BundleComponentsForBundle")
-  partOfBundles    ProductBundleComponent[]   @relation("BundleComponentsForComponent")
-
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-
-  @@index([productId])
-  @@index([isActive])
-  @@index([taxRate])
-  @@map("product_variants")
-}
-
-// Bundle components mapping (bundle variant -> component variant with quantity)
-model ProductBundleComponent {
-  bundleVariantId    String
-  componentVariantId String
-  quantity           Int      @default(1)
-  createdAt          DateTime @default(now())
-
-  bundle    ProductVariant @relation("BundleComponentsForBundle", fields: [bundleVariantId], references: [id])
-  component ProductVariant @relation("BundleComponentsForComponent", fields: [componentVariantId], references: [id])
-
-  @@id([bundleVariantId, componentVariantId])
-  @@map("product_bundle_components")
-}
-
-// One-to-one inventory per variant
-model InventoryItem {
-  id                 String          @id @default(cuid())
-  variantId          String          @unique
-  variant            ProductVariant  @relation(fields: [variantId], references: [id])
-
-  stockOnHand        Int             @default(0)
-  reserved           Int             @default(0)
-  lowStockThreshold  Int             @default(0)
-  backorderPolicy    BackorderPolicy @default(NONE)
-
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
-
-  @@map("inventory_items")
-}
-
-// Variant-to-supplier mapping (cost/ops data)
-model VariantSupplier {
-  variantId        String
-  supplierId       String
-
-  supplierSku      String?
-  costPrice        Decimal  @db.Decimal(10, 2)
-  leadTimeDays     Int?
-  moq              Int?
-  reorderPoint     Int?
-  reorderQuantity  Int?
-  isPrimary        Boolean  @default(false)
-  isActive         Boolean  @default(true)
-
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  variant          ProductVariant @relation(fields: [variantId], references: [id])
-  supplier         Supplier       @relation(fields: [supplierId], references: [id])
-
-  @@id([variantId, supplierId])
-  @@index([supplierId])
-  @@index([isPrimary])
-  @@map("variant_suppliers")
-}
-
-// Many-to-many join for products <-> categories
-model ProductCategory {
-  productId  String
-  categoryId String
-  assignedAt DateTime @default(now())
-
-  product    Product  @relation(fields: [productId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
-
-  @@id([productId, categoryId])
-  @@index([categoryId])
-  @@map("product_categories")
-}
-
-// Promotions
-model Promotion {
-  id               String         @id @default(cuid())
-  name             String
-  code             String?        @unique
-  type             PromotionType
-  // For PERCENT: 0-100; for FIXED: amount units; FREE_SHIPPING: ignore
-  value            Decimal        @db.Decimal(10, 2)
-  isActive         Boolean        @default(true)
-  startsAt         DateTime?
-  endsAt           DateTime?
-
-  // Stacking behavior
-  allowStacking    Boolean        @default(true)
-  stackingPriority Int            @default(0)
-
-  maxUses          Int?
-  maxUsesPerUser   Int?
-
-  conditions       PromotionCondition[]
-  usage            PromotionUsage[]
-
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-
-  @@index([isActive])
-  @@index([startsAt])
-  @@index([endsAt])
-  @@map("promotions")
-}
-
-// Promotion staging model for draft/preview changes
-model PromotionStaging {
-  id               String         @id @default(cuid())
-  name             String
-  code             String?        @unique
-  type             PromotionType
-  // For PERCENT: 0-100; for FIXED: amount units; FREE_SHIPPING: ignore
-  value            Decimal        @db.Decimal(10, 2)
-  isActive         Boolean        @default(true)
-  startsAt         DateTime?
-  endsAt           DateTime?
-
-  // Stacking behavior
-  allowStacking    Boolean        @default(true)
-  stackingPriority Int            @default(0)
-
-  maxUses          Int?
-  maxUsesPerUser   Int?
-  
-  // Deletion tracking (same as tax and supplier)
-  isDeleted        Boolean        @default(false)
-
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-
-  @@index([isActive])
-  @@index([startsAt])
-  @@index([endsAt])
-  @@map("promotion_staging")
-}
-
-// Rule conditions for a promotion
-model PromotionCondition {
-  id            String          @id @default(cuid())
-  promotionId   String
-  promotion     Promotion       @relation(fields: [promotionId], references: [id])
-  scope         PromotionScope
-
-  // Match by product/category; Postgres arrays
-  productIds    String[]
-  categoryIds   String[]
-  // Cart-level minimum subtotal (amount units, no currency)
-  minSubtotal   Decimal?        @db.Decimal(10, 2)
-
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-
-  @@index([promotionId])
-  @@map("promotion_conditions")
-}
-
-// Track usage for global/user caps
-model PromotionUsage {
-  id           String     @id @default(cuid())
-  promotionId  String
-  promotion    Promotion  @relation(fields: [promotionId], references: [id])
-
-  userId       String?
-  // If you want a FK, uncomment next line and ensure your User model table name is mapped accordingly
-  // user         User?      @relation(fields: [userId], references: [id])
-
-  usedAt       DateTime   @default(now())
-
-  @@index([promotionId])
-  @@index([promotionId, userId])
-  @@map("promotion_usage")
-}
-
-
-
-// Simple tax rules for quick reference
-model TaxQuickRule {
-  id           String   @id @default(cuid())
-  name         String   // e.g., "Standard Rate", "Reduced Rate"
-  description  String?
-  ratePercent  Decimal  @db.Decimal(5, 2) // e.g., 9.00 means 9%
-  isInclusive  Boolean  @default(false) // Whether tax is included in price
-  isGST        Boolean  @default(false) // Whether this is a GST tax
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([name])
-  @@map("tax_quick_rules")
-}
-
-// Tax settings for shop configuration
-model TaxSetting {
-  id           String   @id @default(cuid())
-  description  String   // e.g., "Standard Rate", "Reduced Rate"
-  ratePercent  String   // e.g., "9" means 9%
-  isInclusive  Boolean  @default(false) // Whether tax is included in price
-  isGST        Boolean  @default(false) // Whether this is a GST tax
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([description])
-  @@map("tax_settings")
-}
-
-// Staging table for tax settings
-model TaxSettingStaging {
-  id           String   @id @default(cuid())
-  description  String   // e.g., "Standard Rate", "Reduced Rate"
-  ratePercent  String   // e.g., "9" means 9%
-  isInclusive  Boolean  @default(false) // Whether tax is included in price
-  isGST        Boolean  @default(false) // Whether this is a GST tax
-  isDeleted    Boolean  @default(false) // Whether this rule is marked for deletion
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([description])
-  @@map("tax_settings_staging")
-}
-
-
