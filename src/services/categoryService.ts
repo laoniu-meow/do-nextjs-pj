@@ -41,7 +41,7 @@ export type UpdateCategoryData = CreateCategoryData;
 export const categoryService = {
   // Get all production categories
   async getCategories(): Promise<Category[]> {
-    const response = await fetchWithAuth('/api/admin/shop/categories');
+    const response = await fetchWithAuth('/api/admin/products/categories');
     if (!response.ok) {
       throw new Error('Failed to fetch categories');
     }
@@ -51,7 +51,7 @@ export const categoryService = {
 
   // Create a new production category
   async createCategory(categoryData: CreateCategoryData): Promise<Category> {
-    const response = await fetchWithAuth('/api/admin/shop/categories', {
+    const response = await fetchWithAuth('/api/admin/products/categories', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export const categoryService = {
 export const categoryStagingService = {
   // Get all staging categories
   async getStagingCategories(): Promise<CategoryStaging[]> {
-    const response = await fetchWithAuth('/api/admin/shop/categories/staging');
+    const response = await fetchWithAuth('/api/admin/products/categories/staging');
     if (!response.ok) {
       throw new Error('Failed to fetch staging categories');
     }
@@ -81,7 +81,7 @@ export const categoryStagingService = {
 
   // Create a new staging category
   async createStagingCategory(categoryData: CreateCategoryData): Promise<CategoryStaging> {
-    const response = await fetchWithAuth('/api/admin/shop/categories/staging', {
+    const response = await fetchWithAuth('/api/admin/products/categories/staging', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ export const categoryStagingService = {
     activeCategories: CategoryStaging[];
     deletedCategories: CategoryStaging[];
   }> {
-    const response = await fetchWithAuth('/api/admin/shop/categories/staging', {
+    const response = await fetchWithAuth('/api/admin/products/categories/staging', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ export const categoryStagingService = {
 
   // Save categories to staging (bulk save)
   async saveToStaging(categories: CreateCategoryData[]): Promise<CategoryStaging[]> {
-    const response = await fetchWithAuth('/api/admin/shop/categories/staging', {
+    const response = await fetchWithAuth('/api/admin/products/categories/staging', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ export const categoryStagingService = {
 export const categoryProductionService = {
   // Upload staging categories to production
   async uploadToProduction(): Promise<Category[]> {
-    const response = await fetchWithAuth('/api/admin/shop/categories/production', {
+    const response = await fetchWithAuth('/api/admin/products/categories/production', {
       method: 'POST',
     });
     if (!response.ok) {
@@ -157,7 +157,7 @@ export const categoryProductionService = {
 
   // Publish staging categories to production
   async publishToProduction(): Promise<Category[]> {
-    const response = await fetchWithAuth('/api/admin/shop/categories/publish', {
+    const response = await fetchWithAuth('/api/admin/products/categories/publish', {
       method: 'POST',
     });
     if (!response.ok) {

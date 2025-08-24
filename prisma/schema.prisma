@@ -335,18 +335,18 @@ model SupplierStaging {
 }
 
 model Category {
-  id          String            @id @default(cuid())
-  name        String
-  slug        String            @unique
-  isActive    Boolean           @default(true)
-  sortOrder   Int               @default(0)
-  parentId    String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  description String?
-  parent      Category?         @relation("CategoryToSelf", fields: [parentId], references: [id])
-  children    Category[]        @relation("CategoryToSelf")
-  products    ProductCategory[]
+  id                String            @id @default(cuid())
+  name              String
+  slug              String            @unique
+  isActive          Boolean           @default(true)
+  sortOrder         Int               @default(0)
+  parentId          String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  description       String?
+  parent            Category?         @relation("CategoryToSelf", fields: [parentId], references: [id])
+  children          Category[]        @relation("CategoryToSelf")
+  productCategories ProductCategory[] @relation("CategoryProductCategories")
 
   @@index([parentId])
   @@index([isActive])
@@ -371,23 +371,23 @@ model CategoryStaging {
 }
 
 model Product {
-  id               String            @id @default(cuid())
+  id               String                    @id @default(cuid())
   title            String
-  slug             String            @unique
+  slug             String                    @unique
   description      String?
-  status           ProductStatus     @default(DRAFT)
+  status           ProductStatus             @default(DRAFT)
   brandId          String?
-  defaultVariantId String?           @unique
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  defaultVariantId String?                   @unique
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
   metaTitle        String?
   metaDescription  String?
   ogImage          String?
-  categories       ProductCategory[]
+  categories       ProductCategoryJunction[]
   images           ProductImage[]
   variants         ProductVariant[]
-  brand            Brand?            @relation(fields: [brandId], references: [id])
-  defaultVariant   ProductVariant?   @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
+  brand            Brand?                    @relation(fields: [brandId], references: [id])
+  defaultVariant   ProductVariant?           @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
 
   @@index([status])
   @@index([createdAt])
@@ -486,15 +486,50 @@ model VariantSupplier {
 }
 
 model ProductCategory {
-  productId  String
-  categoryId String
-  assignedAt DateTime @default(now())
-  category   Category @relation(fields: [categoryId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+  id          String                    @id @default(cuid())
+  name        String
+  slug        String                    @unique
+  description String?
+  isActive    Boolean                   @default(true)
+  sortOrder   Int                       @default(0)
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  categoryId  String?
+  products    ProductCategoryJunction[]
+  category    Category?                 @relation("CategoryProductCategories", fields: [categoryId], references: [id])
 
-  @@id([productId, categoryId])
   @@index([categoryId])
+  @@index([isActive])
+  @@map("product_categories_hierarchy")
+}
+
+model ProductCategoryJunction {
+  productId         String
+  assignedAt        DateTime        @default(now())
+  productCategoryId String
+  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
+  product           Product         @relation(fields: [productId], references: [id])
+
+  @@id([productId, productCategoryId])
+  @@index([productCategoryId])
   @@map("product_categories")
+}
+
+model ProductCategoryStaging {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  categoryId  String?
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@map("product_category_staging")
 }
 
 model Promotion {
