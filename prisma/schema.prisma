@@ -663,6 +663,9 @@ model PromotionStaging {
 
   maxUses          Int?
   maxUsesPerUser   Int?
+  
+  // Deletion tracking (same as tax and supplier)
+  isDeleted        Boolean        @default(false)
 
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt

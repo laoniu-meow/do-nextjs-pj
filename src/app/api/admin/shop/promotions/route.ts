@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 
 export const runtime = 'nodejs'
 
-// GET /api/admin/shop/promotions - list all promotions
+// GET /api/admin/shop/promotions - list all production promotions (same pattern as tax and supplier)
 export async function GET() {
   try {
     const promotions = await prisma.promotion.findMany({
@@ -16,7 +16,7 @@ export async function GET() {
   }
 }
 
-// POST /api/admin/shop/promotions - create promotion
+// POST /api/admin/shop/promotions - create promotion (same pattern as tax and supplier)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
