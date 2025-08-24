@@ -29,7 +29,9 @@ import TaxSettings, {
   TaxRuleRecord,
   TaxRuleInput,
 } from "@/components/shop/TaxSettings";
-import SupplierSettingsSection from "./components/SupplierSettingsSection";
+import SupplierWorkflow, {
+  SupplierWorkflowRef,
+} from "./components/SupplierWorkflow";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export default function AdminShopPage() {
@@ -39,13 +41,13 @@ export default function AdminShopPage() {
       const savedTab = localStorage.getItem("adminShopActiveTab");
       if (savedTab !== null) {
         const tabIndex = parseInt(savedTab, 10);
-        // Ensure the tab index is valid (0-6)
-        if (tabIndex >= 0 && tabIndex <= 6) {
+        // Ensure the tab index is valid (0-7)
+        if (tabIndex >= 0 && tabIndex <= 7) {
           return tabIndex;
         }
       }
     }
-    return 6; // Default to Tax tab (index 6)
+    return 7; // Default to Tax tab (index 7)
   });
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -69,6 +71,31 @@ export default function AdminShopPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  // Supplier message state
+  const [supplierMessage, setSupplierMessage] = React.useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  // Memoize the supplier message setter to prevent unnecessary re-renders
+  const setSupplierMessageCallback = React.useCallback(
+    (
+      message: {
+        type: "success" | "error";
+        text: string;
+      } | null
+    ) => {
+      setSupplierMessage(message);
+    },
+    []
+  );
+
+  // Supplier button state management (controlled by SupplierWorkflow component)
+  const [supplierSaveDisabled, setSupplierSaveDisabled] = React.useState(true);
+  const [supplierUploadDisabled, setSupplierUploadDisabled] =
+    React.useState(true);
+  const supplierWorkflowRef = React.useRef<SupplierWorkflowRef>(null);
 
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(() => {
@@ -735,7 +762,7 @@ export default function AdminShopPage() {
 
   // Load tax rules when Tax tab is selected
   React.useEffect(() => {
-    if (tab === 6) {
+    if (tab === 7) {
       // Tax tab
       loadTaxData();
     }
@@ -743,6 +770,20 @@ export default function AdminShopPage() {
 
   // Handle save to staging - Simplified and robust version
   const handleSave = React.useCallback(async () => {
+    if (tab === 6) {
+      // Supplier tab - delegate to SupplierWorkflow
+      if (supplierWorkflowRef.current) {
+        await supplierWorkflowRef.current.handleSave();
+      }
+      return;
+    }
+
+    if (tab !== 7) {
+      // Not tax or supplier tab - no save action
+      return;
+    }
+
+    // Tax tab logic
     try {
       setIsLoading(true);
       console.warn("Starting save operation with", taxRules.length, "rules");
@@ -960,10 +1001,24 @@ export default function AdminShopPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [taxRules, deletedRules]);
+  }, [tab, taxRules, deletedRules]);
 
   // Handle upload to production
   const handleUpload = React.useCallback(async () => {
+    if (tab === 6) {
+      // Supplier tab - delegate to SupplierWorkflow
+      if (supplierWorkflowRef.current) {
+        await supplierWorkflowRef.current.handleUpload();
+      }
+      return;
+    }
+
+    if (tab !== 7) {
+      // Not tax or supplier tab - no upload action
+      return;
+    }
+
+    // Tax tab logic
     try {
       setIsLoading(true);
       const res = await fetchWithAuth("/api/admin/shop/tax/publish", {
@@ -1048,11 +1103,19 @@ export default function AdminShopPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [loadTaxData]);
+  }, [tab, loadTaxData]);
 
   // Handle refresh
   const handleRefresh = React.useCallback(() => {
     if (tab === 6) {
+      // Supplier tab - delegate to SupplierWorkflow
+      if (supplierWorkflowRef.current) {
+        supplierWorkflowRef.current.handleRefresh();
+      }
+      return;
+    }
+
+    if (tab === 7) {
       // Tax tab
       // Clear deleted rules state
       setDeletedRules([]);
@@ -1119,11 +1182,23 @@ export default function AdminShopPage() {
       >
         <MainContainerBox
           title="Configuration"
-          showSave={true}
-          showUpload={true}
-          showRefresh={true}
-          saveDisabled={!isDirty || isLoading}
-          uploadDisabled={!hasStagingData || isLoading}
+          showSave={tab === 7 || tab === 6}
+          showUpload={tab === 7 || tab === 6}
+          showRefresh={tab === 7 || tab === 6}
+          saveDisabled={
+            tab === 7
+              ? !isDirty || isLoading
+              : tab === 6
+              ? supplierSaveDisabled
+              : true
+          }
+          uploadDisabled={
+            tab === 7
+              ? !hasStagingData || isLoading
+              : tab === 6
+              ? supplierUploadDisabled
+              : true
+          }
           onSave={handleSave}
           onUpload={handleUpload}
           onRefresh={handleRefresh}
@@ -1233,6 +1308,21 @@ export default function AdminShopPage() {
                   "&:hover": { bgcolor: alpha(t.palette.primary.main, 0.08) },
                 })}
               />
+              <Tab
+                icon={<CategoryIcon fontSize="small" />}
+                iconPosition="start"
+                label="Promotions"
+                sx={(t) => ({
+                  textTransform: "none",
+                  fontWeight: 600,
+                  minHeight: 44,
+                  px: 1.5,
+                  borderRadius: 1,
+                  color: t.palette.text.secondary,
+                  "&.Mui-selected": { color: t.palette.primary.main },
+                  "&:hover": { bgcolor: alpha(t.palette.primary.main, 0.08) },
+                })}
+              />
 
               <Tab
                 icon={<LocalShippingIcon fontSize="small" />}
@@ -1268,11 +1358,26 @@ export default function AdminShopPage() {
 
             {/* Tab content based on selected tab */}
             {tab === 5 ? (
-              // Suppliers tab
+              // Promotions tab
               <Box sx={{ p: 1, pt: 0.5 }}>
-                <SupplierSettingsSection />
+                <Typography variant="h6" sx={{ mb: 2, color: "text.primary" }}>
+                  Promotions Management
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Promotions functionality coming soon...
+                </Typography>
               </Box>
             ) : tab === 6 ? (
+              // Suppliers tab
+              <Box sx={{ p: 1, pt: 0.5 }}>
+                <SupplierWorkflow
+                  ref={supplierWorkflowRef}
+                  onSaveDisabledChange={setSupplierSaveDisabled}
+                  onUploadDisabledChange={setSupplierUploadDisabled}
+                  onMessageChange={setSupplierMessageCallback}
+                />
+              </Box>
+            ) : tab === 7 ? (
               // Tax tab
               <Box sx={{ p: 1, pt: 0.5 }}>
                 <TaxSettings
@@ -1548,9 +1653,12 @@ export default function AdminShopPage() {
 
         {/* Message Display */}
         <Snackbar
-          open={!!message}
+          open={!!message || !!supplierMessage}
           autoHideDuration={3000}
-          onClose={() => setMessage(null)}
+          onClose={() => {
+            setMessage(null);
+            setSupplierMessage(null);
+          }}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           {message ? (
@@ -1560,6 +1668,14 @@ export default function AdminShopPage() {
               sx={{ width: "100%" }}
             >
               {message.text}
+            </Alert>
+          ) : supplierMessage ? (
+            <Alert
+              onClose={() => setSupplierMessage(null)}
+              severity={supplierMessage.type}
+              sx={{ width: "100%" }}
+            >
+              {supplierMessage.text}
             </Alert>
           ) : undefined}
         </Snackbar>

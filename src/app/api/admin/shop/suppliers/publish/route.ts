@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 
 export const runtime = 'nodejs';
 
+// POST /api/admin/shop/suppliers/publish - publish staging suppliers to production
 export async function POST() {
   try {
     // Fetch all staging suppliers
@@ -47,10 +48,11 @@ export async function POST() {
       count: result.count,
     });
   } catch (error) {
-    console.error("Error moving suppliers to production:", error);
+    console.error("Error publishing suppliers to production:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to move suppliers to production" },
+      { success: false, error: "Failed to publish suppliers to production" },
       { status: 500 }
     );
   }
 }
+

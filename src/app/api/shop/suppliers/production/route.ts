@@ -3,6 +3,37 @@ import { prisma } from "@/lib/db";
 
 export const runtime = 'nodejs';
 
+// GET /api/shop/suppliers/production - get production suppliers
+export async function GET() {
+  try {
+    const suppliers = await prisma.supplier.findMany({
+      orderBy: { name: 'asc' },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        email: true,
+        phone: true,
+        notes: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: suppliers,
+    });
+  } catch (error) {
+    console.error('Error loading production suppliers:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to load production suppliers' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST() {
   try {
 

@@ -2,278 +2,309 @@
 
 import React from "react";
 import {
-  Stack,
-  TextField,
-  Typography,
+  Box,
   Button,
+  Card,
+  Typography,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
   FormControlLabel,
   Switch,
-  Box,
-  IconButton,
-  Card,
-  CardContent,
 } from "@mui/material";
-import { alpha, useTheme } from "@mui/material/styles";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import { Card as UiCard, CardBody as UiCardBody } from "@/components/ui";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { alpha } from "@mui/material/styles";
 
-export type SupplierInput = {
+export interface SupplierRecord {
+  id: string;
   name: string;
   code: string;
-  isActive: boolean;
   email?: string;
   phone?: string;
   notes?: string;
-};
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-export type SupplierRecord = SupplierInput & {
-  id: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
+export interface SupplierInput {
+  name: string;
+  code: string;
+  email: string;
+  phone: string;
+  notes: string;
+  isActive: boolean;
+}
 
-export interface SupplierSettingsProps {
-  title?: string;
+interface SupplierSettingsProps {
   suppliers: SupplierRecord[];
-  onAdd?: (supplier: SupplierInput) => void;
-  onEdit?: (id: string) => void;
-  onRemove?: (id: string) => void;
-  onUpdate?: (suppliers: SupplierRecord[]) => void;
-  disabled?: boolean;
-  showActions?: boolean;
+  onAdd: (input: SupplierInput) => void;
+  onEdit: (id: string) => void;
+  onRemove: (id: string) => void;
 }
 
 export default function SupplierSettings({
-  title = "Supplier Settings",
   suppliers,
   onAdd,
   onEdit,
   onRemove,
-  onUpdate,
-  disabled = false,
-  showActions = true,
 }: SupplierSettingsProps) {
-  const theme = useTheme();
-  const gradientBg = `linear-gradient(135deg, ${alpha(
-    theme.palette.primary.main,
-    0.18
-  )} 0%, ${alpha(theme.palette.info.main, 0.18)} 50%, ${alpha(
-    theme.palette.secondary.main,
-    0.18
-  )} 100%)`;
+  const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
+  const [addForm, setAddForm] = React.useState<SupplierInput>({
+    name: "",
+    code: "",
+    email: "",
+    phone: "",
+    notes: "",
+    isActive: true,
+  });
 
-  // Form state for adding new supplier
-  const [supplierName, setSupplierName] = React.useState("");
-  const [supplierCode, setSupplierCode] = React.useState("");
-  const [supplierEmail, setSupplierEmail] = React.useState("");
-  const [supplierPhone, setSupplierPhone] = React.useState("");
-  const [supplierNotes, setSupplierNotes] = React.useState("");
-  const [supplierIsActive, setSupplierIsActive] = React.useState(true);
-
-  const handleAdd = React.useCallback(() => {
-    if (!supplierName.trim() || !supplierCode.trim()) return;
-    
-    onAdd?.({
-      name: supplierName.trim(),
-      code: supplierCode.trim(),
-      isActive: supplierIsActive,
-      email: supplierEmail.trim() || undefined,
-      phone: supplierPhone.trim() || undefined,
-      notes: supplierNotes.trim() || undefined,
+  const handleAddSupplier = () => {
+    onAdd(addForm);
+    setAddForm({
+      name: "",
+      code: "",
+      email: "",
+      phone: "",
+      notes: "",
+      isActive: true,
     });
-
-    // Reset form
-    setSupplierName("");
-    setSupplierCode("");
-    setSupplierEmail("");
-    setSupplierPhone("");
-    setSupplierNotes("");
-    setSupplierIsActive(true);
-  }, [supplierName, supplierCode, supplierEmail, supplierPhone, supplierNotes, supplierIsActive, onAdd]);
-
-  const handleRemove = React.useCallback((id: string) => {
-    if (onRemove) {
-      onRemove(id);
-    } else if (onUpdate) {
-      onUpdate(suppliers.filter(s => s.id !== id));
-    }
-  }, [suppliers, onRemove, onUpdate]);
+    setIsAddModalOpen(false);
+  };
 
   return (
-    <UiCard title={title} variant="outlined" size="sm" compactHeader>
-      <UiCardBody padding="sm">
-        <Stack spacing={2}>
-          {/* Add new supplier form */}
-          {onAdd && (
-            <Box sx={{ background: gradientBg, p: 2, borderRadius: 1 }}>
-              <Typography variant="subtitle2" gutterBottom>
-                Add New Supplier
+    <Box>
+      {/* Header */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ color: "text.primary", fontWeight: 600 }}
+        >
+          Supplier Management
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => setIsAddModalOpen(true)}
+          sx={{
+            borderRadius: 1.5,
+            textTransform: "none",
+            fontWeight: 600,
+            px: 3,
+          }}
+        >
+          Add Supplier
+        </Button>
+      </Box>
+
+      {/* Suppliers Grid */}
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+        {suppliers.map((supplier) => (
+          <Card
+            key={supplier.id}
+            sx={{
+              width: "280px",
+              p: 2,
+              borderRadius: 1.5,
+              border: "1px solid",
+              borderColor: "divider",
+              background: `
+                linear-gradient(135deg, 
+                  rgba(59, 130, 246, 0.05) 0%, 
+                  rgba(147, 197, 253, 0.03) 25%, 
+                  rgba(219, 234, 254, 0.02) 50%, 
+                  rgba(255, 255, 255, 0.95) 100%
+                )
+              `,
+              backdropFilter: "blur(20px)",
+              transition: "all 0.3s ease-in-out",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                boxShadow: (t) =>
+                  `0 12px 40px ${alpha(t.palette.primary.main, 0.15)}`,
+                background: `
+                  linear-gradient(135deg, 
+                    rgba(59, 130, 246, 0.08) 0%, 
+                    rgba(147, 197, 253, 0.05) 25%, 
+                    rgba(219, 234, 254, 0.03) 50%, 
+                    rgba(255, 255, 255, 0.98) 100%
+                  )
+                `,
+              },
+            }}
+          >
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                {supplier.name}
               </Typography>
-              <Stack spacing={2}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField
-                    label="Supplier Name"
-                    size="small"
-                    value={supplierName}
-                    onChange={(e) => setSupplierName(e.target.value)}
-                    disabled={disabled}
-                    sx={{ flexGrow: 1 }}
-                    required
-                  />
-                  <TextField
-                    label="Supplier Code"
-                    size="small"
-                    value={supplierCode}
-                    onChange={(e) => setSupplierCode(e.target.value)}
-                    disabled={disabled}
-                    sx={{ width: { xs: "100%", sm: 150 } }}
-                    required
-                  />
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={supplierIsActive}
-                        onChange={(e) => setSupplierIsActive(e.target.checked)}
-                        disabled={disabled}
-                      />
-                    }
-                    label="Active"
-                  />
-                </Stack>
-
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField
-                    label="Email"
-                    type="email"
-                    size="small"
-                    value={supplierEmail}
-                    onChange={(e) => setSupplierEmail(e.target.value)}
-                    disabled={disabled}
-                    sx={{ flexGrow: 1 }}
-                  />
-                  <TextField
-                    label="Phone"
-                    size="small"
-                    value={supplierPhone}
-                    onChange={(e) => setSupplierPhone(e.target.value)}
-                    disabled={disabled}
-                    sx={{ flexGrow: 1 }}
-                  />
-                </Stack>
-
-                <TextField
-                  label="Notes"
-                  size="small"
-                  value={supplierNotes}
-                  onChange={(e) => setSupplierNotes(e.target.value)}
-                  disabled={disabled}
-                  multiline
-                  rows={2}
-                />
-
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleAdd}
-                  disabled={disabled || !supplierName.trim() || !supplierCode.trim()}
-                  startIcon={<SaveIcon />}
-                >
-                  Add Supplier
-                </Button>
-              </Stack>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                Code: {supplier.code}
+              </Typography>
+              {supplier.email && (
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Email: {supplier.email}
+                </Typography>
+              )}
+              {supplier.phone && (
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Phone: {supplier.phone}
+                </Typography>
+              )}
+              {supplier.notes && (
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Notes: {supplier.notes}
+                </Typography>
+              )}
+              <Typography
+                variant="body2"
+                color={supplier.isActive ? "success.main" : "error.main"}
+              >
+                Status: {supplier.isActive ? "Active" : "Inactive"}
+              </Typography>
             </Box>
-          )}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <IconButton
+                  size="small"
+                  onClick={() => onEdit(supplier.id)}
+                  sx={{
+                    color: "primary.main",
+                    "&:hover": { bgcolor: alpha("primary.main", 0.1) },
+                  }}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => onRemove(supplier.id)}
+                  sx={{
+                    color: "error.main",
+                    "&:hover": { bgcolor: alpha("error.main", 0.1) },
+                  }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            </Box>
+          </Card>
+        ))}
+      </Box>
 
-          {/* Existing suppliers list */}
-          {suppliers.length === 0 ? (
-            <Typography variant="body2" color="text.secondary" align="center">
-              No suppliers configured.
-            </Typography>
-          ) : (
-            <Stack spacing={2}>
-              <Typography variant="subtitle2">Current Suppliers</Typography>
-              {suppliers.map((supplier) => (
-                <Card key={supplier.id} variant="outlined">
-                  <CardContent sx={{ p: 1.5 }}>
-                    <Stack spacing={1}>
-                      <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        spacing={2}
-                        alignItems="center"
-                      >
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Typography variant="subtitle2">
-                            {supplier.name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Code: {supplier.code}
-                          </Typography>
-                        </Box>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={supplier.isActive}
-                              disabled={true}
-                              size="small"
-                            />
-                          }
-                          label="Active"
-                        />
-                        {showActions && (
-                          <Stack direction="row" spacing={1}>
-                            {onEdit && (
-                              <IconButton
-                                size="small"
-                                onClick={() => onEdit(supplier.id)}
-                                disabled={disabled}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            )}
-                            {(onRemove || onUpdate) && (
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={() => handleRemove(supplier.id)}
-                                disabled={disabled}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            )}
-                          </Stack>
-                        )}
-                      </Stack>
-
-                      {(supplier.email || supplier.phone) && (
-                        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                          {supplier.email && (
-                            <Typography variant="body2" color="text.secondary">
-                              📧 {supplier.email}
-                            </Typography>
-                          )}
-                          {supplier.phone && (
-                            <Typography variant="body2" color="text.secondary">
-                              📞 {supplier.phone}
-                            </Typography>
-                          )}
-                        </Stack>
-                      )}
-
-                      {supplier.notes && (
-                        <Typography variant="body2" color="text.secondary">
-                          📝 {supplier.notes}
-                        </Typography>
-                      )}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              ))}
-            </Stack>
-          )}
-        </Stack>
-      </UiCardBody>
-    </UiCard>
+      {/* Add Supplier Modal */}
+      <Dialog
+        open={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontWeight: 600 }}>Add New Supplier</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Name *"
+                value={addForm.name}
+                onChange={(e) =>
+                  setAddForm((prev) => ({ ...prev, name: e.target.value }))
+                }
+                required
+                size="small"
+              />
+              <TextField
+                fullWidth
+                label="Code *"
+                value={addForm.code}
+                onChange={(e) =>
+                  setAddForm((prev) => ({ ...prev, code: e.target.value }))
+                }
+                required
+                size="small"
+              />
+            </Box>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={addForm.email}
+                onChange={(e) =>
+                  setAddForm((prev) => ({ ...prev, email: e.target.value }))
+                }
+                size="small"
+              />
+              <TextField
+                fullWidth
+                label="Phone"
+                value={addForm.phone}
+                onChange={(e) =>
+                  setAddForm((prev) => ({ ...prev, phone: e.target.value }))
+                }
+                size="small"
+              />
+            </Box>
+            <TextField
+              fullWidth
+              label="Notes"
+              multiline
+              rows={3}
+              value={addForm.notes}
+              onChange={(e) =>
+                setAddForm((prev) => ({ ...prev, notes: e.target.value }))
+              }
+              size="small"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={addForm.isActive}
+                  onChange={(e) =>
+                    setAddForm((prev) => ({
+                      ...prev,
+                      isActive: e.target.checked,
+                    }))
+                  }
+                  color="primary"
+                />
+              }
+              label="Active"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 3 }}>
+          <Button
+            onClick={() => setIsAddModalOpen(false)}
+            variant="outlined"
+            sx={{ minWidth: 100 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleAddSupplier}
+            variant="contained"
+            disabled={!addForm.name.trim() || !addForm.code.trim()}
+            sx={{ minWidth: 100 }}
+          >
+            Add Supplier
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }
