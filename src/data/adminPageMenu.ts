@@ -7,6 +7,7 @@ import FooterIcon from '@mui/icons-material/ViewQuilt'
 import HeroIcon from '@mui/icons-material/Star'
 import PagesIcon from '@mui/icons-material/Pages'
 import IconLibraryIcon from '@mui/icons-material/EmojiEmotions'
+import FavoriteIcon from '@mui/icons-material/Favorite'
 
 // Admin Page Menu Data Structure
 export const AdminPageMenu: MenuItem[] = [
@@ -24,6 +25,14 @@ export const AdminPageMenu: MenuItem[] = [
     icon: IconLibraryIcon,
     action: () => {
       // TODO: Implement icon library navigation logic
+    },
+  },
+  {
+    id: 'donations',
+    text: 'Donations',
+    icon: FavoriteIcon,
+    action: () => {
+      // TODO: Implement donations navigation logic
     },
   },
   {
@@ -79,14 +88,16 @@ export const AdminPageMenu: MenuItem[] = [
 export function findMenuItemById(items: MenuItem[], id: string): MenuItem | null {
   for (const item of items) {
     if (item.id === id) {
-      return item
+      return item;
     }
     if (item.children) {
-      const found = findMenuItemById(item.children, id)
-      if (found) return found
+      const found = findMenuItemById(item.children, id);
+      if (found) {
+        return found;
+      }
     }
   }
-  return null
+  return null;
 }
 
 // Helper function to get breadcrumb path

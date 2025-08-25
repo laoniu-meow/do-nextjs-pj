@@ -60,6 +60,9 @@ import ProductCategoryWorkflow, {
 import ProductTypeWorkflow, {
   ProductTypeWorkflowRef,
 } from "./components/ProductTypeWorkflow";
+import ProductWorkflow, {
+  ProductWorkflowRef,
+} from "./components/ProductWorkflow";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export default function AdminProductsPage() {
@@ -126,6 +129,12 @@ export default function AdminProductsPage() {
 
   // Product Type message state
   const [productTypeMessage, setProductTypeMessage] = React.useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  // Product message state
+  const [productMessage, setProductMessage] = React.useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
@@ -214,6 +223,12 @@ export default function AdminProductsPage() {
   const [productTypeUploadDisabled, setProductTypeUploadDisabled] =
     React.useState(true);
   const productTypeWorkflowRef = React.useRef<ProductTypeWorkflowRef>(null);
+
+  // Product workflow state
+  const [productSaveDisabled, setProductSaveDisabled] = React.useState(true);
+  const [productUploadDisabled, setProductUploadDisabled] =
+    React.useState(true);
+  const productWorkflowRef = React.useRef<ProductWorkflowRef>(null);
 
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(() => {
@@ -1440,6 +1455,25 @@ export default function AdminProductsPage() {
     }
   }, []);
 
+  // Product handlers (delegate to ProductWorkflow component)
+  const handleProductSave = React.useCallback(async () => {
+    if (productWorkflowRef.current) {
+      await productWorkflowRef.current.handleSave();
+    }
+  }, []);
+
+  const handleProductUpload = React.useCallback(async () => {
+    if (productWorkflowRef.current) {
+      await productWorkflowRef.current.handleUpload();
+    }
+  }, []);
+
+  const handleProductRefresh = React.useCallback(() => {
+    if (productWorkflowRef.current) {
+      productWorkflowRef.current.handleRefresh();
+    }
+  }, []);
+
   return (
     <Box
       sx={{
@@ -1488,6 +1522,7 @@ export default function AdminProductsPage() {
         <MainContainerBox
           title="Configuration"
           showSave={
+            tab === 1 ||
             tab === 2 ||
             tab === 3 ||
             tab === 4 ||
@@ -1496,6 +1531,7 @@ export default function AdminProductsPage() {
             tab === 7
           }
           showUpload={
+            tab === 1 ||
             tab === 2 ||
             tab === 3 ||
             tab === 4 ||
@@ -1504,6 +1540,7 @@ export default function AdminProductsPage() {
             tab === 7
           }
           showRefresh={
+            tab === 1 ||
             tab === 2 ||
             tab === 3 ||
             tab === 4 ||
@@ -1512,7 +1549,9 @@ export default function AdminProductsPage() {
             tab === 7
           }
           saveDisabled={
-            tab === 2
+            tab === 1
+              ? productSaveDisabled
+              : tab === 2
               ? productTypeSaveDisabled
               : tab === 3
               ? productCategorySaveDisabled
@@ -1527,7 +1566,9 @@ export default function AdminProductsPage() {
               : true
           }
           uploadDisabled={
-            tab === 2
+            tab === 1
+              ? productUploadDisabled
+              : tab === 2
               ? productTypeUploadDisabled
               : tab === 3
               ? productCategoryUploadDisabled
@@ -1542,7 +1583,9 @@ export default function AdminProductsPage() {
               : true
           }
           onSave={
-            tab === 2
+            tab === 1
+              ? handleProductSave
+              : tab === 2
               ? handleProductTypeSave
               : tab === 3
               ? handleProductCategorySave
@@ -1557,7 +1600,9 @@ export default function AdminProductsPage() {
               : () => {}
           }
           onUpload={
-            tab === 2
+            tab === 1
+              ? handleProductUpload
+              : tab === 2
               ? handleProductTypeUpload
               : tab === 3
               ? handleProductCategoryUpload
@@ -1572,7 +1617,9 @@ export default function AdminProductsPage() {
               : () => {}
           }
           onRefresh={
-            tab === 2
+            tab === 1
+              ? handleProductRefresh
+              : tab === 2
               ? handleProductTypeRefresh
               : tab === 3
               ? handleProductCategoryRefresh
@@ -1601,7 +1648,7 @@ export default function AdminProductsPage() {
                     ? "#ffebee"
                     : productTypeMessage.type === "success"
                     ? "#e8f5e8"
-                    : "#f5f5f5",
+                    : "#f5f5f8",
                 color:
                   productTypeMessage.type === "error"
                     ? "#c62828"
@@ -1627,6 +1674,50 @@ export default function AdminProductsPage() {
                 ? productTypeMessage.text.includes("staging")
                   ? "Record saved in staging"
                   : productTypeMessage.text.includes("production")
+                  ? "Record saved in production and go live"
+                  : "Record saved in staging"
+                : "Record saved in staging"}
+            </Box>
+          )}
+          {/* Tab 1: Products */}
+          {tab === 1 && productMessage && (
+            <Box
+              sx={{
+                width: "100%",
+                py: 2,
+                px: 1,
+                mb: 2,
+                backgroundColor:
+                  productMessage.type === "error"
+                    ? "#ffebee"
+                    : productMessage.type === "success"
+                    ? "#e8f5e8"
+                    : "#f5f5f5",
+                color:
+                  productMessage.type === "error"
+                    ? "#c62828"
+                    : productMessage.type === "success"
+                    ? "#2e7d32"
+                    : "#666666",
+                fontSize: "14px",
+                fontWeight: 500,
+                textAlign: "center",
+                borderRadius: 0,
+                borderLeft: `4px solid ${
+                  productMessage.type === "error"
+                    ? "#c62828"
+                    : productMessage.type === "success"
+                    ? "#2e7d32"
+                    : "#666666"
+                }`,
+              }}
+            >
+              {productMessage.type === "error"
+                ? productMessage.text
+                : productMessage.type === "success"
+                ? productMessage.text.includes("staging")
+                  ? "Record saved in staging"
+                  : productMessage.text.includes("production")
                   ? "Record saved in production and go live"
                   : "Record saved in staging"
                 : "Record saved in staging"}
@@ -2019,9 +2110,12 @@ export default function AdminProductsPage() {
             ) : tab === 1 ? (
               // Products tab
               <Box sx={{ p: 1, pt: 0.5 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Products management will be implemented here.
-                </Typography>
+                <ProductWorkflow
+                  ref={productWorkflowRef}
+                  onSaveDisabledChange={setProductSaveDisabled}
+                  onUploadDisabledChange={setProductUploadDisabled}
+                  onMessageChange={setProductMessage}
+                />
               </Box>
             ) : tab === 2 ? (
               // Product Types tab

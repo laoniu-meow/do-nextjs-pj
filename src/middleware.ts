@@ -55,7 +55,12 @@ export async function middleware(request: NextRequest) {
   const BYPASS_AUTH = process.env.AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production'
   
   // Temporary development bypass for product category routes
-      if (request.nextUrl.pathname.includes('/api/admin/products/product-categories') && process.env.NODE_ENV === 'development') {
+  if (request.nextUrl.pathname.includes('/api/admin/products/product-categories') && process.env.NODE_ENV === 'development') {
+    return NextResponse.next()
+  }
+  
+  // Temporary development bypass for donations API
+  if (request.nextUrl.pathname.includes('/api/settings/donations') && process.env.NODE_ENV === 'development') {
     return NextResponse.next()
   }
   
