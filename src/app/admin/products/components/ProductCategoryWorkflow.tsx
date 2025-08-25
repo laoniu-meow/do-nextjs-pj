@@ -14,7 +14,6 @@ import {
   CardContent,
   IconButton,
   Chip,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -33,6 +32,7 @@ import { ProductCategoryStaging } from "./ProductCategoryStaging";
 import { useProductCategoryStaging } from "@/hooks/useProductCategoryStaging";
 import { useCategoryStaging } from "@/hooks/useCategoryStaging";
 import type { CreateProductCategoryData } from "@/services/productCategoryService";
+import { alpha } from "@mui/material/styles";
 
 export interface ProductCategoryWorkflowRef {
   handleSave: () => Promise<void>;
@@ -120,25 +120,7 @@ const ProductCategoryWorkflow = forwardRef<
   const handleAddProductCategory = (
     productCategoryData: CreateProductCategoryData
   ) => {
-    // If we have production product categories but no staging, we need to create staging entries
-    if (
-      stagingProductCategories.length === 0 &&
-      productionProductCategories.length > 0
-    ) {
-      // First, add all production product categories to staging as active
-      productionProductCategories.forEach((cat) => {
-        addProductCategory({
-          name: cat.name,
-          slug: cat.slug,
-          description: cat.description,
-          categoryId: cat.categoryId,
-          isActive: cat.isActive,
-          sortOrder: cat.sortOrder,
-        });
-      });
-    }
-
-    // Add the new product category
+    // Add the new product category directly to staging
     addProductCategory(productCategoryData);
     setIsAddModalOpen(false);
   };
@@ -148,49 +130,21 @@ const ProductCategoryWorkflow = forwardRef<
     id: string,
     productCategoryData: CreateProductCategoryData
   ) => {
-    // If we have production product categories but no staging, we need to create staging entries
-    if (
-      stagingProductCategories.length === 0 &&
-      productionProductCategories.length > 0
-    ) {
-      // First, add all production product categories to staging as active
-      productionProductCategories.forEach((cat) => {
-        addProductCategory({
-          name: cat.name,
-          slug: cat.slug,
-          description: cat.description,
-          categoryId: cat.categoryId,
-          isActive: cat.isActive,
-          sortOrder: cat.sortOrder,
-        });
-      });
-
-      // Now find the product category we're editing and update it
-      const productCategoryToEdit = productionProductCategories.find(
-        (cat) => cat.id === id
-      );
-      if (productCategoryToEdit) {
-        // Find the newly created staging entry and update it
-        const newStagingId = `temp-${Date.now()}-${Math.random()}`;
-        // We'll use the editProductCategory function after the staging entries are created
-        setTimeout(() => {
-          editProductCategory(newStagingId, productCategoryData);
-        }, 0);
-      }
-    } else {
-      // Normal staging edit
-      editProductCategory(id, productCategoryData);
-    }
-
+    // The hook now handles all the logic for production vs staging and change detection
+    editProductCategory(id, productCategoryData);
     setIsEditModalOpen(false);
     setEditingProductCategory(null);
   };
 
   // Handle restore product category
-  const handleRestoreProductCategory = (id: string) => {
+  const handleRestoreProductCategory = (
+    productCategory: ProductCategoryData
+  ) => {
     // Find the product category to restore
     const productCategoryToRestore = stagingProductCategories.find(
-      (cat) => "id" in cat && cat.id === id
+      (cat) =>
+        "id" in cat &&
+        cat.id === ("id" in productCategory ? productCategory.id : undefined)
     );
     if (productCategoryToRestore) {
       // Remove the isDeleted flag by creating a new staging entry
@@ -219,7 +173,7 @@ const ProductCategoryWorkflow = forwardRef<
         (cat) => cat.id === id
       );
       if (productionProductCategory) {
-        // Create a staging entry for deletion
+        // Create a staging entry for deletion for this specific product category only
         addProductCategory(
           {
             name: productionProductCategory.name,
@@ -260,156 +214,20 @@ const ProductCategoryWorkflow = forwardRef<
       : productionCategories;
   };
 
-  // Render product categories table
-  const renderProductCategoriesTable = (
-    productCategories: ProductCategoryData[],
-    isStaging = false
-  ) => {
-    return (
-      <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{ bgcolor: isStaging ? "warning.50" : "grey.50" }}>
-              <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Slug</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Sort Order</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {productCategories
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((productCategory) => {
-                const productCategoryId =
-                  "id" in productCategory
-                    ? productCategory.id
-                    : `temp-${Date.now()}-${Math.random()}`;
-                const categoryName =
-                  "categoryId" in productCategory && productCategory.categoryId
-                    ? getAvailableCategories().find(
-                        (cat) => cat.id === productCategory.categoryId
-                      )?.name || "Unknown Category"
-                    : "No Category";
-
-                return (
-                  <TableRow key={productCategoryId} hover>
-                    <TableCell sx={{ fontWeight: 500 }}>
-                      {isStaging &&
-                      "isDeleted" in productCategory &&
-                      productCategory.isDeleted ? (
-                        <Typography sx={{ textDecoration: "line-through" }}>
-                          {productCategory.name}
-                        </Typography>
-                      ) : (
-                        productCategory.name
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isStaging &&
-                      "isDeleted" in productCategory &&
-                      productCategory.isDeleted ? (
-                        <Typography sx={{ textDecoration: "line-through" }}>
-                          /{productCategory.slug}
-                        </Typography>
-                      ) : (
-                        <Typography>/{productCategory.slug}</Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isStaging &&
-                      "isDeleted" in productCategory &&
-                      productCategory.isDeleted ? (
-                        <Typography sx={{ textDecoration: "line-through" }}>
-                          {productCategory.description || "-"}
-                        </Typography>
-                      ) : (
-                        productCategory.description || "-"
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isStaging &&
-                      "isDeleted" in productCategory &&
-                      productCategory.isDeleted ? (
-                        <Typography sx={{ textDecoration: "line-through" }}>
-                          {categoryName}
-                        </Typography>
-                      ) : (
-                        categoryName
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={productCategory.isActive ? "Active" : "Inactive"}
-                        color={productCategory.isActive ? "success" : "default"}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {isStaging &&
-                      "isDeleted" in productCategory &&
-                      productCategory.isDeleted ? (
-                        <Typography sx={{ textDecoration: "line-through" }}>
-                          {productCategory.sortOrder}
-                        </Typography>
-                      ) : (
-                        productCategory.sortOrder
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isStaging &&
-                      "isDeleted" in productCategory &&
-                      productCategory.isDeleted ? (
-                        <Button
-                          size="small"
-                          startIcon={<RestoreIcon />}
-                          onClick={() =>
-                            handleRestoreProductCategory(productCategoryId)
-                          }
-                          variant="outlined"
-                          color="primary"
-                        >
-                          Restore
-                        </Button>
-                      ) : (
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => openEditModal(productCategory)}
-                            color="primary"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => openDeleteModal(productCategory)}
-                            color="error"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    );
-  };
-
   return (
     <Box>
       {/* Header */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Product Category Management
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography variant="h5">Product Category Management</Typography>
 
-        <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
@@ -418,11 +236,11 @@ const ProductCategoryWorkflow = forwardRef<
           >
             Add Product Category
           </Button>
-        </Stack>
+        </Box>
       </Box>
 
-      {/* Product Categories Table */}
-      <Card>
+      {/* Main Product Categories Table */}
+      <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
         <CardContent>
           <Typography variant="h6" sx={{ mb: 2 }}>
             Product Categories
@@ -430,35 +248,256 @@ const ProductCategoryWorkflow = forwardRef<
 
           {stagingProductCategories.length === 0 &&
           productionProductCategories.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">
-              No product categories added yet. Click &ldquo;Add Product
-              Category&rdquo; to get started.
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: "center", py: 4 }}
+            >
+              No product categories added yet. Click &quot;Add Product
+              Category&quot; to get started.
             </Typography>
-          ) : stagingProductCategories.length > 0 ? (
-            <Box>
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                sx={{ mb: 1 }}
-              >
-                Staging Product Categories (Unsaved Changes)
-              </Typography>
-              {renderProductCategoriesTable(stagingProductCategories, true)}
-            </Box>
           ) : (
-            <Box>
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                sx={{ mb: 1 }}
-              >
-                Production Product Categories
-              </Typography>
-              {renderProductCategoriesTable(productionProductCategories, false)}
-            </Box>
+            <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: "grey.50" }}>
+                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Slug</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Sort Order</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {[...stagingProductCategories, ...productionProductCategories]
+                    .filter(
+                      (productCategory) =>
+                        !(
+                          "isDeleted" in productCategory &&
+                          productCategory.isDeleted
+                        )
+                    )
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((productCategory, index) => {
+                      const productCategoryId =
+                        "id" in productCategory && productCategory.id
+                          ? productCategory.id
+                          : `temp-${index}-${
+                              productCategory.name
+                            }-${Date.now()}`;
+                      const categoryName =
+                        "categoryId" in productCategory &&
+                        productCategory.categoryId
+                          ? getAvailableCategories().find(
+                              (cat) => cat.id === productCategory.categoryId
+                            )?.name || "Unknown Category"
+                          : "No Category";
+
+                      return (
+                        <TableRow key={productCategoryId} hover>
+                          <TableCell sx={{ fontWeight: 500 }}>
+                            {productCategory.name}
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              fontFamily="monospace"
+                            >
+                              /{productCategory.slug}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            {productCategory.description ? (
+                              <Typography
+                                variant="body2"
+                                noWrap
+                                sx={{ maxWidth: 200 }}
+                              >
+                                {productCategory.description}
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                No description
+                              </Typography>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={categoryName}
+                              size="small"
+                              variant="outlined"
+                              color="primary"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={
+                                productCategory.isActive ? "Active" : "Inactive"
+                              }
+                              size="small"
+                              color={
+                                productCategory.isActive ? "success" : "default"
+                              }
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" color="text.secondary">
+                              {productCategory.sortOrder}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Box sx={{ display: "flex", gap: 0.5 }}>
+                              <IconButton
+                                size="small"
+                                onClick={() => openEditModal(productCategory)}
+                                sx={{
+                                  mr: 1,
+                                  "&:hover": {
+                                    bgcolor: (theme) =>
+                                      alpha(theme.palette.primary.main, 0.1),
+                                  },
+                                }}
+                              >
+                                <EditIcon fontSize="small" />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                onClick={() => openDeleteModal(productCategory)}
+                                sx={{
+                                  "&:hover": {
+                                    bgcolor: (theme) =>
+                                      alpha(theme.palette.error.main, 0.1),
+                                  },
+                                }}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
         </CardContent>
       </Card>
+
+      {/* Deleted Product Categories Section */}
+      {stagingProductCategories.filter(
+        (pc) => "isDeleted" in pc && pc.isDeleted
+      ).length > 0 && (
+        <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
+          <CardContent>
+            <Typography
+              variant="h6"
+              sx={{
+                mb: 2,
+                color: "warning.main",
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              🗑️ Staging Changes - Deleted Product Categories (
+              {
+                stagingProductCategories.filter(
+                  (pc) => "isDeleted" in pc && pc.isDeleted
+                ).length
+              }
+              )
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              These product categories are marked for deletion in staging. You
+              can restore them before uploading to production.
+            </Typography>
+            <TableContainer component={Paper} sx={{ borderRadius: 1 }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: "warning.50" }}>
+                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Slug</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {stagingProductCategories
+                    .filter(
+                      (productCategory) =>
+                        "isDeleted" in productCategory &&
+                        productCategory.isDeleted
+                    )
+                    .map((productCategory, index) => {
+                      const productCategoryId =
+                        "id" in productCategory && productCategory.id
+                          ? productCategory.id
+                          : `temp-deleted-${index}-${
+                              productCategory.name
+                            }-${Date.now()}`;
+                      const categoryName =
+                        "categoryId" in productCategory &&
+                        productCategory.categoryId
+                          ? getAvailableCategories().find(
+                              (cat) => cat.id === productCategory.categoryId
+                            )?.name || "Unknown Category"
+                          : "No Category";
+
+                      return (
+                        <TableRow key={productCategoryId} hover>
+                          <TableCell
+                            sx={{
+                              fontWeight: 500,
+                              textDecoration: "line-through",
+                            }}
+                          >
+                            {productCategory.name}
+                          </TableCell>
+                          <TableCell sx={{ textDecoration: "line-through" }}>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              fontFamily="monospace"
+                            >
+                              /{productCategory.slug}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ textDecoration: "line-through" }}>
+                            {productCategory.description || "No description"}
+                          </TableCell>
+                          <TableCell sx={{ textDecoration: "line-through" }}>
+                            {categoryName}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outlined"
+                              color="warning"
+                              size="small"
+                              startIcon={<RestoreIcon />}
+                              onClick={() =>
+                                handleRestoreProductCategory(productCategory)
+                              }
+                            >
+                              Restore
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Add Product Category Modal */}
       <ProductCategoryStaging
@@ -494,53 +533,67 @@ const ProductCategoryWorkflow = forwardRef<
             id:
               "id" in editingProductCategory
                 ? editingProductCategory.id
-                : `temp-${Date.now()}`,
+                : `temp-${Date.now()}-${Math.random()}`,
             name: editingProductCategory.name,
             slug: editingProductCategory.slug,
             description: editingProductCategory.description,
-            categoryId: editingProductCategory.categoryId,
+            categoryId:
+              "categoryId" in editingProductCategory
+                ? editingProductCategory.categoryId
+                : null,
             isActive: editingProductCategory.isActive,
             sortOrder: editingProductCategory.sortOrder,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt:
+              "createdAt" in editingProductCategory
+                ? editingProductCategory.createdAt
+                : new Date(),
+            updatedAt:
+              "updatedAt" in editingProductCategory
+                ? editingProductCategory.updatedAt
+                : new Date(),
           }}
           mode="edit"
         />
       )}
 
-      {/* Delete Product Category Modal */}
-      {deletingProductCategory && (
-        <ProductCategoryStaging
-          open={isDeleteModalOpen}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-            setDeletingProductCategory(null);
-          }}
-          onDelete={handleDeleteProductCategory}
-          productCategories={
-            stagingProductCategories.length > 0
-              ? stagingProductCategories
-              : productionProductCategories
-          }
-          categories={getAvailableCategories()}
-          editingProductCategory={{
-            id:
-              "id" in deletingProductCategory
-                ? deletingProductCategory.id
-                : `temp-${Date.now()}`,
-            name: deletingProductCategory.name,
-            slug: deletingProductCategory.slug,
-            description: deletingProductCategory.description,
-            categoryId: deletingProductCategory.categoryId,
-            isActive: deletingProductCategory.isActive,
-            sortOrder: deletingProductCategory.sortOrder,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }}
-          mode="delete"
-          onSave={handleAddProductCategory} // Use the same handler for consistency
-        />
-      )}
+      {/* Delete Confirmation Modal */}
+      <ProductCategoryStaging
+        open={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDeletingProductCategory(null);
+        }}
+        onSave={() => {}} // Dummy function for delete mode
+        onDelete={handleDeleteProductCategory}
+        productCategories={
+          stagingProductCategories.length > 0
+            ? stagingProductCategories
+            : productionProductCategories
+        }
+        categories={getAvailableCategories()}
+        editingProductCategory={
+          deletingProductCategory
+            ? {
+                id:
+                  "id" in deletingProductCategory
+                    ? deletingProductCategory.id
+                    : `temp-${Date.now()}-${Math.random()}`,
+                name: deletingProductCategory.name,
+                slug: deletingProductCategory.slug,
+                description: deletingProductCategory.description,
+                categoryId:
+                  "categoryId" in deletingProductCategory
+                    ? deletingProductCategory.categoryId
+                    : null,
+                isActive: deletingProductCategory.isActive,
+                sortOrder: deletingProductCategory.sortOrder,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              }
+            : null
+        }
+        mode="delete"
+      />
     </Box>
   );
 });

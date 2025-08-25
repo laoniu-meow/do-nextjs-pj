@@ -153,3 +153,45 @@ export interface ApiError {
 // Utility types
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
+
+export interface ProductType {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  productCategoryId?: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductTypeStaging {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  productCategoryId?: string;
+  isActive: boolean;
+  sortOrder: number;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProductTypeData {
+  name: string;
+  description?: string;
+  productCategoryId: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface UpdateProductTypeData {
+  name?: string;
+  description?: string;
+  productCategoryId?: string;
+  isActive?: boolean;
+  sortOrder?: number;
+  isDeleted?: boolean;
+}

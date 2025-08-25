@@ -1,5 +1,23 @@
 "use client";
 
+/**
+ * Admin Products Management Page
+ *
+ * Tab Structure (Logical Order):
+ * Tab 0: Variants - Product variants and inventory management
+ * Tab 1: Products - Main product management
+ * Tab 2: Product Types - Product type classification (e.g., Physical, Digital, Service)
+ * Tab 3: Product Categories - Product category hierarchy
+ * Tab 4: Categories - General category management
+ * Tab 5: Promotions - Discount and promotion rules
+ * Tab 6: Suppliers - Supplier and vendor management
+ * Tab 7: Tax - Tax rules and settings
+ *
+ * This logical arrangement groups related functionality together:
+ * - Product-related: Variants (0) → Products (1) → Product Types (2) → Product Categories (3)
+ * - System-wide: Categories (4) → Promotions (5) → Suppliers (6) → Tax (7)
+ */
+
 import React from "react";
 import { PageLayout, MainContainerBox } from "@/components/ui";
 import {
@@ -39,6 +57,9 @@ import CategoryWorkflow, {
 import ProductCategoryWorkflow, {
   ProductCategoryWorkflowRef,
 } from "./components/ProductCategoryWorkflow";
+import ProductTypeWorkflow, {
+  ProductTypeWorkflowRef,
+} from "./components/ProductTypeWorkflow";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export default function AdminProductsPage() {
@@ -48,8 +69,8 @@ export default function AdminProductsPage() {
       const savedTab = localStorage.getItem("adminProductsActiveTab");
       if (savedTab !== null) {
         const tabIndex = parseInt(savedTab, 10);
-        // Ensure the tab index is valid (0-7)
-        if (tabIndex >= 0 && tabIndex <= 7) {
+        // Ensure the tab index is valid (0-8)
+        if (tabIndex >= 0 && tabIndex <= 8) {
           return tabIndex;
         }
       }
@@ -99,6 +120,12 @@ export default function AdminProductsPage() {
 
   // Product Category message state
   const [productCategoryMessage, setProductCategoryMessage] = React.useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  // Product Type message state
+  const [productTypeMessage, setProductTypeMessage] = React.useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
@@ -180,6 +207,13 @@ export default function AdminProductsPage() {
   const categoryWorkflowRef = React.useRef<CategoryWorkflowRef>(null);
   const productCategoryWorkflowRef =
     React.useRef<ProductCategoryWorkflowRef>(null);
+
+  // Product Type workflow state
+  const [productTypeSaveDisabled, setProductTypeSaveDisabled] =
+    React.useState(true);
+  const [productTypeUploadDisabled, setProductTypeUploadDisabled] =
+    React.useState(true);
+  const productTypeWorkflowRef = React.useRef<ProductTypeWorkflowRef>(null);
 
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(() => {
@@ -853,8 +887,40 @@ export default function AdminProductsPage() {
 
   // Handle save to staging - Simplified and robust version
   const handleSave = React.useCallback(async () => {
+    if (tab === 2) {
+      // Product Types tab - delegate to ProductTypeWorkflow
+      if (productTypeWorkflowRef.current) {
+        await productTypeWorkflowRef.current.handleSave();
+      }
+      return;
+    }
+
+    if (tab === 3) {
+      // Product Categories tab - delegate to ProductCategoryWorkflow
+      if (productCategoryWorkflowRef.current) {
+        await productCategoryWorkflowRef.current.handleSave();
+      }
+      return;
+    }
+
+    if (tab === 4) {
+      // Category tab - delegate to CategoryWorkflow
+      if (categoryWorkflowRef.current) {
+        await categoryWorkflowRef.current.handleSave();
+      }
+      return;
+    }
+
+    if (tab === 5) {
+      // Promotions tab - delegate to PromotionWorkflow
+      if (promotionWorkflowRef.current) {
+        await promotionWorkflowRef.current.handleSave();
+      }
+      return;
+    }
+
     if (tab === 6) {
-      // Supplier tab - delegate to SupplierWorkflow
+      // Suppliers tab - delegate to SupplierWorkflow
       if (supplierWorkflowRef.current) {
         await supplierWorkflowRef.current.handleSave();
       }
@@ -1085,8 +1151,40 @@ export default function AdminProductsPage() {
 
   // Handle upload to production
   const handleUpload = React.useCallback(async () => {
+    if (tab === 2) {
+      // Product Types tab - delegate to ProductTypeWorkflow
+      if (productTypeWorkflowRef.current) {
+        await productTypeWorkflowRef.current.handleUpload();
+      }
+      return;
+    }
+
+    if (tab === 3) {
+      // Product Categories tab - delegate to ProductCategoryWorkflow
+      if (productCategoryWorkflowRef.current) {
+        await productCategoryWorkflowRef.current.handleUpload();
+      }
+      return;
+    }
+
+    if (tab === 4) {
+      // Category tab - delegate to CategoryWorkflow
+      if (categoryWorkflowRef.current) {
+        await categoryWorkflowRef.current.handleUpload();
+      }
+      return;
+    }
+
+    if (tab === 5) {
+      // Promotions tab - delegate to PromotionWorkflow
+      if (promotionWorkflowRef.current) {
+        await promotionWorkflowRef.current.handleUpload();
+      }
+      return;
+    }
+
     if (tab === 6) {
-      // Supplier tab - delegate to SupplierWorkflow
+      // Suppliers tab - delegate to SupplierWorkflow
       if (supplierWorkflowRef.current) {
         await supplierWorkflowRef.current.handleUpload();
       }
@@ -1184,6 +1282,22 @@ export default function AdminProductsPage() {
 
   // Handle refresh
   const handleRefresh = React.useCallback(() => {
+    if (tab === 2) {
+      // Product Types tab - delegate to ProductTypeWorkflow
+      if (productTypeWorkflowRef.current) {
+        productTypeWorkflowRef.current.handleRefresh();
+      }
+      return;
+    }
+
+    if (tab === 3) {
+      // Product Categories tab - delegate to ProductCategoryWorkflow
+      if (productCategoryWorkflowRef.current) {
+        productCategoryWorkflowRef.current.handleRefresh();
+      }
+      return;
+    }
+
     if (tab === 4) {
       // Category tab - delegate to CategoryWorkflow
       if (categoryWorkflowRef.current) {
@@ -1192,16 +1306,16 @@ export default function AdminProductsPage() {
       return;
     }
 
-    if (tab === 3) {
-      // Product Category tab - delegate to ProductCategoryWorkflow
-      if (productCategoryWorkflowRef.current) {
-        productCategoryWorkflowRef.current.handleRefresh();
+    if (tab === 5) {
+      // Promotions tab - delegate to PromotionWorkflow
+      if (promotionWorkflowRef.current) {
+        promotionWorkflowRef.current.handleRefresh();
       }
       return;
     }
 
     if (tab === 6) {
-      // Supplier tab - delegate to SupplierWorkflow
+      // Suppliers tab - delegate to SupplierWorkflow
       if (supplierWorkflowRef.current) {
         supplierWorkflowRef.current.handleRefresh();
       }
@@ -1307,6 +1421,25 @@ export default function AdminProductsPage() {
     }
   }, []);
 
+  // Product Type handlers (delegate to ProductTypeWorkflow component)
+  const handleProductTypeSave = React.useCallback(async () => {
+    if (productTypeWorkflowRef.current) {
+      await productTypeWorkflowRef.current.handleSave();
+    }
+  }, []);
+
+  const handleProductTypeUpload = React.useCallback(async () => {
+    if (productTypeWorkflowRef.current) {
+      await productTypeWorkflowRef.current.handleUpload();
+    }
+  }, []);
+
+  const handleProductTypeRefresh = React.useCallback(() => {
+    if (productTypeWorkflowRef.current) {
+      productTypeWorkflowRef.current.handleRefresh();
+    }
+  }, []);
+
   return (
     <Box
       sx={{
@@ -1355,42 +1488,63 @@ export default function AdminProductsPage() {
         <MainContainerBox
           title="Configuration"
           showSave={
-            tab === 3 || tab === 4 || tab === 5 || tab === 7 || tab === 6
+            tab === 2 ||
+            tab === 3 ||
+            tab === 4 ||
+            tab === 5 ||
+            tab === 6 ||
+            tab === 7
           }
           showUpload={
-            tab === 3 || tab === 4 || tab === 5 || tab === 7 || tab === 6
+            tab === 2 ||
+            tab === 3 ||
+            tab === 4 ||
+            tab === 5 ||
+            tab === 6 ||
+            tab === 7
           }
           showRefresh={
-            tab === 3 || tab === 4 || tab === 5 || tab === 7 || tab === 6
+            tab === 2 ||
+            tab === 3 ||
+            tab === 4 ||
+            tab === 5 ||
+            tab === 6 ||
+            tab === 7
           }
           saveDisabled={
-            tab === 3
+            tab === 2
+              ? productTypeSaveDisabled
+              : tab === 3
               ? productCategorySaveDisabled
               : tab === 4
               ? categorySaveDisabled
               : tab === 5
               ? promotionSaveDisabled
-              : tab === 7
-              ? !isDirty || isLoading
               : tab === 6
               ? supplierSaveDisabled
+              : tab === 7
+              ? !isDirty || isLoading
               : true
           }
           uploadDisabled={
-            tab === 3
+            tab === 2
+              ? productTypeUploadDisabled
+              : tab === 3
               ? productCategoryUploadDisabled
               : tab === 4
               ? categoryUploadDisabled
               : tab === 5
               ? promotionUploadDisabled
-              : tab === 7
-              ? !hasStagingData || isLoading
               : tab === 6
               ? supplierUploadDisabled
+              : tab === 7
+              ? !hasStagingData || isLoading
               : true
           }
           onSave={
-            tab === 3
+            tab === 2
+              ? handleProductTypeSave
+              : tab === 3
               ? handleProductCategorySave
               : tab === 4
               ? handleCategorySave
@@ -1398,10 +1552,14 @@ export default function AdminProductsPage() {
               ? handlePromotionSave
               : tab === 6
               ? handleSupplierSave
-              : handleSave
+              : tab === 7
+              ? handleSave
+              : () => {}
           }
           onUpload={
-            tab === 3
+            tab === 2
+              ? handleProductTypeUpload
+              : tab === 3
               ? handleProductCategoryUpload
               : tab === 4
               ? handleCategoryUpload
@@ -1409,10 +1567,14 @@ export default function AdminProductsPage() {
               ? handlePromotionUpload
               : tab === 6
               ? handleSupplierUpload
-              : handleUpload
+              : tab === 7
+              ? handleUpload
+              : () => {}
           }
           onRefresh={
-            tab === 3
+            tab === 2
+              ? handleProductTypeRefresh
+              : tab === 3
               ? handleProductCategoryRefresh
               : tab === 4
               ? handleCategoryRefresh
@@ -1420,11 +1582,57 @@ export default function AdminProductsPage() {
               ? handlePromotionRefresh
               : tab === 6
               ? handleSupplierRefresh
-              : handleRefresh
+              : tab === 7
+              ? handleRefresh
+              : () => {}
           }
         >
           {/* Status Message Banners */}
-          {/* Tab 3: Product Category */}
+          {/* Tab 2: Product Types */}
+          {tab === 2 && productTypeMessage && (
+            <Box
+              sx={{
+                width: "100%",
+                py: 2,
+                px: 1,
+                mb: 2,
+                backgroundColor:
+                  productTypeMessage.type === "error"
+                    ? "#ffebee"
+                    : productTypeMessage.type === "success"
+                    ? "#e8f5e8"
+                    : "#f5f5f5",
+                color:
+                  productTypeMessage.type === "error"
+                    ? "#c62828"
+                    : productTypeMessage.type === "success"
+                    ? "#2e7d32"
+                    : "#666666",
+                fontSize: "14px",
+                fontWeight: 500,
+                textAlign: "center",
+                borderRadius: 0,
+                borderLeft: `4px solid ${
+                  productTypeMessage.type === "error"
+                    ? "#c62828"
+                    : productTypeMessage.type === "success"
+                    ? "#2e7d32"
+                    : "#666666"
+                }`,
+              }}
+            >
+              {productTypeMessage.type === "error"
+                ? productTypeMessage.text
+                : productTypeMessage.type === "success"
+                ? productTypeMessage.text.includes("staging")
+                  ? "Record saved in staging"
+                  : productTypeMessage.text.includes("production")
+                  ? "Record saved in production and go live"
+                  : "Record saved in staging"
+                : "Record saved in staging"}
+            </Box>
+          )}
+          {/* Tab 3: Product Categories */}
           {tab === 3 && productCategoryMessage && (
             <Box
               sx={{
@@ -1468,7 +1676,7 @@ export default function AdminProductsPage() {
                 : "Record saved in staging"}
             </Box>
           )}
-          {/* Tab 4: Category */}
+          {/* Tab 4: Categories */}
           {tab === 4 && categoryMessage && (
             <Box
               sx={{
@@ -1662,22 +1870,26 @@ export default function AdminProductsPage() {
               variant="scrollable"
               scrollButtons="auto"
               sx={{
-                px: 1,
-                borderBottom: (t) => `1px solid ${t.palette.divider}`,
-                "& .MuiTabs-flexContainer": { gap: 0.5 },
-              }}
-              TabIndicatorProps={{
-                sx: (t) => ({
-                  height: 3,
-                  borderRadius: 2,
-                  background: `linear-gradient(90deg, ${t.palette.primary.main}, ${t.palette.primary.dark})`,
-                }),
+                borderBottom: 1,
+                borderColor: "divider",
+                "& .MuiTab-root": {
+                  textTransform: "none",
+                  fontWeight: 600,
+                  minHeight: 44,
+                  px: 1.5,
+                  borderRadius: 1,
+                  color: "text.secondary",
+                  "&.Mui-selected": { color: "primary.main" },
+                  "&:hover": {
+                    bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
+                  },
+                },
               }}
             >
               <Tab
-                icon={<InventoryIcon fontSize="small" />}
+                icon={<InventoryIcon />}
                 iconPosition="start"
-                label="Variants & Inventory"
+                label="Variants"
                 sx={(t) => ({
                   textTransform: "none",
                   fontWeight: 600,
@@ -1690,7 +1902,7 @@ export default function AdminProductsPage() {
                 })}
               />
               <Tab
-                icon={<Inventory2Icon fontSize="small" />}
+                icon={<Inventory2Icon />}
                 iconPosition="start"
                 label="Products"
                 sx={(t) => ({
@@ -1705,9 +1917,9 @@ export default function AdminProductsPage() {
                 })}
               />
               <Tab
-                icon={<CategoryIcon fontSize="small" />}
+                icon={<CategoryIcon />}
                 iconPosition="start"
-                label="Product Type"
+                label="Product Types"
                 sx={(t) => ({
                   textTransform: "none",
                   fontWeight: 600,
@@ -1720,9 +1932,9 @@ export default function AdminProductsPage() {
                 })}
               />
               <Tab
-                icon={<CategoryIcon fontSize="small" />}
+                icon={<CategoryIcon />}
                 iconPosition="start"
-                label="Product Category"
+                label="Product Categories"
                 sx={(t) => ({
                   textTransform: "none",
                   fontWeight: 600,
@@ -1735,9 +1947,9 @@ export default function AdminProductsPage() {
                 })}
               />
               <Tab
-                icon={<CategoryIcon fontSize="small" />}
+                icon={<CategoryIcon />}
                 iconPosition="start"
-                label="Category"
+                label="Categories"
                 sx={(t) => ({
                   textTransform: "none",
                   fontWeight: 600,
@@ -1750,7 +1962,7 @@ export default function AdminProductsPage() {
                 })}
               />
               <Tab
-                icon={<CategoryIcon fontSize="small" />}
+                icon={<ReceiptLongIcon />}
                 iconPosition="start"
                 label="Promotions"
                 sx={(t) => ({
@@ -1764,9 +1976,8 @@ export default function AdminProductsPage() {
                   "&:hover": { bgcolor: alpha(t.palette.primary.main, 0.08) },
                 })}
               />
-
               <Tab
-                icon={<LocalShippingIcon fontSize="small" />}
+                icon={<LocalShippingIcon />}
                 iconPosition="start"
                 label="Suppliers"
                 sx={(t) => ({
@@ -1781,7 +1992,7 @@ export default function AdminProductsPage() {
                 })}
               />
               <Tab
-                icon={<ReceiptLongIcon fontSize="small" />}
+                icon={<ReceiptLongIcon />}
                 iconPosition="start"
                 label="Tax"
                 sx={(t) => ({
@@ -1798,8 +2009,32 @@ export default function AdminProductsPage() {
             </Tabs>
 
             {/* Tab content based on selected tab */}
-            {tab === 3 ? (
-              // Product Category tab
+            {tab === 0 ? (
+              // Variants tab
+              <Box sx={{ p: 1, pt: 0.5 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Variants management will be implemented here.
+                </Typography>
+              </Box>
+            ) : tab === 1 ? (
+              // Products tab
+              <Box sx={{ p: 1, pt: 0.5 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Products management will be implemented here.
+                </Typography>
+              </Box>
+            ) : tab === 2 ? (
+              // Product Types tab
+              <Box sx={{ p: 1, pt: 0.5 }}>
+                <ProductTypeWorkflow
+                  ref={productTypeWorkflowRef}
+                  onSaveDisabledChange={setProductTypeSaveDisabled}
+                  onUploadDisabledChange={setProductTypeUploadDisabled}
+                  onMessageChange={setProductTypeMessage}
+                />
+              </Box>
+            ) : tab === 3 ? (
+              // Product Categories tab
               <Box sx={{ p: 1, pt: 0.5 }}>
                 <ProductCategoryWorkflow
                   ref={productCategoryWorkflowRef}
@@ -1868,8 +2103,8 @@ export default function AdminProductsPage() {
                       color="text.secondary"
                       sx={{ mb: 2 }}
                     >
-                      These records are marked for deletion in staging. You can
-                      restore them before uploading to production.
+                      These records are marked for deletion. You can restore it
+                      before uploading to production.
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                       {deletedRules.map((deletedRule) => (
@@ -1988,7 +2223,6 @@ export default function AdminProductsPage() {
                         isInclusive: e.target.checked,
                       }))
                     }
-                    color="primary"
                   />
                 }
                 label="Tax Inclusive"
@@ -2003,7 +2237,6 @@ export default function AdminProductsPage() {
                         isGST: e.target.checked,
                       }))
                     }
-                    color="info"
                   />
                 }
                 label="GST"
@@ -2028,7 +2261,7 @@ export default function AdminProductsPage() {
           </DialogActions>
         </Dialog>
 
-        {/* Delete Tax Rule Confirmation Modal */}
+        {/* Delete Confirmation Modal */}
         <Dialog
           open={isDeleteModalOpen}
           onClose={handleCancelDelete}
@@ -2044,54 +2277,30 @@ export default function AdminProductsPage() {
               gap: 1,
             }}
           >
-            ⚠️ Confirm Deletion
+            🗑️ Confirm Deletion
           </DialogTitle>
           <DialogContent>
-            <Box sx={{ py: 1 }}>
-              <Typography variant="body1" gutterBottom>
-                Are you sure you want to delete this tax rule?
-              </Typography>
-              {deletingRule && (
-                <Box
-                  sx={{
-                    mt: 2,
-                    p: 2,
-                    bgcolor: "grey.50",
-                    borderRadius: 1,
-                    border: "1px solid",
-                    borderColor: "grey.200",
-                  }}
-                >
-                  <Typography
-                    variant="subtitle2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    Rule Details:
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500}>
-                    Description: {deletingRule.description || "No description"}
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500}>
-                    Rate: {deletingRule.ratePercent}%
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500}>
-                    Mode: {deletingRule.isInclusive ? "Inclusive" : "Exclusive"}
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500}>
-                    Type: {deletingRule.isGST ? "GST" : "Regular"}
-                  </Typography>
-                </Box>
-              )}
-              <Typography
-                variant="body2"
-                color="error.main"
-                sx={{ mt: 2, fontWeight: 500 }}
-              >
-                ⚠️ WARNING: After clicking Upload, this deletion will be
-                PERMANENT and cannot be undone.
-              </Typography>
-            </Box>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              Are you sure you want to delete this tax rule?
+            </Typography>
+            {deletingRule && (
+              <Box sx={{ p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  {deletingRule.description || "No description"}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Rate: {deletingRule.ratePercent}%
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {deletingRule.isInclusive ? "Inclusive" : "Exclusive"} |{" "}
+                  {deletingRule.isGST ? "GST" : "Regular"}
+                </Typography>
+              </Box>
+            )}
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              This action will mark the tax rule for deletion. You can restore
+              it before uploading to production.
+            </Typography>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 3 }}>
             <Button
@@ -2103,8 +2312,8 @@ export default function AdminProductsPage() {
             </Button>
             <Button
               onClick={handleConfirmDelete}
-              color="error"
               variant="contained"
+              color="error"
               sx={{ minWidth: 100 }}
             >
               Delete

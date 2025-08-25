@@ -183,20 +183,20 @@ export default function SupplierSettings({
                 <IconButton
                   size="small"
                   onClick={() => onEdit(supplier.id)}
-                  sx={{
+                  sx={(t) => ({
                     color: "primary.main",
-                    "&:hover": { bgcolor: alpha("primary.main", 0.1) },
-                  }}
+                    "&:hover": { bgcolor: alpha(t.palette.primary.main, 0.1) },
+                  })}
                 >
                   <EditIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   size="small"
                   onClick={() => onRemove(supplier.id)}
-                  sx={{
+                  sx={(t) => ({
                     color: "error.main",
-                    "&:hover": { bgcolor: alpha("error.main", 0.1) },
-                  }}
+                    "&:hover": { bgcolor: alpha(t.palette.error.main, 0.1) },
+                  })}
                 >
                   <DeleteIcon fontSize="small" />
                 </IconButton>

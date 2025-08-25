@@ -1230,7 +1230,7 @@ const PromotionWorkflow = React.forwardRef<
         <DialogActions>
           <Button onClick={handleCancelEdit}>Cancel</Button>
           <Button onClick={handleSavePromotion} variant="contained">
-            {editingPromotion ? "Update" : "Add"} Promotion
+            {editingPromotion ? "Save Changes" : "Add Promotion"}
           </Button>
         </DialogActions>
       </Dialog>
