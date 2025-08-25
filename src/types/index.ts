@@ -195,3 +195,101 @@ export interface UpdateProductTypeData {
   sortOrder?: number;
   isDeleted?: boolean;
 }
+
+// Product interfaces for raw material management
+export interface Product {
+  id: string;
+  productCode: string;
+  productName: string;
+  description?: string;
+  productTypeId: string;
+  productType?: ProductType;
+  sellingPrice: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'DRAFT';
+  categoryId?: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  tags: string[];
+  stockLevel: number;
+  reorderPoint: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductStaging {
+  id: string;
+  productCode: string;
+  productName: string;
+  description?: string;
+  productTypeId: string;
+  productType?: ProductType;
+  sellingPrice: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'DRAFT';
+  categoryId?: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  tags: string[];
+  stockLevel: number;
+  reorderPoint: number;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductSupplier {
+  id: string;
+  productId: string;
+  supplierId: string;
+  supplier: {
+    id: string;
+    name: string;
+    code: string;
+  };
+  costPrice: number;
+  isPrimary: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProductData {
+  productCode: string;
+  productName: string;
+  description?: string;
+  productTypeId: string;
+  sellingPrice: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'DRAFT';
+  categoryId?: string;
+  tags: string[];
+  stockLevel: number;
+  reorderPoint: number;
+  suppliers?: {
+    supplierId: string;
+    costPrice: number;
+    isPrimary: boolean;
+  }[];
+}
+
+export interface UpdateProductData {
+  productCode?: string;
+  productName?: string;
+  description?: string;
+  productTypeId?: string;
+  sellingPrice?: number;
+  status?: 'ACTIVE' | 'INACTIVE' | 'DRAFT';
+  categoryId?: string;
+  tags?: string[];
+  stockLevel?: number;
+  reorderPoint?: number;
+  suppliers?: {
+    supplierId: string;
+    costPrice: number;
+    isPrimary: boolean;
+  }[];
+}

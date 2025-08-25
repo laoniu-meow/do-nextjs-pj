@@ -5,7 +5,7 @@ import { authenticateRequest } from "@/lib/auth";
 // PUT /api/admin/products/product-types/staging/[id]
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = authenticateRequest(request);
@@ -13,7 +13,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { name, description, productCategoryId, isActive, sortOrder } = body;
 
@@ -77,7 +77,7 @@ export async function PUT(
 // DELETE /api/admin/products/product-types/staging/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = authenticateRequest(request);
@@ -85,7 +85,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Soft delete by marking as deleted
     await prisma.productTypeStaging.update({

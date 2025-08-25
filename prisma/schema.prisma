@@ -301,16 +301,18 @@ model Brand {
 }
 
 model Supplier {
-  id               String            @id @default(cuid())
-  name             String
-  code             String            @unique
-  isActive         Boolean           @default(true)
-  email            String?
-  phone            String?
-  notes            String?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  variantSuppliers VariantSupplier[]
+  id                      String                   @id @default(cuid())
+  name                    String
+  code                    String                   @unique
+  isActive                Boolean                  @default(true)
+  email                   String?
+  phone                   String?
+  notes                   String?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  stagingProductSuppliers ProductSupplierStaging[]
+  productSuppliers        ProductSupplier[]
+  variantSuppliers        VariantSupplier[]
 
   @@index([name])
   @@index([isActive])
@@ -332,6 +334,26 @@ model SupplierStaging {
   @@index([name])
   @@index([isActive])
   @@map("supplier_staging")
+}
+
+model Donation {
+  id            String   @id @default(cuid())
+  description   String
+  amount        Decimal  @db.Decimal(10, 2)
+  campaignName  String
+  startDateTime DateTime
+  endDateTime   DateTime
+  isOneTime     Boolean  @default(true)
+  notes         String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([campaignName])
+  @@index([isActive])
+  @@index([startDateTime])
+  @@index([endDateTime])
+  @@map("donations")
 }
 
 model Category {
@@ -372,8 +394,6 @@ model CategoryStaging {
 
 model Product {
   id                     String                    @id @default(cuid())
-  title                  String
-  slug                   String                    @unique
   description            String?
   status                 ProductStatus             @default(DRAFT)
   brandId                String?
@@ -383,16 +403,28 @@ model Product {
   metaTitle              String?
   metaDescription        String?
   ogImage                String?
+  categoryId             String?
+  productCode            String                    @unique
+  productName            String
+  productTypeId          String
+  reorderPoint           Int                       @default(0)
+  sellingPrice           Decimal                   @db.Decimal(10, 2)
+  stockLevel             Int                       @default(0)
+  tags                   String[]
   categories             ProductCategoryJunction[]
   images                 ProductImage[]
+  suppliers              ProductSupplier[]
   product_type_junctions product_type_junctions[]
   variants               ProductVariant[]
   brand                  Brand?                    @relation(fields: [brandId], references: [id])
+  category               ProductCategory?          @relation(fields: [categoryId], references: [id])
   defaultVariant         ProductVariant?           @relation("DefaultVariant", fields: [defaultVariantId], references: [id])
+  productType            ProductType               @relation(fields: [productTypeId], references: [id])
 
   @@index([status])
   @@index([createdAt])
-  @@index([title])
+  @@index([productCode])
+  @@index([productName])
   @@map("products")
 }
 
@@ -409,6 +441,69 @@ model ProductImage {
 
   @@index([productId, sortOrder])
   @@map("product_images")
+}
+
+model ProductStaging {
+  id            String                   @id @default(cuid())
+  productCode   String                   @unique
+  productName   String
+  description   String?
+  productTypeId String
+  sellingPrice  Decimal                  @db.Decimal(10, 2)
+  status        ProductStatus            @default(DRAFT)
+  categoryId    String?
+  tags          String[]
+  stockLevel    Int                      @default(0)
+  reorderPoint  Int                      @default(0)
+  isDeleted     Boolean                  @default(false)
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  category      ProductCategory?         @relation(fields: [categoryId], references: [id])
+  productType   ProductType              @relation(fields: [productTypeId], references: [id])
+  suppliers     ProductSupplierStaging[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([productCode])
+  @@index([productName])
+  @@index([isDeleted])
+  @@map("product_staging")
+}
+
+model ProductSupplier {
+  id         String   @id @default(cuid())
+  productId  String
+  supplierId String
+  costPrice  Decimal  @db.Decimal(10, 2)
+  isPrimary  Boolean  @default(false)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  product    Product  @relation(fields: [productId], references: [id])
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  @@index([productId])
+  @@index([supplierId])
+  @@index([isPrimary])
+  @@map("product_suppliers")
+}
+
+model ProductSupplierStaging {
+  id         String         @id @default(cuid())
+  productId  String
+  supplierId String
+  costPrice  Decimal        @db.Decimal(10, 2)
+  isPrimary  Boolean        @default(false)
+  isActive   Boolean        @default(true)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  product    ProductStaging @relation(fields: [productId], references: [id])
+  supplier   Supplier       @relation(fields: [supplierId], references: [id])
+
+  @@index([productId])
+  @@index([supplierId])
+  @@index([isPrimary])
+  @@map("product_supplier_staging")
 }
 
 model ProductVariant {
@@ -498,8 +593,10 @@ model ProductCategory {
   categoryId           String?
   products             ProductCategoryJunction[]
   category             Category?                 @relation("CategoryProductCategories", fields: [categoryId], references: [id])
+  stagingRawProducts   ProductStaging[]
   product_type_staging ProductTypeStaging[]
   product_types        ProductType[]
+  rawProducts          Product[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -680,8 +777,10 @@ model ProductType {
   createdAt                    DateTime                 @default(now())
   updatedAt                    DateTime                 @updatedAt
   productCategoryId            String
+  stagingProducts              ProductStaging[]
   product_type_junctions       product_type_junctions[]
   product_categories_hierarchy ProductCategory          @relation(fields: [productCategoryId], references: [id])
+  products                     Product[]
 
   @@index([productCategoryId])
   @@index([isActive])
